@@ -9,12 +9,12 @@
           <b-nav vertical class="">
             <!--リンクタグを生成します。-->
             <b-nav-item exact-active-class="active" to="/">HOME</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/page2">JSON Beautifier</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/page3">SQL Beautifier</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/page4">DB Initial SQL Creator</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/page5">Barcode Reader</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/page6">Image Data URI Scheme Generator</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/page7">Password Generator</b-nav-item>
+            <b-nav-item exact-active-class="active" to="/json-beautifier">JSON Beautifier</b-nav-item>
+            <b-nav-item exact-active-class="active" to="/page2">SQL Beautifier</b-nav-item>
+            <b-nav-item exact-active-class="active" to="/page3">DB Initial SQL Creator</b-nav-item>
+            <b-nav-item exact-active-class="active" to="/page4">Barcode Reader</b-nav-item>
+            <b-nav-item exact-active-class="active" to="/page5">Image Data URI Scheme Generator</b-nav-item>
+            <b-nav-item exact-active-class="active" to="/page6">Password Generator</b-nav-item>
           </b-nav>
         </b-col>
         <b-col cols="9">

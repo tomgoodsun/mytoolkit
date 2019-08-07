@@ -1,15 +1,15 @@
 /* eslint-disable */
 import Vue from 'vue'
-import { BootstrapVue, LayoutPlugin, NavPlugin, ListGroupPlugin } from 'bootstrap-vue'
+import { BootstrapVue, LayoutPlugin, NavPlugin } from 'bootstrap-vue'
 import Router from 'vue-router'
 //import HelloWorld from '@/components/HelloWorld'
 import Home from '@/components/Home'
+import JsonBeautifier from '@/components/JsonBeautifier'
 import Page2 from '@/components/Page2'
 import Page3 from '@/components/Page3'
 
-Vue.use(NavPlugin)
 Vue.use(LayoutPlugin)
-Vue.use(ListGroupPlugin)
+Vue.use(NavPlugin)
 Vue.use(Router)
 
 export default new Router({
@@ -17,6 +17,10 @@ export default new Router({
     {
       path: '/',
       component: Home
+    },
+    {
+      path: '/json-beautifier',
+      component: JsonBeautifier
     },
     {
       path: '/page2',
