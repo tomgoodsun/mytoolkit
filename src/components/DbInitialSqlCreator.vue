@@ -72,33 +72,40 @@ import {
   FormPlugin,
   LayoutPlugin
 } from 'bootstrap-vue'
+import DbInitialSql from '../libraries/DbInitialSql.js'
+
 Vue.use(FormCheckboxPlugin)
 Vue.use(FormGroupPlugin)
 Vue.use(FormInputPlugin)
 Vue.use(FormPlugin)
 Vue.use(AlertPlugin);
 
-const HOSTS = {
-  default: [
-    { text: '%', value: '%' },
-    { text: 'localhost', value: 'localhost' },
-    { text: '127.0.0.1', value: '127.0.0.1' }
-  ],
-  selected: [
-    'localhost',
-    '127.0.0.1'
-  ]
-};
+//const HOSTS = {
+//  default: [
+//    { text: '%', value: '%' },
+//    { text: 'localhost', value: 'localhost' },
+//    { text: '127.0.0.1', value: '127.0.0.1' }
+//  ],
+//  selected: [
+//    'localhost',
+//    '127.0.0.1'
+//  ]
+//};
+
+
 export default {
   data() {
+    let dis = new DbInitialSql();
     return {
       form: {
         database: '',
         username: '',
         password: '',
         customHosts: '',
-        selected: HOSTS.selected,
-        defaultHosts: HOSTS.default
+        //selected: HOSTS.selected,
+        //defaultHosts: HOSTS.default
+        selected: dis.getDefaultHostsSelected(),
+        defaultHosts: dis.getDefaultHosts()
       },
       //foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
       show: true
