@@ -78,6 +78,17 @@ Vue.use(FormInputPlugin)
 Vue.use(FormPlugin)
 Vue.use(AlertPlugin);
 
+const HOSTS = {
+  default: [
+    { text: '%', value: '%' },
+    { text: 'localhost', value: 'localhost' },
+    { text: '127.0.0.1', value: '127.0.0.1' }
+  ],
+  selected: [
+    'localhost',
+    '127.0.0.1'
+  ]
+};
 export default {
   data() {
     return {
@@ -86,15 +97,8 @@ export default {
         username: '',
         password: '',
         customHosts: '',
-        selected: [
-          'localhost',
-          '127.0.0.1'
-          ],
-        defaultHosts: [
-          { text: '%', value: '%' },
-          { text: 'localhost', value: 'localhost' },
-          { text: '127.0.0.1', value: '127.0.0.1' }
-        ],
+        selected: HOSTS.selected,
+        defaultHosts: HOSTS.default
       },
       //foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
       show: true
