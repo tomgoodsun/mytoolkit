@@ -52,10 +52,11 @@ body {
   color: #ffcc99;
 }
 #app {
+  color: #2c3e50;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-size: 12px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
 }
 
 #app .container {
