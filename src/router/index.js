@@ -4,6 +4,7 @@ import { BootstrapVue, LayoutPlugin, NavPlugin } from 'bootstrap-vue'
 import Router from 'vue-router'
 //import HelloWorld from '@/components/HelloWorld'
 import Home from '@/components/Home'
+import DbInitialSqlCreator from '@/components/DbInitialSqlCreator'
 import JsonBeautifier from '@/components/JsonBeautifier'
 import Page2 from '@/components/Page2'
 import Page3 from '@/components/Page3'
@@ -21,6 +22,10 @@ export default new Router({
     {
       path: '/json-beautifier',
       component: JsonBeautifier
+    },
+    {
+      path: '/db-initial-sql-creator',
+      component: DbInitialSqlCreator
     },
     {
       path: '/page2',

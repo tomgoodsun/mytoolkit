@@ -11,7 +11,7 @@
             <b-nav-item exact-active-class="active" to="/">HOME</b-nav-item>
             <b-nav-item exact-active-class="active" to="/json-beautifier">JSON Beautifier</b-nav-item>
             <b-nav-item exact-active-class="active" to="/page2">SQL Beautifier</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/page3">DB Initial SQL Creator</b-nav-item>
+            <b-nav-item exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</b-nav-item>
             <b-nav-item exact-active-class="active" to="/page4">Barcode Reader</b-nav-item>
             <b-nav-item exact-active-class="active" to="/page5">Image Data URI Scheme Generator</b-nav-item>
             <b-nav-item exact-active-class="active" to="/page6">Password Generator</b-nav-item>
