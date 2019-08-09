@@ -54,7 +54,7 @@
               v-model="form.defaultHostsSelected"
               :key="defaultHost.value"
               :value="defaultHost.value"
-              name="flavour-3a"
+              name="hosts"
             >
               {{ defaultHost.text }}
             </b-form-checkbox>
@@ -80,7 +80,7 @@
               v-model="form.privilegesSelected"
               :key="privilege.value"
               :value="privilege.value"
-              name="flavour-3a"
+              name="privileges"
             >
               {{ privilege.text }}
             </b-form-checkbox>
