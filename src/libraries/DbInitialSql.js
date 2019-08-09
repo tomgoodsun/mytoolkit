@@ -344,4 +344,34 @@ export default class DbInitialSql {
   getDefaultCharset() {
     return DbInitialSqlDefine.DEFAULT_CHARSET;
   }
+
+  getPrivileges() {
+    let privileges = [];
+    DbInitialSqlDefine.PRIVILEGES.forEach(function (item) {
+      privileges.push({
+          text: `${item.privilege} (${item.column})`,
+          value: item.privilege
+
+      });
+    });
+    return privileges;
+  }
+
+  getPrivilegesSelected() {
+    let selected = [];
+    DbInitialSqlDefine.PRIVILEGES.forEach(function (item) {
+      if (item.checked) {
+        selected.push(item.privilege);
+      }
+    });
+    return selected;
+  }
+
+  getPrivilegesSelectedAll() {
+    let selected = [];
+    DbInitialSqlDefine.PRIVILEGES.forEach(function (item) {
+      selected.push(item.privilege);
+    });
+    return selected;
+  }
 }

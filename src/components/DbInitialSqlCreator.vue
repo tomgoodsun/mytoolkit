@@ -1,8 +1,8 @@
 <template>
   <b-container fluid>
-    <b-row>
-      <b-col cols="6">
-        <b-form @reset="onReset" v-if="show">
+    <b-form @reset="onReset" v-if="show">
+      <b-row>
+        <b-col cols="6">
           <b-form-group id="input-group-database" label="Database:" label-for="database">
             <b-form-input
               id="database"
@@ -66,11 +66,30 @@
               v-model="form.customHosts"
             ></b-form-textarea>
           </b-form-group>
-         </b-form>
-      </b-col>
-      <b-col cols="6">
-      </b-col>
-    </b-row>
+
+        </b-col>
+
+        <b-col cols="6">
+
+          <b-form-group label="Privileges: ">
+            <b-button variant="outline-primary" name="resetPrivileges" v-on:click="resetPrivileges()">Reset</b-button>
+            <b-button variant="outline-primary" name="checkAllPrivileges" v-on:click="checkAllPrivileges()">Check All</b-button>
+            <b-button variant="outline-primary" name="uncheckAllPrivileges" v-on:click="uncheckAllPrivileges()">Uncheck All</b-button>
+            <b-form-checkbox
+              v-for="privilege in form.privileges"
+              v-model="form.privilegesSelected"
+              :key="privilege.value"
+              :value="privilege.value"
+              name="flavour-3a"
+            >
+              {{ privilege.text }}
+            </b-form-checkbox>
+          </b-form-group>
+
+        </b-col>
+
+      </b-row>
+    </b-form>
   </b-container>
 </template>
 
@@ -78,9 +97,10 @@
 /* eslint-disable */
 import Vue from 'vue'
 import {
-  BootstrapVue,
   AlertPlugin,
   BFormTextarea,
+  BootstrapVue,
+  ButtonPlugin,
   FormCheckboxPlugin,
   FormGroupPlugin,
   FormInputPlugin,
@@ -90,12 +110,13 @@ import {
 } from 'bootstrap-vue'
 import DbInitialSql from '../libraries/DbInitialSql.js'
 
+Vue.use(AlertPlugin);
+Vue.use(ButtonPlugin);
 Vue.use(FormCheckboxPlugin)
 Vue.use(FormGroupPlugin)
 Vue.use(FormInputPlugin)
 Vue.use(FormPlugin)
 Vue.use(FormSelectPlugin)
-Vue.use(AlertPlugin);
 
 //const HOSTS = {
 //  default: [
@@ -123,12 +144,11 @@ export default {
         charsetGroups: dis.getCharsetGroups(),
         charsetsSelected: dis.getDefaultCharset(),
         charsets: dis.getCharsets(dis.getDefaultCharsetGroup()),
-        //selected: HOSTS.selected,
-        //defaultHosts: HOSTS.default
         defaultHostsSelected: dis.getDefaultHostsSelected(),
-        defaultHosts: dis.getDefaultHosts()
+        defaultHosts: dis.getDefaultHosts(),
+        privilegesSelected: dis.getPrivilegesSelected(),
+        privileges: dis.getPrivileges(),
       },
-      //foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
       show: true
     };
   },
@@ -172,14 +192,22 @@ export default {
         this.show = true
       })
     },
-    /**
-     * @param Event {evt}
-     */
+
     updateCharsets(evt) {
       let dis = new DbInitialSql();
-      console.log(dis.getCharsets(evt));
-      console.log();
       this.form.charsets = dis.getCharsets(evt);
+    },
+
+    resetPrivileges() {
+      let dis = new DbInitialSql();
+      this.form.privilegesSelected = dis.getPrivilegesSelected();
+    },
+    checkAllPrivileges() {
+      let dis = new DbInitialSql();
+      this.form.privilegesSelected = dis.getPrivilegesSelectedAll();
+    },
+    uncheckAllPrivileges() {
+      this.form.privilegesSelected = [];
     }
   },
   components: {
