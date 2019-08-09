@@ -33,10 +33,25 @@
             ></b-form-input>
           </b-form-group>
 
-          <b-form-group label="Individual stacked checkboxes (default)">
+          <b-form-group label="Charset Type: ">
+            <b-form-select
+              v-model="form.charsetGroupsSelected"
+              :options="form.charsetGroups"
+              @change="updateCharsets($event)"
+            ></b-form-select>
+          </b-form-group>
+
+          <b-form-group label="Charset: ">
+            <b-form-select
+              v-model="form.charsetsSelected"
+              :options="form.charsets"
+            ></b-form-select>
+          </b-form-group>
+
+          <b-form-group label="Hosts: ">
             <b-form-checkbox
               v-for="defaultHost in form.defaultHosts"
-              v-model="form.selected"
+              v-model="form.defaultHostsSelected"
               :key="defaultHost.value"
               :value="defaultHost.value"
               name="flavour-3a"
@@ -70,6 +85,7 @@ import {
   FormGroupPlugin,
   FormInputPlugin,
   FormPlugin,
+  FormSelectPlugin,
   LayoutPlugin
 } from 'bootstrap-vue'
 import DbInitialSql from '../libraries/DbInitialSql.js'
@@ -78,6 +94,7 @@ Vue.use(FormCheckboxPlugin)
 Vue.use(FormGroupPlugin)
 Vue.use(FormInputPlugin)
 Vue.use(FormPlugin)
+Vue.use(FormSelectPlugin)
 Vue.use(AlertPlugin);
 
 //const HOSTS = {
@@ -102,9 +119,13 @@ export default {
         username: '',
         password: '',
         customHosts: '',
+        charsetGroupsSelected: dis.getDefaultCharsetGroup(),
+        charsetGroups: dis.getCharsetGroups(),
+        charsetsSelected: dis.getDefaultCharset(),
+        charsets: dis.getCharsets(dis.getDefaultCharsetGroup()),
         //selected: HOSTS.selected,
         //defaultHosts: HOSTS.default
-        selected: dis.getDefaultHostsSelected(),
+        defaultHostsSelected: dis.getDefaultHostsSelected(),
         defaultHosts: dis.getDefaultHosts()
       },
       //foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
@@ -150,6 +171,15 @@ export default {
       this.$nextTick(() => {
         this.show = true
       })
+    },
+    /**
+     * @param Event {evt}
+     */
+    updateCharsets(evt) {
+      let dis = new DbInitialSql();
+      console.log(dis.getCharsets(evt));
+      console.log();
+      this.form.charsets = dis.getCharsets(evt);
     }
   },
   components: {
