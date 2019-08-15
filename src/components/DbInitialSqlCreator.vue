@@ -37,6 +37,8 @@
             <b-form-select
               v-model="form.charsetsSelected"
               :options="form.charsets"
+              true-value="yes"
+              false-value="no"
               @change="updateCharsets($event)"
             ></b-form-select>
           </b-form-group>
@@ -50,13 +52,11 @@
 
           <b-form-group label="Hosts: ">
             <b-form-checkbox
-              v-for="defaultHost in form.defaultHosts"
-              v-model="form.defaultHostsSelected"
+              v-for="defaultHost in form.hosts"
+              v-model="form.hostsSelected"
               :key="defaultHost.value"
               :value="defaultHost.value"
               name="hosts"
-              :disabled="defaultHost.value == '%'"
-              v-on:change="checkHost"
             >
               {{ defaultHost.text }}
             </b-form-checkbox>
@@ -68,6 +68,8 @@
               v-model="form.customHosts"
             ></b-form-textarea>
           </b-form-group>
+
+          <b-button variant="outline-primary" name="generate" v-on:click="generate()">Generate</b-button>
 
         </b-col>
 
@@ -111,6 +113,7 @@ import {
   LayoutPlugin
 } from 'bootstrap-vue'
 import DbInitialSql from '../libraries/DbInitialSql.js'
+import DbInitialSqlGenerator from '../libraries/DbInitialSqlGenerator.js'
 
 Vue.use(AlertPlugin);
 Vue.use(ButtonPlugin);
@@ -119,19 +122,6 @@ Vue.use(FormGroupPlugin)
 Vue.use(FormInputPlugin)
 Vue.use(FormPlugin)
 Vue.use(FormSelectPlugin)
-
-//const HOSTS = {
-//  default: [
-//    { text: '%', value: '%' },
-//    { text: 'localhost', value: 'localhost' },
-//    { text: '127.0.0.1', value: '127.0.0.1' }
-//  ],
-//  selected: [
-//    'localhost',
-//    '127.0.0.1'
-//  ]
-//};
-
 
 export default {
   data() {
@@ -146,8 +136,8 @@ export default {
         charsets: dis.getCharsets(),
         collationsSelected: dis.getDefaultCollation(),
         collations: dis.getCollations(dis.getDefaultCharset()),
-        defaultHostsSelected: dis.getDefaultHostsSelected(this.form),
-        defaultHosts: dis.getDefaultHosts(),
+        hostsSelected: dis.getDefaultHostsSelected(),
+        hosts: dis.getDefaultHosts(),
         privilegesSelected: dis.getPrivilegesSelected(),
         privileges: dis.getPrivileges(),
       },
@@ -217,7 +207,8 @@ export default {
     },
 
     generate() {
-
+      let generator = new DbInitialSqlGenerator(this.form);
+      generator.generate();
     }
   },
   components: {
