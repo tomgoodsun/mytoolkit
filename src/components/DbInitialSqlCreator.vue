@@ -35,16 +35,16 @@
 
           <b-form-group label="Charset Type: ">
             <b-form-select
-              v-model="form.charsetGroupsSelected"
-              :options="form.charsetGroups"
+              v-model="form.charsetsSelected"
+              :options="form.charsets"
               @change="updateCharsets($event)"
             ></b-form-select>
           </b-form-group>
 
-          <b-form-group label="Charset: ">
+          <b-form-group label="Collation: ">
             <b-form-select
-              v-model="form.charsetsSelected"
-              :options="form.charsets"
+              v-model="form.collationsSelected"
+              :options="form.collations"
             ></b-form-select>
           </b-form-group>
 
@@ -55,6 +55,8 @@
               :key="defaultHost.value"
               :value="defaultHost.value"
               name="hosts"
+              :disabled="defaultHost.value == '%'"
+              v-on:change="checkHost"
             >
               {{ defaultHost.text }}
             </b-form-checkbox>
@@ -140,11 +142,11 @@ export default {
         username: '',
         password: '',
         customHosts: '',
-        charsetGroupsSelected: dis.getDefaultCharsetGroup(),
-        charsetGroups: dis.getCharsetGroups(),
         charsetsSelected: dis.getDefaultCharset(),
-        charsets: dis.getCharsets(dis.getDefaultCharsetGroup()),
-        defaultHostsSelected: dis.getDefaultHostsSelected(),
+        charsets: dis.getCharsets(),
+        collationsSelected: dis.getDefaultCollation(),
+        collations: dis.getCollations(dis.getDefaultCharset()),
+        defaultHostsSelected: dis.getDefaultHostsSelected(this.form),
         defaultHosts: dis.getDefaultHosts(),
         privilegesSelected: dis.getPrivilegesSelected(),
         privileges: dis.getPrivileges(),
@@ -193,6 +195,10 @@ export default {
       })
     },
 
+    checkHost(evt) {
+      console.log(this);
+    },
+
     updateCharsets(evt) {
       let dis = new DbInitialSql();
       this.form.charsets = dis.getCharsets(evt);
@@ -208,6 +214,10 @@ export default {
     },
     uncheckAllPrivileges() {
       this.form.privilegesSelected = [];
+    },
+
+    generate() {
+
     }
   },
   components: {
