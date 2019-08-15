@@ -9,7 +9,6 @@
               name="database"
               v-model="form.database"
               required
-              placeholder="Enter DB name"
             ></b-form-input>
           </b-form-group>
 
@@ -19,7 +18,6 @@
               name="username"
               v-model="form.username"
               required
-              placeholder="Enter username"
             ></b-form-input>
           </b-form-group>
 
@@ -29,11 +27,10 @@
               name="password"
               v-model="form.password"
               required
-              placeholder="Enter password"
             ></b-form-input>
           </b-form-group>
 
-          <b-form-group label="Charset Type: ">
+          <b-form-group label="Charset: ">
             <b-form-select
               v-model="form.charsetsSelected"
               :options="form.charsets"
@@ -191,7 +188,7 @@ export default {
 
     updateCharsets(evt) {
       let dis = new DbInitialSql();
-      this.form.charsets = dis.getCharsets(evt);
+      this.form.collations = dis.getCollations(evt);
     },
 
     resetPrivileges() {
@@ -208,7 +205,12 @@ export default {
 
     generate() {
       let generator = new DbInitialSqlGenerator(this.form);
-      generator.generate();
+      let sql = generator.generate();
+      if (0 == sql.length) {
+        alert('SQL could not be created due to lack of parameters.');
+        return;
+      }
+      console.log(sql);
     }
   },
   components: {
