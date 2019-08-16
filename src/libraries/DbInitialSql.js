@@ -3,9 +3,17 @@ import DbInitialSqlDefine from './DbInitialSqlDefine';
 
 export default class DbInitialSql {
 
+  /**
+   * @constructor
+   */
   constructor() {
   }
 
+  /**
+   * Get default hosts
+   *
+   * @return {Array.<object>}
+   */
   getDefaultHosts() {
     let hosts = [];
     DbInitialSqlDefine.DEFAULT_HOSTS.forEach(function (item) {
@@ -17,6 +25,11 @@ export default class DbInitialSql {
     return hosts;
   }
 
+  /**
+   * Get dafault selected hosts
+   *
+   * @return {Array.<number>}
+   */
   getDefaultHostsSelected() {
     let values = [];
     DbInitialSqlDefine.DEFAULT_HOSTS.forEach(function (item) {
@@ -98,7 +111,7 @@ export default class DbInitialSql {
       database: '',
       username: '',
       password: '',
-      useNativePassword: true,
+      useNativePassword: '1',
       customHosts: '',
       charsetsSelected: this.getDefaultCharset(),
       charsets: this.getCharsets(),

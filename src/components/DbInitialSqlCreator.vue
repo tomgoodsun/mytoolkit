@@ -31,8 +31,8 @@
             <b-form-checkbox
               v-model="form.useNativePassword"
               name="useNativePassword"
-              value="true"
-              unchecked-value="false"
+              value="1"
+              unchecked-value="0"
             >
               Use native password
             </b-form-checkbox>
