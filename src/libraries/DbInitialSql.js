@@ -1,6 +1,9 @@
 /* eslint-disable */
-import DbInitialSqlDefine from './DbInitialSqlDefine';
+import DbInitialSqlDefine from './DbInitialSqlDefine.js';
 
+/**
+ * Database Initial SQL value management class
+ */
 export default class DbInitialSql {
 
   /**
@@ -40,6 +43,11 @@ export default class DbInitialSql {
     return values;
   }
 
+  /**
+   * Get lists of charsets
+   *
+   * @return {Array.<object>}
+   */
   getCharsets() {
     let doneList = [];
     let charsets = [];
@@ -55,10 +63,21 @@ export default class DbInitialSql {
     return charsets;
   }
 
+  /**
+   * Get default charset
+   *
+   * @return {string}
+   */
   getDefaultCharset() {
     return DbInitialSqlDefine.DEFAULT_CHARSET;
   }
 
+  /**
+   * Get lists of collations of specified charset
+   *
+   * @param {string} charset
+   * @return {Array.<object>}
+   */
   getCollations(charset) {
     let collations = [];
     DbInitialSqlDefine.CHARSETS.forEach(function (item) {
@@ -72,22 +91,36 @@ export default class DbInitialSql {
     return collations;
   }
 
+  /**
+   * Get default collation
+   *
+   * @return {string}
+   */
   getDefaultCollation() {
     return DbInitialSqlDefine.DEFAULT_COLLATION;
   }
 
+  /**
+   * Get lists of privileges
+   *
+   * @return {Array.<object>}
+   */
   getPrivileges() {
     let privileges = [];
     DbInitialSqlDefine.PRIVILEGES.forEach(function (item) {
       privileges.push({
-          text: `${item.privilege} (${item.column})`,
-          value: item.privilege
-
+        text: `${item.privilege} (${item.column})`,
+        value: item.privilege
       });
     });
     return privileges;
   }
 
+  /**
+   * Get lists of default selected privileges
+   *
+   * @return {Array.<string>}
+   */
   getPrivilegesSelected() {
     let selected = [];
     DbInitialSqlDefine.PRIVILEGES.forEach(function (item) {
@@ -98,6 +131,11 @@ export default class DbInitialSql {
     return selected;
   }
 
+  /**
+   * Get lists of selecting all privileges
+   *
+   * @return {Array.<string>}
+   */
   getPrivilegesSelectedAll() {
     let selected = [];
     DbInitialSqlDefine.PRIVILEGES.forEach(function (item) {
@@ -106,6 +144,11 @@ export default class DbInitialSql {
     return selected;
   }
 
+  /**
+   * Get default form values
+   *
+   * @return {object}
+   */
   getDefaultFormValues() {
     return {
       database: '',

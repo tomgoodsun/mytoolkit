@@ -5,8 +5,15 @@ var sprintf = require('sprintf-js').sprintf;
 
 export default class DbInitialSqlGenerator {
 
+  /**
+   * @type {object}
+   */
   form;
 
+  /**
+   * @constructor
+   * @param {object} form
+   */
   constructor(form) {
     this.form = form;
   }
@@ -14,7 +21,7 @@ export default class DbInitialSqlGenerator {
   /**
    * Get lists of checked or written hostnames
    *
-   * @return {Array}
+   * @return {Array.<string>}
    */
   getHosts() {
     let hosts = this.form.hostsSelected;
@@ -30,7 +37,7 @@ export default class DbInitialSqlGenerator {
   /**
    * Get lists of checked privileges
    *
-   * @return {Array}
+   * @return {Array.<string>}
    */
   getPrivs() {
     let privs = this.form.privilegesSelected;
@@ -81,13 +88,13 @@ export default class DbInitialSqlGenerator {
   /**
    * Generate CREATE USER statements
    *
-   * @return {Array}
+   * @return {Array.<string>}
    */
   generateCreateUser() {
     let result = [];
     let hosts = this.getHosts();
     let option = '';
-    if (this.form.useNativePassword) {
+    if ('1' == this.form.useNativePassword) {
       option = 'WITH mysql_native_password';
     }
     if (this.form.username.length > 0
@@ -110,7 +117,7 @@ export default class DbInitialSqlGenerator {
   /**
    * Generate GRANT statements
    *
-   * @return {Array}
+   * @return {Array.<string>}
    */
   generateGrant() {
     let result = [],

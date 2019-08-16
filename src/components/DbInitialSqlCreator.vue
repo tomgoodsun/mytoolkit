@@ -112,9 +112,8 @@
 
 <script>
 /* eslint-disable */
-import Vue from 'vue'
+import Vue from 'vue';
 import {
-  AlertPlugin,
   BFormTextarea,
   BootstrapVue,
   ButtonPlugin,
@@ -125,18 +124,17 @@ import {
   FormSelectPlugin,
   LayoutPlugin,
   ModalPlugin
-} from 'bootstrap-vue'
-import DbInitialSql from '../libraries/DbInitialSql.js'
-import DbInitialSqlGenerator from '../libraries/DbInitialSqlGenerator.js'
+} from 'bootstrap-vue';
+import DbInitialSql from '../libraries/DbInitialSql.js';
+import DbInitialSqlGenerator from '../libraries/DbInitialSqlGenerator.js';
 
-Vue.use(AlertPlugin);
 Vue.use(ButtonPlugin);
-Vue.use(FormCheckboxPlugin)
-Vue.use(FormGroupPlugin)
-Vue.use(FormInputPlugin)
-Vue.use(FormPlugin)
-Vue.use(FormSelectPlugin)
-Vue.use(ModalPlugin)
+Vue.use(FormCheckboxPlugin);
+Vue.use(FormGroupPlugin);
+Vue.use(FormInputPlugin);
+Vue.use(FormPlugin);
+Vue.use(FormSelectPlugin);
+Vue.use(ModalPlugin);
 
 export default {
   data() {
@@ -225,7 +223,6 @@ export default {
     }
   },
   components: {
-    AlertPlugin,
     BFormTextarea
   }
 }
