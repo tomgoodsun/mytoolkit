@@ -28,6 +28,14 @@
               v-model="form.password"
               required
             ></b-form-input>
+            <b-form-checkbox
+              v-model="form.useNativePassword"
+              name="useNativePassword"
+              value="true"
+              unchecked-value="false"
+            >
+              Use native password
+            </b-form-checkbox>
           </b-form-group>
 
           <b-form-group label="Charset: ">
@@ -66,7 +74,12 @@
             ></b-form-textarea>
           </b-form-group>
 
-          <b-button variant="outline-primary" name="generate" v-on:click="generate()">Generate</b-button>
+          <b-button variant="outline-primary" name="generate" @click="generate()">Generate</b-button>
+
+          <!-- <b-button variant="outline-primary" v-b-modal.result-sql>Launch demo modal</b-button> -->
+          <b-modal ref="result-sql" id="result-sql-modal" size="lg" title="Generated Result">
+            <b-form-textarea readonly v-model="resultSql" id="result-sql" size="sm" rows="10"></b-form-textarea>
+           </b-modal>
 
         </b-col>
 
@@ -91,6 +104,9 @@
 
       </b-row>
     </b-form>
+    <div class="mb-1">
+     Return value: {{ String(alertMsg) }}
+    </div>
   </b-container>
 </template>
 
@@ -107,7 +123,8 @@ import {
   FormInputPlugin,
   FormPlugin,
   FormSelectPlugin,
-  LayoutPlugin
+  LayoutPlugin,
+  ModalPlugin
 } from 'bootstrap-vue'
 import DbInitialSql from '../libraries/DbInitialSql.js'
 import DbInitialSqlGenerator from '../libraries/DbInitialSqlGenerator.js'
@@ -119,71 +136,45 @@ Vue.use(FormGroupPlugin)
 Vue.use(FormInputPlugin)
 Vue.use(FormPlugin)
 Vue.use(FormSelectPlugin)
+Vue.use(ModalPlugin)
 
 export default {
   data() {
     let dis = new DbInitialSql();
     return {
-      form: {
-        database: '',
-        username: '',
-        password: '',
-        customHosts: '',
-        charsetsSelected: dis.getDefaultCharset(),
-        charsets: dis.getCharsets(),
-        collationsSelected: dis.getDefaultCollation(),
-        collations: dis.getCollations(dis.getDefaultCharset()),
-        hostsSelected: dis.getDefaultHostsSelected(),
-        hosts: dis.getDefaultHosts(),
-        privilegesSelected: dis.getPrivilegesSelected(),
-        privileges: dis.getPrivileges(),
-      },
+      form: dis.getDefaultFormValues(),
+      //form: {
+      //  database: '',
+      //  username: '',
+      //  password: '',
+      //  useNativePassword: true,
+      //  customHosts: '',
+      //  charsetsSelected: dis.getDefaultCharset(),
+      //  charsets: dis.getCharsets(),
+      //  collationsSelected: dis.getDefaultCollation(),
+      //  collations: dis.getCollations(dis.getDefaultCharset()),
+      //  hostsSelected: dis.getDefaultHostsSelected(),
+      //  hosts: dis.getDefaultHosts(),
+      //  privilegesSelected: dis.getPrivilegesSelected(),
+      //  privileges: dis.getPrivileges(),
+      //},
+      alertMsg: '',
+      resultSql: '',
       show: true
     };
   },
-  //created() {
-  //  this.$watch(
-  //    () => this.$data.jsonFrom,
-  //    (jsonFrom) => {
-  //      let that = this;
-
-  //      // 切り替わったことをわかりやすくするため、時間差で処理する
-  //      setTimeout(() => {
-  //        let parsedJson = '';
-  //        let errorMessage = '';
-  //        try {
-  //          if (jsonFrom.length > 0) {
-  //            parsedJson = JSON.stringify(JSON.parse(jsonFrom), null, 2);
-  //          }
-  //        } catch (e) {
-  //          errorMessage = 'JSON Parse Error.';
-  //        }
-  //        console.log(errorMessage);
-  //        that.jsonTo = parsedJson;
-  //        that.errorMessage = errorMessage;
-  //      }, 500);
-
-  //      this.jsonTo = '';
-  //    }
-  //  );
-  //},
   methods: {
     onReset(evt) {
-      evt.preventDefault()
+      let dis = new DbInitialSql();
+      evt.preventDefault();
       // Reset our form values
-      this.form.database = ''
-      this.form.username = ''
-      this.form.food = null
-      this.form.checked = []
-      // Trick to reset/clear native browser form validation state
-      this.show = false
+      this.form = dis.getDefaultFormValues(),
+      this.alertMsg = '';
+      this.resultSql = '';
+      this.show = false;
       this.$nextTick(() => {
         this.show = true
       })
-    },
-
-    checkHost(evt) {
-      console.log(this);
     },
 
     updateCharsets(evt) {
@@ -203,14 +194,34 @@ export default {
       this.form.privilegesSelected = [];
     },
 
+    resetModal() {
+      this.reusltSql = null;
+    },
     generate() {
       let generator = new DbInitialSqlGenerator(this.form);
       let sql = generator.generate();
       if (0 == sql.length) {
-        alert('SQL could not be created due to lack of parameters.');
+        let alertMsg = 'SQL could not be created due to lack of parameters.';
+        //alert(alertMsg);
+        this.alertMsg = ''
+        this.$bvModal.msgBoxOk(alertMsg, {
+          title: 'Error',
+          size: 'sm',
+          buttonSize: 'sm',
+          okVariant: 'success',
+          headerClass: 'p-2 border-bottom-0',
+          footerClass: 'p-2 border-top-0',
+          centered: true
+        }).then(value => {
+          this.alertMsg = value;
+        }).catch(err => {
+          // An error occurred
+        });
         return;
       }
-      console.log(sql);
+      this.resultSql = sql;
+      this.$refs['result-sql'].show();
+      return;
     }
   },
   components: {
@@ -226,5 +237,8 @@ export default {
   font-size: 100%;
   height: 500px;
   min-height: 300px;
+}
+#result-sql {
+  font-family: Monaco, monospace;
 }
 </style>

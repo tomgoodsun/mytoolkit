@@ -46,6 +46,7 @@ export default class DbInitialSqlGenerator {
    * @return {string}
    */
   generate() {
+    console.log(this.form);
     let result = [];
     let tmpResult = [];
     tmpResult = tmpResult.concat(this.generateCreateDatabase());
@@ -85,15 +86,20 @@ export default class DbInitialSqlGenerator {
   generateCreateUser() {
     let result = [];
     let hosts = this.getHosts();
+    let option = '';
+    if (this.form.useNativePassword) {
+      option = 'WITH mysql_native_password';
+    }
     if (this.form.username.length > 0
       && this.form.password.length > 0
       && hosts.length > 0
     ) {
       for (let i = 0, len = hosts.length; i < len; i++) {
         result.push(sprintf(
-          "CREATE USER '%s'@'%s' IDENTIFIED BY '%s';",
+          "CREATE USER '%s'@'%s' IDENTIFIED %s BY '%s';",
           this.form.username,
           hosts[i],
+          option,
           this.form.password
         ));
       }

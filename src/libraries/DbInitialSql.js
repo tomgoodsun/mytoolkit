@@ -92,4 +92,22 @@ export default class DbInitialSql {
     });
     return selected;
   }
+
+  getDefaultFormValues() {
+    return {
+      database: '',
+      username: '',
+      password: '',
+      useNativePassword: true,
+      customHosts: '',
+      charsetsSelected: this.getDefaultCharset(),
+      charsets: this.getCharsets(),
+      collationsSelected: this.getDefaultCollation(),
+      collations: this.getCollations(this.getDefaultCharset()),
+      hostsSelected: this.getDefaultHostsSelected(),
+      hosts: this.getDefaultHosts(),
+      privilegesSelected: this.getPrivilegesSelected(),
+      privileges: this.getPrivileges(),
+    };
+  }
 }
