@@ -3,6 +3,9 @@ import DbInitialSqlDefine from './DbInitialSqlDefine.js';
 
 var sprintf = require('sprintf-js').sprintf;
 
+/**
+ * Database Initial SQL statement generating class
+ */
 export default class DbInitialSqlGenerator {
 
   /**
@@ -53,7 +56,6 @@ export default class DbInitialSqlGenerator {
    * @return {string}
    */
   generate() {
-    console.log(this.form);
     let result = [];
     let tmpResult = [];
     tmpResult = tmpResult.concat(this.generateCreateDatabase());
