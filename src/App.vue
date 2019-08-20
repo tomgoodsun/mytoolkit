@@ -40,7 +40,7 @@ body {
 #header {
   background-color: #3399cc;
   color: #fff;
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'M PLUS 1p', 'Avenir', Helvetica, Arial, sans-serif;
   font-size: 60px;
   font-weight: bold;
   margin-bottom: 10px;
@@ -53,7 +53,7 @@ body {
 }
 #app {
   color: #2c3e50;
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'M PLUS 1p', 'Avenir', Helvetica, Arial, sans-serif;
   font-size: 12px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

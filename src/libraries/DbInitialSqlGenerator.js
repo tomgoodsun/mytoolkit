@@ -54,7 +54,7 @@ export default class DbInitialSqlGenerator {
    * Generate initializing SQL for MySQL
    *
    * @return {string}
-   */
+   */mytoolkimytoolkitt
   generate() {
     let result = [];
     let tmpResult = [];
