@@ -6,6 +6,7 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import DbInitialSqlCreator from '@/components/DbInitialSqlCreator'
 import JsonBeautifier from '@/components/JsonBeautifier'
+import SqlBeautifier from '@/components/SqlBeautifier'
 import Page2 from '@/components/Page2'
 import Page3 from '@/components/Page3'
 
@@ -22,6 +23,10 @@ export default new Router({
     {
       path: '/json-beautifier',
       component: JsonBeautifier
+    },
+    {
+      path: '/sql-beautifier',
+      component: SqlBeautifier
     },
     {
       path: '/db-initial-sql-creator',
