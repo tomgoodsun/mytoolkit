@@ -76,7 +76,6 @@
 
           <b-button variant="outline-primary" name="generate" @click="generate()">Generate</b-button>
 
-          <!-- <b-button variant="outline-primary" v-b-modal.result-sql>Launch demo modal</b-button> -->
           <b-modal ref="result-sql" id="result-sql-modal" size="lg" title="Generated Result">
             <b-form-textarea readonly v-model="resultSql" id="result-sql" size="sm" rows="10"></b-form-textarea>
            </b-modal>
@@ -141,21 +140,6 @@ export default {
     let dis = new DbInitialSql();
     return {
       form: dis.getDefaultFormValues(),
-      //form: {
-      //  database: '',
-      //  username: '',
-      //  password: '',
-      //  useNativePassword: true,
-      //  customHosts: '',
-      //  charsetsSelected: dis.getDefaultCharset(),
-      //  charsets: dis.getCharsets(),
-      //  collationsSelected: dis.getDefaultCollation(),
-      //  collations: dis.getCollations(dis.getDefaultCharset()),
-      //  hostsSelected: dis.getDefaultHostsSelected(),
-      //  hosts: dis.getDefaultHosts(),
-      //  privilegesSelected: dis.getPrivilegesSelected(),
-      //  privileges: dis.getPrivileges(),
-      //},
       alertMsg: '',
       resultSql: '',
       show: true
