@@ -7,6 +7,7 @@ import Home from '@/components/Home'
 import DbInitialSqlCreator from '@/components/DbInitialSqlCreator'
 import JsonBeautifier from '@/components/JsonBeautifier'
 import SqlBeautifier from '@/components/SqlBeautifier'
+import PasswordGenerator from '@/components/PasswordGenerator'
 import Page2 from '@/components/Page2'
 import Page3 from '@/components/Page3'
 
@@ -31,6 +32,10 @@ export default new Router({
     {
       path: '/db-initial-sql-creator',
       component: DbInitialSqlCreator
+    },
+    {
+      path: '/password-generator',
+      component: PasswordGenerator
     },
     {
       path: '/page2',

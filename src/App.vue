@@ -14,7 +14,7 @@
             <b-nav-item exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</b-nav-item>
             <b-nav-item exact-active-class="active" to="/page4">Barcode Reader</b-nav-item>
             <b-nav-item exact-active-class="active" to="/page5">Image Data URI Scheme Generator</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/page6">Password Generator</b-nav-item>
+            <b-nav-item exact-active-class="active" to="/password-generator">Password Generator</b-nav-item>
           </b-nav>
         </b-col>
         <b-col cols="9">
