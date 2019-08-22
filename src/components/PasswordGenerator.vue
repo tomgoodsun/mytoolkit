@@ -174,6 +174,7 @@ export default {
 #drawn-result,
 #result .password {
   background: #eee;
+  color: #666;
   display: inline-block;
   font: 12px Monaco, monospace;
   margin: 3px 2px 3px 2px;
