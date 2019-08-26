@@ -5,9 +5,7 @@
         <b-col cols="6" id="file">
           <b-form-file
             v-model="file"
-            :state="Boolean(file)"
-            placeholder="Choose a file or drop it here..."
-            drop-placeholder="Drop file here..."
+            plain
             v-on:change="readFromFile"
           ></b-form-file>
           <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
@@ -24,9 +22,6 @@
         </b-col>
       </b-row>
     </b-form>
-    <div class="mb-1">
-      Return value: {{ String(alertMsg) }}
-    </div>
   </b-container>
 </template>
 
@@ -42,7 +37,6 @@ import {
   FormInputPlugin,
   FormPlugin,
   LayoutPlugin,
-  ModalPlugin
 } from 'bootstrap-vue';
 import {
   BrowserQRCodeReader,
@@ -54,7 +48,6 @@ Vue.use(FormFilePlugin);
 Vue.use(FormGroupPlugin);
 Vue.use(FormInputPlugin);
 Vue.use(FormPlugin);
-Vue.use(ModalPlugin);
 
 const codeReader = new BrowserMultiFormatReader();
 
