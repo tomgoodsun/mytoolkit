@@ -4,7 +4,7 @@
       <span class="site-name">tom-gs.com</span> toolkit
     </div>
     <b-container class="wrapper" fluid>
-      <b-row>
+      <b-row class="content-wrapper">
         <b-col cols="2" class="sidebar">
           <b-nav vertical class="">
             <!--リンクタグを生成します。-->
@@ -12,7 +12,7 @@
             <b-nav-item exact-active-class="active" to="/json-beautifier">JSON Beautifier</b-nav-item>
             <b-nav-item exact-active-class="active" to="/sql-beautifier">SQL Beautifier</b-nav-item>
             <b-nav-item exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/page4">Barcode Reader</b-nav-item>
+            <b-nav-item exact-active-class="active" to="/qrcode-reader">QR Code Reader</b-nav-item>
             <b-nav-item exact-active-class="active" to="/page5">Image Data URI Scheme Generator</b-nav-item>
             <b-nav-item exact-active-class="active" to="/password-generator">Password Generator</b-nav-item>
           </b-nav>
@@ -39,7 +39,6 @@ body {
 }
 
 body {
-  background-color: #2c3e50;
   margin: 0;
 }
 
@@ -59,6 +58,7 @@ body {
   color: #ffcc99;
 }
 #app {
+  background-color: #2c3e50;
   box-sizing: border-box;
   color: #cfcfcf;
   font-family: 'M PLUS 1p', 'Avenir', Helvetica, Arial, sans-serif;
@@ -76,6 +76,13 @@ body {
 }
 #app .nav .nav-item .active {
   background-color: #2b2b2b;
+}
+#app .nav .nav-item:hover a {
+  color: #2b2b2b !important;
+}
+#app .nav .nav-item:hover .active,
+#app .nav .nav-item a {
+  color: #cfcfcf !important;
 }
 
 #app .wrapper {
@@ -99,7 +106,25 @@ body {
 .form-control,
 .custom-select {
   background-color: #fff0 !important;
-  color: #cfcfcf;
+  color: #cfcfcf !important;
 }
-
+.custom-select option {
+  background-color: #2c3e50 !important;
+}
+.custom-control-input:checked ~ .custom-control-label::before {
+  color: #fff;
+  border-color: #ffcc66 !important;
+  background-color: #ffcc66 !important;
+}
+.btn-outline-primary {
+  color: #ffcc66 !important;
+  border-color: #ffcc66 !important;
+}
+.btn-outline-primary:hover,
+.btn-primary,
+.btn-primary:hover {
+  background-color: #ffcc66 !important;
+  border-color: #ffcc66 !important;
+  color: #2c3e50 !important;
+}
 </style>

@@ -8,7 +8,7 @@ import DbInitialSqlCreator from '@/components/DbInitialSqlCreator'
 import JsonBeautifier from '@/components/JsonBeautifier'
 import SqlBeautifier from '@/components/SqlBeautifier'
 import PasswordGenerator from '@/components/PasswordGenerator'
-import Page2 from '@/components/Page2'
+import QrcodeReader from '@/components/QrcodeReader'
 import Page3 from '@/components/Page3'
 
 Vue.use(LayoutPlugin)
@@ -38,8 +38,8 @@ export default new Router({
       component: PasswordGenerator
     },
     {
-      path: '/page2',
-      component: Page2
+      path: '/qrcode-reader',
+      component: QrcodeReader
     },
     {
       path: '/page3',

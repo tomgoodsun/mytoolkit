@@ -78,7 +78,7 @@
 
           <b-modal ref="result-sql" id="result-sql-modal" size="lg" title="Generated Result">
             <b-form-textarea readonly v-model="resultSql" id="result-sql" size="sm" rows="10"></b-form-textarea>
-           </b-modal>
+          </b-modal>
 
         </b-col>
 
@@ -104,7 +104,7 @@
       </b-row>
     </b-form>
     <div class="mb-1">
-     Return value: {{ String(alertMsg) }}
+      Return value: {{ String(alertMsg) }}
     </div>
   </b-container>
 </template>
