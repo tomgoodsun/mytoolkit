@@ -91,7 +91,8 @@ export default {
 
 <style>
 #file .image img:first-child {
-  width: 100%;
+  max-height: 500px;
+  max-width: 100%;
 }
 #result {
   font-family: Monaco, monospace;
