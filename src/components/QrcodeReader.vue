@@ -5,11 +5,18 @@
         <b-col cols="6" id="file">
           <b-form-file
             v-model="file"
+            accept="image/*"
             plain
+            capture
             v-on:change="readFromFile"
           ></b-form-file>
           <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
-          <div class="mt-3 image"><img src=""></div>
+          <div class="mt-3 image">
+            <img src="">
+          </div>
+          <div class="mt-3 image">
+            <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
+          </div>
 
         </b-col>
 
@@ -40,7 +47,11 @@ import {
 } from 'bootstrap-vue';
 import {
   BrowserQRCodeReader,
-  BrowserMultiFormatReader
+  BrowserMultiFormatReader,
+  BrowserCodeReader,
+  NotFoundException,
+  ChecksumException,
+  FormatException,
 } from '@zxing/library';
 
 Vue.use(ButtonPlugin);
@@ -50,6 +61,8 @@ Vue.use(FormInputPlugin);
 Vue.use(FormPlugin);
 
 const codeReader = new BrowserMultiFormatReader();
+const codeReaderCamera = new BrowserCodeReader();
+let selectedDeviceId;
 
 export default {
   data() {
@@ -59,6 +72,19 @@ export default {
       result: null
     }
   },
+  //mounted() {
+  //  codeReaderCamera.getVideoInputDevices()
+  //    .then((videoInputDevices) => {
+  //      const sourceSelect = document.getElementById('sourceSelect')
+  //      selectedDeviceId = videoInputDevices[0].deviceId
+  //      this.decodeContinuously(codeReaderCamera, selectedDeviceId);
+  //      //this.decodeOnce(codeReaderCamera, selectedDeviceId);
+  //      console.log(`Started decode from camera with id ${selectedDeviceId}`)
+  //    })
+  //    .catch((err) => {
+  //      console.error(err)
+  //    })
+  //},
   methods: {
     readFromFile(evt) {
       let that = this;
@@ -81,6 +107,35 @@ export default {
         });
       };
       fr.readAsDataURL(file);
+    },
+    decodeOnce(codeReader, selectedDeviceId) {
+      codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((result) => {
+        console.log(result)
+        this.result = result.text;
+      }).catch((err) => {
+        console.error(err)
+        this.result = err;
+      })
+    },
+    decodeContinuously(codeReader, selectedDeviceId) {
+      codeReader.decodeFromInputVideoDeviceContinuously(selectedDeviceId, 'video', (result, err) => {
+        console.log(result);
+        if (result) {
+          console.log('Found QR code!', result)
+          this.result = result.text;
+        }
+        if (err) {
+          if (err instanceof NotFoundException) {
+            console.log('No QR code found.')
+          }
+          if (err instanceof ChecksumException) {
+            console.log('A code was found, but it\'s read value was not valid.')
+          }
+          if (err instanceof FormatException) {
+            console.log('A code was found, but it was in a invalid format.')
+          }
+        }
+      })
     }
   },
   components: {
