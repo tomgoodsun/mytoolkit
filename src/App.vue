@@ -33,6 +33,17 @@ export default {
 </script>
 
 <style>
+@import url(//db.onlinewebfonts.com/c/034590c9705a820856d89653415479ff?family=Neutraface+2+Text+Bold);
+@font-face {
+  font-family: "Neutraface 2 Text Bold";
+  src: url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.eot");
+  src: url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.eot?#iefix") format("embedded-opentype"),
+    url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.woff2") format("woff2"),
+    url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.woff") format("woff"),
+    url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.ttf") format("truetype"),
+    url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.svg#Neutraface 2 Text Bold") format("svg");
+  }
+
 html,
 body {
   height: 100%;
@@ -45,7 +56,8 @@ body {
 #header {
   background-color: #3399cc;
   color: #fff;
-  font-family: 'M PLUS 1p', 'Avenir', Helvetica, Arial, sans-serif;
+  /*font-family: 'M PLUS 1p', 'Avenir', Helvetica, Arial, sans-serif;*/
+  font-family: 'Neutraface 2 Text Bold';
   font-size: 60px;
   font-weight: bold;
   height: 110px;

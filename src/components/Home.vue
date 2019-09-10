@@ -1,9 +1,26 @@
 <template>
-   <p>ここはトップページです。</p>
+  <div class="home">
+    <h3>Welcome to</h3>
+    <h1>tom-gs.com toolkit</h1>
+    <p>Convenient tools for web development.<br />Select from site bar.</p>
+  </div>
 </template>
 
 <script>
 </script>
 
 <style>
+.home {
+  font-family: 'Neutraface 2 Text Bold';
+  text-align: center;
+}
+.home h3 {
+  font-size: 420%;
+}
+.home h1 {
+  font-size: 720%;
+}
+.home p {
+  font-size: 220%;
+}
 </style>
