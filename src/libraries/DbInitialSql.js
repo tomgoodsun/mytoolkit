@@ -15,14 +15,23 @@ export default class DbInitialSql {
   /**
    * Get default hosts
    *
+   * @param {bool} checkedAny
    * @return {Array.<object>}
    */
-  getDefaultHosts() {
+  getDefaultHosts(checkedAny = false) {
     let hosts = [];
     DbInitialSqlDefine.DEFAULT_HOSTS.forEach(function (item) {
+      let disabled = false;
+      if (checkedAny) {
+        if ('%' != item.host) {
+          disabled = true;
+        }
+      }
       hosts.push({
         text: item.description,
-        value: item.host
+        value: item.host,
+        uncheckedValue: 'unchecked-' + item.host,
+        disabled: disabled
       });
     });
     return hosts;

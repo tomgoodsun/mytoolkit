@@ -61,7 +61,10 @@
               v-model="form.hostsSelected"
               :key="defaultHost.value"
               :value="defaultHost.value"
+              :disabled="defaultHost.disabled"
+              :unchecked-value="defaultHost.uncheckedValue"
               name="hosts"
+              @change="updateHostCheckbox($event)"
             >
               {{ defaultHost.text }}
             </b-form-checkbox>
@@ -157,6 +160,15 @@ export default {
       this.$nextTick(() => {
         this.show = true
       })
+    },
+
+    updateHostCheckbox(evt) {
+      let dis = new DbInitialSql();
+      if ('%' == evt) {
+        this.form.hosts = dis.getDefaultHosts(true);
+      } else {
+        this.form.hosts = dis.getDefaultHosts(false);
+      }
     },
 
     updateCharsets(evt) {
