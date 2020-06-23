@@ -14,8 +14,8 @@
           <div class="mt-3 image">
             <img src="">
           </div>
-          <div class="mt-3 image">
-            <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
+          <div class="mt-3 qr-code-reader">
+            <qrcode-stream class="qr-reader" @decode="onDecode" @init="onInit" />
           </div>
 
         </b-col>
@@ -53,16 +53,19 @@ import {
   ChecksumException,
   FormatException,
 } from '@zxing/library';
+import VueQrcodeReader from "vue-qrcode-reader";
 
 Vue.use(ButtonPlugin);
 Vue.use(FormFilePlugin);
 Vue.use(FormGroupPlugin);
 Vue.use(FormInputPlugin);
 Vue.use(FormPlugin);
+Vue.use(VueQrcodeReader);
 
 const codeReader = new BrowserMultiFormatReader();
-const codeReaderCamera = new BrowserCodeReader();
+//const codeReaderCamera = new BrowserCodeReader();
 let selectedDeviceId;
+let imgElem;
 
 export default {
   data() {
@@ -72,33 +75,47 @@ export default {
       result: null
     }
   },
-  //mounted() {
-  //  codeReaderCamera.getVideoInputDevices()
-  //    .then((videoInputDevices) => {
-  //      const sourceSelect = document.getElementById('sourceSelect')
-  //      selectedDeviceId = videoInputDevices[0].deviceId
-  //      this.decodeContinuously(codeReaderCamera, selectedDeviceId);
-  //      //this.decodeOnce(codeReaderCamera, selectedDeviceId);
-  //      console.log(`Started decode from camera with id ${selectedDeviceId}`)
-  //    })
-  //    .catch((err) => {
-  //      console.error(err)
-  //    })
-  //},
+  mounted: function() {
+    imgElem = document.querySelector('#file .image img:first-child');
+  },
   methods: {
+    // @see https://gruhn.github.io/vue-qrcode-reader/demos/DecodeAll.html
+    onDecode (result) {
+      this.result = result
+      imgElem.src = '';
+      imgElem.alt = '';
+    },
+    async onInit (promise) {
+      try {
+        await promise
+      } catch (error) {
+        if (error.name === 'NotAllowedError') {
+          this.error = "ERROR: you need to grant camera access permisson"
+        } else if (error.name === 'NotFoundError') {
+          this.error = "ERROR: no camera on this device"
+        } else if (error.name === 'NotSupportedError') {
+          this.error = "ERROR: secure context required (HTTPS, localhost)"
+        } else if (error.name === 'NotReadableError') {
+          this.error = "ERROR: is the camera already in use?"
+        } else if (error.name === 'OverconstrainedError') {
+          this.error = "ERROR: installed cameras are not suitable"
+        } else if (error.name === 'StreamApiNotSupportedError') {
+          this.error = "ERROR: Stream API is not supported in this browser"
+        }
+      }
+    },
+
     readFromFile(evt) {
       let that = this;
-      let elem = document.querySelector('#file .image img:first-child');
-      //let resultForm = document.querySelector('#result');
-      elem.src = '';
-      elem.alt = '';
+      imgElem.src = '';
+      imgElem.alt = '';
 
       let file = evt.target.files[0];
       let fr = new FileReader();
       fr.onload = function () {
-        elem.src = fr.result;
-        elem.alt = file.name;
-        codeReader.decodeFromImage(elem).then((result) => {
+        imgElem.src = fr.result;
+        imgElem.alt = file.name;
+        codeReader.decodeFromImage(imgElem).then((result) => {
           that.result = result.text;
           //resultForm.select();
           //console.log(resultForm);
@@ -147,6 +164,10 @@ export default {
 <style>
 #file .image img:first-child {
   max-height: 500px;
+  max-width: 100%;
+}
+#file .qr-code-reader {
+  max-height: 100px;
   max-width: 100%;
 }
 #result {
