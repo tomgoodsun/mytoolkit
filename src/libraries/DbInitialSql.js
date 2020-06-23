@@ -22,14 +22,16 @@ export default class DbInitialSql {
     let hosts = [];
     DbInitialSqlDefine.DEFAULT_HOSTS.forEach(function (item) {
       let disabled = false;
+      let host = item.host;
       if (checkedAny) {
         if ('%' != item.host) {
           disabled = true;
+          host = 'unchecked-' + item.host;
         }
       }
       hosts.push({
         text: item.description,
-        value: item.host,
+        value: host,
         uncheckedValue: 'unchecked-' + item.host,
         disabled: disabled
       });
