@@ -13,7 +13,7 @@
             <b-nav-item exact-active-class="active" to="/sql-beautifier">SQL Beautifier</b-nav-item>
             <b-nav-item exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</b-nav-item>
             <b-nav-item exact-active-class="active" to="/qrcode-reader">QR Code Reader</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/page5">Image Data URI Scheme Generator</b-nav-item>
+            <b-nav-item exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</b-nav-item>
             <b-nav-item exact-active-class="active" to="/password-generator">Password Generator</b-nav-item>
           </b-nav>
         </b-col>

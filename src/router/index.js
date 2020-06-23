@@ -9,7 +9,7 @@ import JsonBeautifier from '@/components/JsonBeautifier'
 import SqlBeautifier from '@/components/SqlBeautifier'
 import PasswordGenerator from '@/components/PasswordGenerator'
 import QrcodeReader from '@/components/QrcodeReader'
-import Page3 from '@/components/Page3'
+import DataUriSchemeGenerator from '@/components/DataUriSchemeGenerator'
 
 Vue.use(LayoutPlugin)
 Vue.use(NavPlugin)
@@ -42,8 +42,8 @@ export default new Router({
       component: QrcodeReader
     },
     {
-      path: '/page3',
-      component: Page3
+      path: '/data-uri-scheme-generator',
+      component: DataUriSchemeGenerator
     }
   ]
 })

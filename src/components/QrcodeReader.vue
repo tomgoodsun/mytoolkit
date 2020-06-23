@@ -48,7 +48,6 @@ import {
 import {
   BrowserQRCodeReader,
   BrowserMultiFormatReader,
-  BrowserCodeReader,
   NotFoundException,
   ChecksumException,
   FormatException,
@@ -63,7 +62,6 @@ Vue.use(FormPlugin);
 Vue.use(VueQrcodeReader);
 
 const codeReader = new BrowserMultiFormatReader();
-//const codeReaderCamera = new BrowserCodeReader();
 let selectedDeviceId;
 let imgElem;
 
