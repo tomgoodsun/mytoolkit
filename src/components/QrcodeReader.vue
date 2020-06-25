@@ -17,7 +17,6 @@
           <div class="mt-3 qr-code-reader">
             <qrcode-stream class="qr-reader" @decode="onDecode" @init="onInit" />
           </div>
-
         </b-col>
 
         <b-col cols="6">
@@ -167,6 +166,10 @@ export default {
 #file .qr-code-reader {
   max-height: 100px;
   max-width: 100%;
+}
+#file .qr-code-reader * {
+  max-height: 300px;
+  max-width: 300%;
 }
 #result {
   font-family: Monaco, monospace;
