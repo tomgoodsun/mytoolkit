@@ -2,26 +2,16 @@
    <b-container fluid>
     <b-form>
       <b-row>
-        <b-col cols="6" id="file">
+        <b-col cols="12" id="file">
           <b-form-file
-            v-model="file"
             accept="image/*"
             plain
             multiple
             v-on:change="readFromFile"
           ></b-form-file>
-          <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
-          <div class="mt-3 image">
-            <img src="">
+          <div class="mt-3 images">
+            <div class="result"></div>
           </div>
-        </b-col>
-
-        <b-col cols="6">
-          <b-form-textarea
-            id="result"
-            v-model="$data.result"
-            readonly
-          ></b-form-textarea>
         </b-col>
       </b-row>
     </b-form>
@@ -54,9 +44,7 @@ Vue.use(FormGroupPlugin);
 Vue.use(FormInputPlugin);
 Vue.use(FormPlugin);
 
-const codeReader = new BrowserMultiFormatReader();
-let selectedDeviceId;
-let imgElem;
+let resultArea;
 
 export default {
   data() {
@@ -67,22 +55,48 @@ export default {
     }
   },
   mounted: function() {
-    imgElem = document.querySelector('#file .image img:first-child');
+    resultArea = global.$('.result');
   },
   methods: {
     readFromFile(evt) {
-      let that = this;
-      imgElem.src = '';
-      imgElem.alt = '';
+      //let that = this;
+      //imgElem.src = '';
+      //imgElem.alt = '';
+      resultArea.html('');
 
-      let file = evt.target.files[0];
-      let fr = new FileReader();
-      fr.onload = function (evt) {
-        imgElem.src = fr.result;
-        imgElem.alt = file.name;
-        that.result = evt.target.result;
+      let files = evt.target.files;
+      console.log(typeof files);
+      for (let i = 0, len = files.length; i < len; i++) {
+        let file = files[i];
+        let fr = new FileReader();
+        fr.onload = function (evt) {
+          //let img = new Image();
+          //img.src = fr.result;
+          //img.alt = file.name;
+
+          let html = `<div class="img-line">`;
+          html += `<div class="img-name">${file.name}</div>`;
+          html += `<div class="img">`;
+          html += `<img src="${fr.result}" name="${file.name}" alt="${file.name}" />`;
+          html += `</div>`;
+          html += `<div class="data-uri-scheme">`;
+          html += `<textarea>${evt.target.result}</textarea>`;
+          html += `</div>`;
+          html += `</div>`;
+          global.$('.result').append(html);
+        };
+        fr.readAsDataURL(file);
       };
-      fr.readAsDataURL(file);
+
+
+      //let file = evt.target.files[0];
+      //let fr = new FileReader();
+      //fr.onload = function (evt) {
+      //  imgElem.src = fr.result;
+      //  imgElem.alt = file.name;
+      //  that.result = evt.target.result;
+      //};
+      //fr.readAsDataURL(file);
     }
   },
   components: {
@@ -92,10 +106,29 @@ export default {
 </script>
 
 <style>
-#result {
+.images .img-line {
+  clear: both;
+  margin-bottom: 5px;
+  overflow: hidden;
+}
+.images .img-line .img {
+  float: left;
+  height: 100px;
+  width: 100px;
+}
+.images .img-line .img img {
+  height: 99px;
+  width: 99px;
+}
+.images .img-line .data-uri-scheme {
+  float: right;
+  height: 99px;
+  width: calc(100% - 100px);
+}
+.images .img-line .data-uri-scheme textarea {
+  background-color: #ccc;
   font-family: Monaco, monospace;
-  font-size: 100%;
-  height: 500px;
-  min-height: 300px;
+  height: inherit;
+  width: 100%;
 }
 </style>
