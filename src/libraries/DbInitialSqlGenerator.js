@@ -22,12 +22,26 @@ export default class DbInitialSqlGenerator {
   }
 
   /**
+   * Get checked hosts
+   *
+   * @return {Array.<string>}
+   */
+  getSelectedHosts() {
+    let hosts = [];
+    document.querySelectorAll('input[name="hosts"]').forEach((host) => {
+      if (host.checked) {
+        hosts.push(host.value);
+      }
+    });
+  }
+
+  /**
    * Get lists of checked or written hostnames
    *
    * @return {Array.<string>}
    */
   getHosts() {
-    let hosts = this.form.hostsSelected;
+    let hosts = this.getSelectedHosts();
     let customHosts = this.form.customHosts.split('\n');
     for (let i = 0, len = customHosts.length; i < len; i++) {
       if (customHosts[i].length > 0 && -1 == hosts.indexOf(customHosts[i])) {
