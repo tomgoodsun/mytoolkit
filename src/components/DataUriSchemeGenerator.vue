@@ -49,9 +49,6 @@ let resultArea;
 export default {
   data() {
     return {
-      alertMsg: '',
-      file: null,
-      result: null
     }
   },
   mounted: function() {
@@ -59,22 +56,14 @@ export default {
   },
   methods: {
     readFromFile(evt) {
-      //let that = this;
-      //imgElem.src = '';
-      //imgElem.alt = '';
       resultArea.html('');
-
       let files = evt.target.files;
-      console.log(typeof files);
       for (let i = 0, len = files.length; i < len; i++) {
         let file = files[i];
         let fr = new FileReader();
         fr.onload = function (evt) {
-          //let img = new Image();
-          //img.src = fr.result;
-          //img.alt = file.name;
-
-          let html = `<div class="img-line">`;
+          let html = '';
+          html += `<div class="img-line">`;
           html += `<div class="img-name">${file.name}</div>`;
           html += `<div class="img">`;
           html += `<img src="${fr.result}" name="${file.name}" alt="${file.name}" />`;
@@ -87,16 +76,6 @@ export default {
         };
         fr.readAsDataURL(file);
       };
-
-
-      //let file = evt.target.files[0];
-      //let fr = new FileReader();
-      //fr.onload = function (evt) {
-      //  imgElem.src = fr.result;
-      //  imgElem.alt = file.name;
-      //  that.result = evt.target.result;
-      //};
-      //fr.readAsDataURL(file);
     }
   },
   components: {
@@ -118,6 +97,7 @@ export default {
 }
 .images .img-line .img img {
   height: 99px;
+  object-fit: contain;
   width: 99px;
 }
 .images .img-line .data-uri-scheme {
