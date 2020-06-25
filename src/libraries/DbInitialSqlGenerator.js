@@ -33,6 +33,7 @@ export default class DbInitialSqlGenerator {
         hosts.push(host.value);
       }
     });
+    return hosts;
   }
 
   /**
