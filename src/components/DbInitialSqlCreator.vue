@@ -72,7 +72,7 @@
 
           <b-form-group id="input-group-custom-hosts" label="Custom hosts:" label-for="custom-hosts">
             <b-form-textarea
-              id="custome-hosts"
+              id="custom-hosts"
               v-model="form.customHosts"
             ></b-form-textarea>
           </b-form-group>
