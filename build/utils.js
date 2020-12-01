@@ -1,18 +1,18 @@
 'use strict'
-const path = require('path')
-const config = require('../config')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const packageConfig = require('../package.json')
+import { posix, join } from 'path'
+import { build, dev } from '../config'
+import { extract } from 'extract-text-webpack-plugin'
+import { name } from '../package.json'
 
-exports.assetsPath = function (_path) {
+export function assetsPath (_path) {
   const assetsSubDirectory = process.env.NODE_ENV === 'production'
-    ? config.build.assetsSubDirectory
-    : config.dev.assetsSubDirectory
+    ? build.assetsSubDirectory
+    : dev.assetsSubDirectory
 
-  return path.posix.join(assetsSubDirectory, _path)
+  return posix.join(assetsSubDirectory, _path)
 }
 
-exports.cssLoaders = function (options) {
+export function cssLoaders (options) {
   options = options || {}
 
   const cssLoader = {
@@ -45,7 +45,7 @@ exports.cssLoaders = function (options) {
     // Extract CSS when that option is specified
     // (which is the case during production build)
     if (options.extract) {
-      return ExtractTextPlugin.extract({
+      return extract({
         use: loaders,
         fallback: 'vue-style-loader'
       })
@@ -67,9 +67,9 @@ exports.cssLoaders = function (options) {
 }
 
 // Generate loaders for standalone style files (outside of .vue)
-exports.styleLoaders = function (options) {
+export function styleLoaders (options) {
   const output = []
-  const loaders = exports.cssLoaders(options)
+  const loaders = cssLoaders(options)
 
   for (const extension in loaders) {
     const loader = loaders[extension]
@@ -82,7 +82,7 @@ exports.styleLoaders = function (options) {
   return output
 }
 
-exports.createNotifierCallback = () => {
+export function createNotifierCallback() {
   const notifier = require('node-notifier')
 
   return (severity, errors) => {
@@ -92,10 +92,10 @@ exports.createNotifierCallback = () => {
     const filename = error.file && error.file.split('!').pop()
 
     notifier.notify({
-      title: packageConfig.name,
+      title: name,
       message: severity + ': ' + error.name,
       subtitle: filename || '',
-      icon: path.join(__dirname, 'logo.png')
+      icon: join(__dirname, 'logo.png')
     })
   }
 }
