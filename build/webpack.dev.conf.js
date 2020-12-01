@@ -1,6 +1,7 @@
 'use strict'
 import { styleLoaders, createNotifierCallback } from './utils'
-import { DefinePlugin, HotModuleReplacementPlugin, NamedModulesPlugin, NoEmitOnErrorsPlugin } from 'webpack'
+//import { DefinePlugin, HotModuleReplacementPlugin } from 'webpack'
+import { webpack } from 'webpack'
 import { dev } from '../config'
 import merge from 'webpack-merge'
 import { posix, resolve as _resolve } from 'path'
@@ -45,12 +46,12 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     }
   },
   plugins: [
-    new DefinePlugin({
+    new webpack.DefinePlugin({
       'process.env': require('../config/dev.env').default
     }),
-    new HotModuleReplacementPlugin(),
-    new NamedModulesPlugin(), // HMR shows correct file names in console on update.
-    new NoEmitOnErrorsPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new webback.NamedModulesPlugin(), // HMR shows correct file names in console on update.
+    new webpack.NoEmitOnErrorsPlugin(),
     // https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: 'index.html',
