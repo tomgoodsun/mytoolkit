@@ -164,11 +164,7 @@ export default {
 
     updateHostCheckbox(evt) {
       let dis = new DbInitialSql();
-      if ('%' == evt) {
-        this.form.hosts = dis.getDefaultHosts(true);
-      } else {
-        this.form.hosts = dis.getDefaultHosts(false);
-      }
+      this.form.hosts = dis.getDefaultHosts(evt.includes('%'));
     },
 
     updateCharsets(evt) {
