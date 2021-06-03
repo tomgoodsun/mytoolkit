@@ -5,7 +5,7 @@
     </div>
     <b-container class="wrapper" fluid>
       <b-row class="content-wrapper">
-        <b-col cols="2" class="sidebar">
+        <b-col class="sidebar">
           <b-nav vertical class="">
             <!--リンクタグを生成します。-->
             <b-nav-item exact-active-class="active" to="/">HOME</b-nav-item>
@@ -17,7 +17,7 @@
             <b-nav-item exact-active-class="active" to="/password-generator">Password Generator</b-nav-item>
           </b-nav>
         </b-col>
-        <b-col cols="9" class="content">
+        <b-col class="content">
           <!--上記のリンクタグで設定したコンポーネントが表示される場所です。-->
           <router-view></router-view>
         </b-col>

@@ -1,4 +1,4 @@
-# mytoolkit2
+# mytoolkit
 
 > A Vue.js project
 
