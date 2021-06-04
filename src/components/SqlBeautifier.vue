@@ -27,7 +27,7 @@
 /* eslint-disable */
 import Vue from 'vue'
 import { BootstrapVue, AlertPlugin, BFormTextarea, LayoutPlugin } from 'bootstrap-vue'
-import sqlFormatter from "sql-formatter";
+import { format } from "sql-formatter";
 
 Vue.use(AlertPlugin);
 
@@ -51,7 +51,7 @@ export default {
           let errorMessage = '';
           try {
             if (sqlFrom.length > 0) {
-              parsedSql = sqlFormatter.format(sqlFrom);
+              parsedSql = format(sqlFrom);
             }
           } catch (e) {
             errorMessage = 'SQL Parse Error.';
