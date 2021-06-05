@@ -44,7 +44,7 @@ Vue.use(FormGroupPlugin);
 Vue.use(FormInputPlugin);
 Vue.use(FormPlugin);
 
-let resultArea;
+let resultAreas = [];
 
 export default {
   data() {
@@ -52,11 +52,13 @@ export default {
     }
   },
   mounted: function() {
-    resultArea = global.$('.result');
+    resultAreas = document.querySelectorAll('.result');
   },
   methods: {
     readFromFile(evt) {
-      resultArea.html('');
+      resultAreas.forEach(element => {
+        element.innerHTML = '';
+      });
       let files = evt.target.files;
       for (let i = 0, len = files.length; i < len; i++) {
         let file = files[i];
@@ -72,7 +74,9 @@ export default {
           html += `<textarea>${evt.target.result}</textarea>`;
           html += `</div>`;
           html += `</div>`;
-          global.$('.result').append(html);
+          resultAreas.forEach(element => {
+            element.innerHTML += html;
+          });
         };
         fr.readAsDataURL(file);
       };
