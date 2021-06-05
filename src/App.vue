@@ -5,7 +5,7 @@
     </div>
     <b-container class="wrapper" fluid>
       <b-row class="content-wrapper">
-        <b-col class="sidebar">
+        <b-col class="sidebar" :style="{height: sidebarHeight}">
           <b-nav vertical class="">
             <!--リンクタグを生成します。-->
             <b-nav-item exact-active-class="active" to="/">HOME</b-nav-item>
@@ -27,8 +27,33 @@
 </template>
 
 <script>
+/* eslint-disable */
 export default {
-  name: 'App'
+  name: 'App',
+  methods: {
+    adjustSidebarHeight() {
+      let header = document.getElementById('header');
+      let headerHeight = parseInt(window.getComputedStyle(header).getPropertyValue('height').replace(/px$/, ''), 10);
+      let height = this.$el.scrollHeight;
+      if (window.innerHeight > height) {
+        height = window.innerHeight;
+      }
+      //console.log(this.$el.scrollHeight);
+      //console.log(window.innerHeight);
+      this.sidebarHeight = (height - headerHeight) + 'px';
+    }
+  },
+  data() {
+    return {
+      sidebarHeight: 'auto'
+    }
+  },
+  mounted() {
+    this.adjustSidebarHeight();
+  },
+  updated() {
+    this.adjustSidebarHeight();
+  }
 }
 </script>
 
@@ -42,14 +67,10 @@ export default {
     url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.woff") format("woff"),
     url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.ttf") format("truetype"),
     url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.svg#Neutraface 2 Text Bold") format("svg");
-  }
-
-html,
-body {
-  height: 100%;
 }
 
 body {
+  background-color: #2c3e50;
   margin: 0;
 }
 
@@ -80,7 +101,7 @@ body {
 }
 
 #app .container {
-  margin: 0;
+  margin: 0 0 0 0;
 }
 
 #app .nav .nav-item:hover {
@@ -98,20 +119,18 @@ body {
 }
 
 #app .wrapper {
-  height: calc(100vh - 110px);
   box-sizing: border-box;
   margin: 0;
 }
 #app .sidebar {
   background-color: #333333;
-  height: calc(100vh - 110px);
   padding: 0 0 0 0;
   width: 25%;
 }
 #app .content {
   flex: 0 0 83% !important;
   max-width: 100% !important;
-  padding: 10px 0 0 0;
+  padding: 10px 0 10px 0;
   width: 100% !important;
 }
 
