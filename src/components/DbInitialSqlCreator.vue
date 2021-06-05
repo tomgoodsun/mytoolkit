@@ -106,9 +106,11 @@
 
       </b-row>
     </b-form>
+    <!--
     <div class="mb-1">
       Return value: {{ String(alertMsg) }}
     </div>
+    -->
   </b-container>
 </template>
 
