@@ -30,12 +30,9 @@
       <span class="site-name">tom-gs.com</span> toolkit
     </header>
     <b-container class="wrapper" fluid>
-      <b-row class="content-wrapper">
-        <b-col class="content">
-          <!--上記のリンクタグで設定したコンポーネントが表示される場所です。-->
-          <router-view></router-view>
-        </b-col>
-      </b-row>
+      <div class="content">
+        <router-view></router-view>
+      </div>
     </b-container>
   </div>
 </template>
@@ -136,6 +133,9 @@ body {
   max-width: 100% !important;
   padding: 10px 0 10px 0;
   width: 100% !important;
+}
+#app .content > .row > .col {
+  margin-bottom: 1.2rem;
 }
 
 .form-control,

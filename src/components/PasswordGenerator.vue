@@ -1,77 +1,75 @@
 <template>
-  <b-container fluid>
-    <b-row>
-      <b-col cols="6">
-        <b-form-group id="input-group-min" label="Min Length:" label-for="min-exclude">
-          <b-form-input
-            id="min-exclude"
-            name="min-exclude"
-            v-model="minLength"
-          ></b-form-input>
-        </b-form-group>
+  <b-row>
+    <b-col col lg="6" md="12" sm="12">
+      <b-form-group id="input-group-min" label="Min Length:" label-for="min-exclude">
+        <b-form-input
+          id="min-exclude"
+          name="min-exclude"
+          v-model="minLength"
+        ></b-form-input>
+      </b-form-group>
 
-        <b-form-group id="input-group-max" label="Max Length:" label-for="max-exclude">
-          <b-form-input
-            id="max-exclude"
-            name="max-exclude"
-            v-model="maxLength"
-          ></b-form-input>
-        </b-form-group>
+      <b-form-group id="input-group-max" label="Max Length:" label-for="max-exclude">
+        <b-form-input
+          id="max-exclude"
+          name="max-exclude"
+          v-model="maxLength"
+        ></b-form-input>
+      </b-form-group>
 
-        <b-form-group id="input-group-settings" label="Setting:" label-for="settings">
-          <b-form-checkbox
-            v-for="form in forms"
-            v-model="checked"
-            :key="form.id"
-            :value="form.id"
-            name="settings"
-          >
-            {{ form.name }}
-          </b-form-checkbox>
-        </b-form-group>
+      <b-form-group id="input-group-settings" label="Setting:" label-for="settings">
+        <b-form-checkbox
+          v-for="form in forms"
+          v-model="checked"
+          :key="form.id"
+          :value="form.id"
+          name="settings"
+        >
+          {{ form.name }}
+        </b-form-checkbox>
+      </b-form-group>
 
-        <b-form-group id="input-group-exclude" label="Exclude Chars:" label-for="exclude">
-          <b-form-input
-            id="exclude"
-            name="exclude"
-            v-model="excludeChars"
-          ></b-form-input>
-        </b-form-group>
+      <b-form-group id="input-group-exclude" label="Exclude Chars:" label-for="exclude">
+        <b-form-input
+          id="exclude"
+          name="exclude"
+          v-model="excludeChars"
+        ></b-form-input>
+      </b-form-group>
 
-        <b-form-group id="input-group-num" label="Sampling Num:" label-for="num">
-          <b-form-input
-            id="num"
-            name="num"
-            v-model="samplingNum"
-          ></b-form-input>
-        </b-form-group>
+      <b-form-group id="input-group-num" label="Sampling Num:" label-for="num">
+        <b-form-input
+          id="num"
+          name="num"
+          v-model="samplingNum"
+        ></b-form-input>
+      </b-form-group>
 
-        <b-button variant="outline-primary" name="generate" @click="generate()">Generate</b-button>
+      <b-button variant="outline-primary" name="generate" @click="generate()">Generate</b-button>
 
-      </b-col>
-      <b-col cols="6">
-        <h3>Password Results</h3>
-          <h4>
-          Drawn
-          <b-button variant="primary" name="generate" @click="draw()">Draw from results</b-button>
-        </h4>
-        <div id="drawn-result">
-          {{ drawnPassword }}
-        </div>
-        <h4>Generated</h4>
-        <ul id="result">
-          <li
-           v-for="password in passwords"
-           v-bind:key="password.id"
-           v-bind:class="{'is-selected': password.isSelected}"
-           class="password"
-          >
-            {{ password.password }}
-          </li>
-        </ul>
-      </b-col>
-    </b-row>
-  </b-container>
+    </b-col>
+    <b-col col lg="6" md="12" sm="12">
+      <h3>Password Results</h3>
+        <h4>
+        Drawn
+        <b-button variant="primary" name="generate" @click="draw()">Draw from results</b-button>
+      </h4>
+      <div id="drawn-result">
+        {{ drawnPassword }}
+      </div>
+      <h4>Generated</h4>
+      <ul id="result">
+        <li
+         v-for="password in passwords"
+         v-bind:key="password.id"
+         v-bind:class="{'is-selected': password.isSelected}"
+         class="password"
+        >
+          {{ password.password }}
+        </li>
+      </ul>
+    </b-col>
+  </b-row>
 </template>
 
 <script>
@@ -189,6 +187,7 @@ export default {
 #drawn-result {
   display: block;
   font-size: 30px;
+  height: 1.2em;
   min-height: 1.2em;
   text-align: center;
 }

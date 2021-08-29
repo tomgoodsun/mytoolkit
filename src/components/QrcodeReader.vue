@@ -1,34 +1,32 @@
 <template>
-  <b-container fluid>
-    <b-form>
-      <b-row>
-        <b-col cols="6" id="file">
-          <b-form-file
-            v-model="file"
-            accept="image/*"
-            plain
-            capture
-            v-on:change="readFromFile"
-          ></b-form-file>
-          <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
-          <div class="mt-3 image">
-            <img src="">
-          </div>
-          <div class="mt-3 qr-code-reader">
-            <qrcode-stream class="qr-reader" @decode="onDecode" @init="onInit" />
-          </div>
-        </b-col>
+  <b-form>
+    <b-row>
+      <b-col col lg="6" md="12" sm="12" id="file">
+        <b-form-file
+          v-model="file"
+          accept="image/*"
+          plain
+          capture
+          v-on:change="readFromFile"
+        ></b-form-file>
+        <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
+        <div class="mt-3 image">
+          <img src="">
+        </div>
+        <div class="mt-3 qr-code-reader">
+          <qrcode-stream class="qr-reader" @decode="onDecode" @init="onInit" />
+        </div>
+      </b-col>
 
-        <b-col cols="6">
-          <b-form-textarea
-            id="result"
-            v-model="$data.result"
-            readonly
-          ></b-form-textarea>
-        </b-col>
-      </b-row>
-    </b-form>
-  </b-container>
+      <b-col col lg="6" md="12" sm="12">
+        <b-form-textarea
+          id="result"
+          v-model="$data.result"
+          readonly
+        ></b-form-textarea>
+      </b-col>
+    </b-row>
+  </b-form>
 </template>
 
 <script>

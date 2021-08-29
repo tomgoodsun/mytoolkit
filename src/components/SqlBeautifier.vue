@@ -1,26 +1,24 @@
 <template>
-  <b-container fluid>
-    <b-row>
-      <b-col cols="6">
-        <b-alert v-if="$data.errorMessage == ''" variant="success" show>Input SQL string</b-alert>
-        <b-alert v-else variant="danger" show>{{ errorMessage }}</b-alert>
-        <b-form-textarea
-          id="sql-from"
-          v-model="$data.sqlFrom"
-          placeholder="Enter SQL string..."
-        ></b-form-textarea>
-      </b-col>
-      <b-col cols="6">
-        <b-alert v-if="sqlTo.length > 0" variant="info" show>SQL parsed</b-alert>
-        <b-alert v-else variant="dark" show>Waiting for SQL input...</b-alert>
-        <b-form-textarea
-          id="sql-to"
-          v-model="$data.sqlTo"
-          readonly
-        ></b-form-textarea>
-      </b-col>
-    </b-row>
-  </b-container>
+  <b-row>
+    <b-col col lg="6" md="12" sm="12">
+      <b-alert v-if="$data.errorMessage == ''" variant="success" show>Input SQL string</b-alert>
+      <b-alert v-else variant="danger" show>{{ errorMessage }}</b-alert>
+      <b-form-textarea
+        id="sql-from"
+        v-model="$data.sqlFrom"
+        placeholder="Enter SQL string..."
+      ></b-form-textarea>
+    </b-col>
+    <b-col col lg="6" md="12" sm="12">
+      <b-alert v-if="sqlTo.length > 0" variant="info" show>SQL parsed</b-alert>
+      <b-alert v-else variant="dark" show>Waiting for SQL input...</b-alert>
+      <b-form-textarea
+        id="sql-to"
+        v-model="$data.sqlTo"
+        readonly
+      ></b-form-textarea>
+    </b-col>
+  </b-row>
 </template>
 
 <script>
