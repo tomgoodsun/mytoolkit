@@ -187,8 +187,8 @@ export default {
 #drawn-result {
   display: block;
   font-size: 30px;
-  height: 1.2em;
-  min-height: 1.2em;
+  height: 1.5em;
+  min-height: 1.5em;
   text-align: center;
 }
 </style>
