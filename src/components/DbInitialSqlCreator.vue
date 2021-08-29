@@ -87,10 +87,12 @@
 
         <b-col cols="6">
 
-          <b-form-group label="Privileges: ">
-            <b-button variant="outline-primary" name="resetPrivileges" v-on:click="resetPrivileges()">Reset</b-button>
-            <b-button variant="outline-primary" name="checkAllPrivileges" v-on:click="checkAllPrivileges()">Check All</b-button>
-            <b-button variant="outline-primary" name="uncheckAllPrivileges" v-on:click="uncheckAllPrivileges()">Uncheck All</b-button>
+          <b-form-group label="Privileges: " id="privileges">
+            <div class="buttons">
+              <b-button variant="outline-primary" name="resetPrivileges" v-on:click="resetPrivileges()">Reset</b-button>
+              <b-button variant="outline-primary" name="checkAllPrivileges" v-on:click="checkAllPrivileges()">Check All</b-button>
+              <b-button variant="outline-primary" name="uncheckAllPrivileges" v-on:click="uncheckAllPrivileges()">Uncheck All</b-button>
+            </div>
             <b-form-checkbox
               v-for="privilege in form.privileges"
               v-model="form.privilegesSelected"
@@ -231,5 +233,8 @@ export default {
 }
 #result-sql {
   font-family: Monaco, monospace;
+}
+#privileges .buttons button {
+  margin-bottom: 5px;
 }
 </style>
