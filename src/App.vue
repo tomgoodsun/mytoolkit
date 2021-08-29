@@ -65,6 +65,10 @@ export default {
     url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.svg#Neutraface 2 Text Bold") format("svg");
 }
 
+:root {
+  --normal-text-color: #2b2b2b;
+}
+
 body {
   background-color: #2c3e50;
   margin: 0;
@@ -111,11 +115,11 @@ body {
   background-color: #ffcc99 !important;
 }
 #app .nav .nav-item .active {
-  background-color: #2b2b2b;
+  background-color: var(--normal-text-color); /* Reverse of text color */
 }
 #app .nav .nav-item:hover a,
 #app .nav .nav-item a {
-  color: #2b2b2b !important;
+  color: var(--normal-text-color) !important;
 }
 #app .nav .nav-item .active,
 #app .nav .nav-item:hover .active {

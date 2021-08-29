@@ -232,6 +232,7 @@ export default {
   min-height: 300px;
 }
 #result-sql {
+  color: var(--normal-text-color) !important;
   font-family: Monaco, monospace;
 }
 #privileges .buttons button {
