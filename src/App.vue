@@ -66,6 +66,9 @@ export default {
   --normal-text-color: #2b2b2b;
 }
 
+html {
+  background-color: #2c3e50;
+}
 body {
   background-color: #2c3e50;
   margin: 0;
