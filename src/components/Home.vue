@@ -15,10 +15,10 @@
   text-align: center;
 }
 .home h3 {
-  font-size: 420%;
+  font-size: 320%;
 }
 .home h1 {
-  font-size: 720%;
+  font-size: 520%;
 }
 .home p {
   font-size: 220%;

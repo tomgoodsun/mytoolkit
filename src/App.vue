@@ -1,22 +1,36 @@
 <template>
   <div id="app">
-    <div id="header">
+    <b-sidebar
+     id="sidebar-no-header"
+     aria-labelledby="sidebar-no-header-title"
+     shadow
+     backdrop
+     title="tom-gs.com toolkit"
+    >
+      <template #default="{ hide }">
+        <div class="p-3">
+          <nav class="mb-3">
+            <b-nav vertical>
+              <b-nav-item @click="hide" exact-active-class="active" to="/">HOME</b-nav-item>
+              <b-nav-item @click="hide" exact-active-class="active" to="/json-beautifier">JSON Beautifier</b-nav-item>
+              <b-nav-item @click="hide" exact-active-class="active" to="/sql-beautifier">SQL Beautifier</b-nav-item>
+              <b-nav-item @click="hide" exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</b-nav-item>
+              <b-nav-item @click="hide" exact-active-class="active" to="/qrcode-reader">QR Code Reader</b-nav-item>
+              <b-nav-item @click="hide" exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</b-nav-item>
+              <b-nav-item @click="hide" exact-active-class="active" to="/password-generator">Password Generator</b-nav-item>
+            </b-nav>
+          </nav>
+        </div>
+      </template>
+    </b-sidebar>
+    <div id="header" class="site-title">
+      <a v-b-toggle.sidebar-no-header class="toggle-sidebar">
+        <b-icon-list></b-icon-list>
+      </a>
       <span class="site-name">tom-gs.com</span> toolkit
     </div>
     <b-container class="wrapper" fluid>
       <b-row class="content-wrapper">
-        <b-col class="sidebar" :style="{height: sidebarHeight}">
-          <b-nav vertical class="">
-            <!--リンクタグを生成します。-->
-            <b-nav-item exact-active-class="active" to="/">HOME</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/json-beautifier">JSON Beautifier</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/sql-beautifier">SQL Beautifier</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/qrcode-reader">QR Code Reader</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/password-generator">Password Generator</b-nav-item>
-          </b-nav>
-        </b-col>
         <b-col class="content">
           <!--上記のリンクタグで設定したコンポーネントが表示される場所です。-->
           <router-view></router-view>
@@ -28,32 +42,14 @@
 
 <script>
 /* eslint-disable */
+import Vue from 'vue';
+import { BootstrapVue, IconsPlugin, SidebarPlugin } from 'bootstrap-vue';
+Vue.use(BootstrapVue)
+Vue.use(IconsPlugin)
+Vue.use(SidebarPlugin);
+
 export default {
-  name: 'App',
-  methods: {
-    adjustSidebarHeight() {
-      let header = document.getElementById('header');
-      let headerHeight = parseInt(window.getComputedStyle(header).getPropertyValue('height').replace(/px$/, ''), 10);
-      let height = this.$el.scrollHeight;
-      if (window.innerHeight > height) {
-        height = window.innerHeight;
-      }
-      //console.log(this.$el.scrollHeight);
-      //console.log(window.innerHeight);
-      this.sidebarHeight = (height - headerHeight) + 'px';
-    }
-  },
-  data() {
-    return {
-      sidebarHeight: 'auto'
-    }
-  },
-  mounted() {
-    this.adjustSidebarHeight();
-  },
-  updated() {
-    this.adjustSidebarHeight();
-  }
+  name: 'App'
 }
 </script>
 
@@ -77,18 +73,22 @@ body {
 #header {
   background-color: #3399cc;
   color: #fff;
-  /*font-family: 'M PLUS 1p', 'Avenir', Helvetica, Arial, sans-serif;*/
-  font-family: 'Neutraface 2 Text Bold';
-  font-size: 60px;
+  font-size: 200%;
   font-weight: bold;
-  height: 110px;
   margin-bottom: 0;
   padding: 10px;
   text-align: left;
 }
 
-#header .site-name {
+.site-title,
+.b-sidebar-header {
+  font-family: 'Neutraface 2 Text Bold';
+}
+.site-title .site-name {
   color: #ffcc99;
+}
+.toggle-sidebar {
+  color: #fff;
 }
 #app {
   background-color: #2c3e50;
@@ -110,11 +110,12 @@ body {
 #app .nav .nav-item .active {
   background-color: #2b2b2b;
 }
-#app .nav .nav-item:hover a {
+#app .nav .nav-item:hover a,
+#app .nav .nav-item a {
   color: #2b2b2b !important;
 }
-#app .nav .nav-item:hover .active,
-#app .nav .nav-item a {
+#app .nav .nav-item .active,
+#app .nav .nav-item:hover .active {
   color: #cfcfcf !important;
 }
 
@@ -122,13 +123,7 @@ body {
   box-sizing: border-box;
   margin: 0;
 }
-#app .sidebar {
-  background-color: #333333;
-  padding: 0 0 0 0;
-  width: 25%;
-}
 #app .content {
-  flex: 0 0 83% !important;
   max-width: 100% !important;
   padding: 10px 0 10px 0;
   width: 100% !important;
