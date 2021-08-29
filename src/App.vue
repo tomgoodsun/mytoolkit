@@ -23,12 +23,12 @@
         </div>
       </template>
     </b-sidebar>
-    <div id="header" class="site-title">
+    <header id="header" class="site-title">
       <a v-b-toggle.sidebar-no-header class="toggle-sidebar">
         <b-icon-list></b-icon-list>
       </a>
       <span class="site-name">tom-gs.com</span> toolkit
-    </div>
+    </header>
     <b-container class="wrapper" fluid>
       <b-row class="content-wrapper">
         <b-col class="content">
@@ -72,12 +72,15 @@ body {
 
 #header {
   background-color: #3399cc;
-  color: #fff;
+  color: #ffffff;
   font-size: 200%;
   font-weight: bold;
   margin-bottom: 0;
   padding: 10px;
+  position: sticky;
   text-align: left;
+  top: 0px;
+  z-index: 10;
 }
 
 .site-title,
