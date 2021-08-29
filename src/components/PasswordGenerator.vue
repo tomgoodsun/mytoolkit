@@ -128,6 +128,7 @@ export default {
     },
 
     generate() {
+      this.drawnPassword = '';
       let passwords = [];
       let options = {};
 
