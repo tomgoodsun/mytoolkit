@@ -1,21 +1,19 @@
 <template>
-   <b-container fluid>
-    <b-form>
-      <b-row>
-        <b-col cols="12" id="file">
-          <b-form-file
-            accept="image/*"
-            plain
-            multiple
-            v-on:change="readFromFile"
-          ></b-form-file>
-          <div class="mt-3 images">
-            <div class="result"></div>
-          </div>
-        </b-col>
-      </b-row>
-    </b-form>
-  </b-container>
+  <b-form>
+    <b-row>
+      <b-col col lg="12" md="12" sm="12" id="file">
+        <b-form-file
+          accept="image/*"
+          plain
+          multiple
+          v-on:change="readFromFile"
+        ></b-form-file>
+        <div class="mt-3 images">
+          <div class="result"></div>
+        </div>
+      </b-col>
+    </b-row>
+  </b-form>
 </template>
 
 <script>

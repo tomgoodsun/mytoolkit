@@ -1,59 +1,52 @@
 <template>
   <div id="app">
-    <div id="header">
+    <b-sidebar
+     id="sidebar-no-header"
+     aria-labelledby="sidebar-no-header-title"
+     shadow
+     backdrop
+     title="tom-gs.com toolkit"
+    >
+      <template #default="{ hide }">
+        <div class="p-3">
+          <nav class="mb-3">
+            <b-nav vertical>
+              <b-nav-item @click="hide" exact-active-class="active" to="/">HOME</b-nav-item>
+              <b-nav-item @click="hide" exact-active-class="active" to="/json-beautifier">JSON Beautifier</b-nav-item>
+              <b-nav-item @click="hide" exact-active-class="active" to="/sql-beautifier">SQL Beautifier</b-nav-item>
+              <b-nav-item @click="hide" exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</b-nav-item>
+              <b-nav-item @click="hide" exact-active-class="active" to="/qrcode-reader">QR Code Reader</b-nav-item>
+              <b-nav-item @click="hide" exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</b-nav-item>
+              <b-nav-item @click="hide" exact-active-class="active" to="/password-generator">Password Generator</b-nav-item>
+            </b-nav>
+          </nav>
+        </div>
+      </template>
+    </b-sidebar>
+    <header id="header" class="site-title">
+      <a v-b-toggle.sidebar-no-header class="toggle-sidebar">
+        <b-icon-list></b-icon-list>
+      </a>
       <span class="site-name">tom-gs.com</span> toolkit
-    </div>
+    </header>
     <b-container class="wrapper" fluid>
-      <b-row class="content-wrapper">
-        <b-col class="sidebar" :style="{height: sidebarHeight}">
-          <b-nav vertical class="">
-            <!--リンクタグを生成します。-->
-            <b-nav-item exact-active-class="active" to="/">HOME</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/json-beautifier">JSON Beautifier</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/sql-beautifier">SQL Beautifier</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/qrcode-reader">QR Code Reader</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</b-nav-item>
-            <b-nav-item exact-active-class="active" to="/password-generator">Password Generator</b-nav-item>
-          </b-nav>
-        </b-col>
-        <b-col class="content">
-          <!--上記のリンクタグで設定したコンポーネントが表示される場所です。-->
-          <router-view></router-view>
-        </b-col>
-      </b-row>
+      <div class="content">
+        <router-view></router-view>
+      </div>
     </b-container>
   </div>
 </template>
 
 <script>
 /* eslint-disable */
+import Vue from 'vue';
+import { BootstrapVue, IconsPlugin, SidebarPlugin } from 'bootstrap-vue';
+Vue.use(BootstrapVue)
+Vue.use(IconsPlugin)
+Vue.use(SidebarPlugin);
+
 export default {
-  name: 'App',
-  methods: {
-    adjustSidebarHeight() {
-      let header = document.getElementById('header');
-      let headerHeight = parseInt(window.getComputedStyle(header).getPropertyValue('height').replace(/px$/, ''), 10);
-      let height = this.$el.scrollHeight;
-      if (window.innerHeight > height) {
-        height = window.innerHeight;
-      }
-      //console.log(this.$el.scrollHeight);
-      //console.log(window.innerHeight);
-      this.sidebarHeight = (height - headerHeight) + 'px';
-    }
-  },
-  data() {
-    return {
-      sidebarHeight: 'auto'
-    }
-  },
-  mounted() {
-    this.adjustSidebarHeight();
-  },
-  updated() {
-    this.adjustSidebarHeight();
-  }
+  name: 'App'
 }
 </script>
 
@@ -69,26 +62,39 @@ export default {
     url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.svg#Neutraface 2 Text Bold") format("svg");
 }
 
+:root {
+  --normal-text-color: #2b2b2b;
+}
+
 body {
   background-color: #2c3e50;
   margin: 0;
 }
 
 #header {
-  background-color: #3399cc;
-  color: #fff;
-  /*font-family: 'M PLUS 1p', 'Avenir', Helvetica, Arial, sans-serif;*/
-  font-family: 'Neutraface 2 Text Bold';
-  font-size: 60px;
+  font-size: 200%;
   font-weight: bold;
-  height: 110px;
   margin-bottom: 0;
-  padding: 10px;
+  position: sticky;
   text-align: left;
+  top: 0px;
+  z-index: 10;
 }
 
-#header .site-name {
+#header,
+.b-sidebar > .b-sidebar-header {
+  background-color: #3399cc;
+  color: #ffffff;
+  font-family: 'Neutraface 2 Text Bold';
+  font-size: 1.5rem !important;
+  padding: 0.5rem 1rem 0.5rem 1rem !important;
+}
+
+.site-title .site-name {
   color: #ffcc99;
+}
+.toggle-sidebar {
+  color: #fff;
 }
 #app {
   background-color: #2c3e50;
@@ -108,13 +114,14 @@ body {
   background-color: #ffcc99 !important;
 }
 #app .nav .nav-item .active {
-  background-color: #2b2b2b;
+  background-color: var(--normal-text-color); /* Reverse of text color */
 }
-#app .nav .nav-item:hover a {
-  color: #2b2b2b !important;
-}
-#app .nav .nav-item:hover .active,
+#app .nav .nav-item:hover a,
 #app .nav .nav-item a {
+  color: var(--normal-text-color) !important;
+}
+#app .nav .nav-item .active,
+#app .nav .nav-item:hover .active {
   color: #cfcfcf !important;
 }
 
@@ -122,16 +129,13 @@ body {
   box-sizing: border-box;
   margin: 0;
 }
-#app .sidebar {
-  background-color: #333333;
-  padding: 0 0 0 0;
-  width: 25%;
-}
 #app .content {
-  flex: 0 0 83% !important;
   max-width: 100% !important;
   padding: 10px 0 10px 0;
   width: 100% !important;
+}
+#app .content > .row > .col {
+  margin-bottom: 1.2rem;
 }
 
 .form-control,
