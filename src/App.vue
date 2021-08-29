@@ -75,22 +75,24 @@ body {
 }
 
 #header {
-  background-color: #3399cc;
-  color: #ffffff;
   font-size: 200%;
   font-weight: bold;
   margin-bottom: 0;
-  padding: 10px;
   position: sticky;
   text-align: left;
   top: 0px;
   z-index: 10;
 }
 
-.site-title,
-.b-sidebar-header {
+#header,
+.b-sidebar > .b-sidebar-header {
+  background-color: #3399cc;
+  color: #ffffff;
   font-family: 'Neutraface 2 Text Bold';
+  font-size: 1.5rem !important;
+  padding: 0.5rem 1rem 0.5rem 1rem !important;
 }
+
 .site-title .site-name {
   color: #ffcc99;
 }
