@@ -52,7 +52,10 @@
       <h3>Password Results</h3>
         <h4>
         Drawn
-        <b-button variant="primary" name="generate" @click="draw()">Draw from results</b-button>
+        <b-button variant="primary" size="sm" name="generate" @click="draw()">Draw from results</b-button>
+        <b-button variant="light" size="sm" class="clipboard" data-clipboard-target="#drawn-result" title="Copy to clipboard">
+          <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
+        </b-button>
       </h4>
       <div id="drawn-result">
         {{ drawnPassword }}
@@ -74,7 +77,7 @@
 
 <script>
 /* eslint-disable */
-import Vue from 'vue'
+import Vue from 'vue';
 import {
   BootstrapVue,
   ButtonPlugin,
@@ -84,6 +87,7 @@ import {
   FormPlugin,
   LayoutPlugin,
 } from 'bootstrap-vue';
+import Clipboard from 'clipboard';
 
 Vue.use(ButtonPlugin);
 Vue.use(FormCheckboxPlugin);
@@ -119,6 +123,9 @@ export default {
       passwords: [],
       drawnPassword: '',
     };
+  },
+  mounted() {
+    new Clipboard('.clipboard');
   },
   methods: {
     getRandomInt(min, max) {
