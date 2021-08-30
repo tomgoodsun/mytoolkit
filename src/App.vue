@@ -11,13 +11,13 @@
         <div class="p-3">
           <nav class="mb-3">
             <b-nav vertical>
-              <b-nav-item @click="hide" exact-active-class="active" to="/">HOME</b-nav-item>
-              <b-nav-item @click="hide" exact-active-class="active" to="/json-beautifier">JSON Beautifier</b-nav-item>
-              <b-nav-item @click="hide" exact-active-class="active" to="/sql-beautifier">SQL Beautifier</b-nav-item>
-              <b-nav-item @click="hide" exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</b-nav-item>
-              <b-nav-item @click="hide" exact-active-class="active" to="/qrcode-reader">QR Code Reader</b-nav-item>
-              <b-nav-item @click="hide" exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</b-nav-item>
-              <b-nav-item @click="hide" exact-active-class="active" to="/password-generator">Password Generator</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/">HOME</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/json-beautifier">JSON Beautifier</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/sql-beautifier">SQL Beautifier</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/qrcode-reader">QR Code Reader</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/password-generator">Password Generator</b-nav-item>
             </b-nav>
           </nav>
         </div>
@@ -27,7 +27,7 @@
       <a v-b-toggle.sidebar-no-header class="toggle-sidebar">
         <b-icon-list></b-icon-list>
       </a>
-      <span class="site-name">tom-gs.com</span> toolkit
+      <span class="site-name">tom-gs.com</span> toolkit - {{ contentName }}
     </header>
     <b-container class="wrapper" fluid>
       <div class="content">
@@ -46,7 +46,23 @@ Vue.use(IconsPlugin)
 Vue.use(SidebarPlugin);
 
 export default {
-  name: 'App'
+  name: 'App',
+  data() {
+    return {
+      contentName: ''
+    };
+  },
+  mounted() {
+    this.contentName = document.querySelector('#sidebar-no-header a.active').innerHTML;
+  },
+  methods: {
+    /**
+     * @param {Event} evt
+     */
+    navEvent(evt) {
+      this.contentName = evt.target.innerHTML;
+    }
+  }
 }
 </script>
 
