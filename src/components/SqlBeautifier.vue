@@ -17,15 +17,21 @@
         v-model="$data.sqlTo"
         readonly
       ></b-form-textarea>
+      <div class="op-btn">
+        <b-button variant="light" size="sm" class="clipboard" data-clipboard-target="#sql-to" title="Copy to clipboard">
+          <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
+        </b-button>
+      </div>
     </b-col>
   </b-row>
 </template>
 
 <script>
 /* eslint-disable */
-import Vue from 'vue'
-import { BootstrapVue, AlertPlugin, BFormTextarea, LayoutPlugin } from 'bootstrap-vue'
+import Vue from 'vue';
+import { BootstrapVue, AlertPlugin, BFormTextarea, LayoutPlugin } from 'bootstrap-vue';
 import { format } from "sql-formatter";
+import Clipboard from 'clipboard';
 
 Vue.use(AlertPlugin);
 
@@ -63,6 +69,9 @@ export default {
       }
     );
   },
+  mounted() {
+    new Clipboard('.clipboard');
+  },
   components: {
     AlertPlugin,
     BFormTextarea
@@ -76,5 +85,9 @@ export default {
   font-size: 100%;
   height: 500px;
   min-height: 300px;
+}
+.op-btn {
+  margin-top: 0.5rem;
+  text-align: right;
 }
 </style>

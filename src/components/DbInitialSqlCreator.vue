@@ -78,8 +78,21 @@
 
         <b-button variant="outline-primary" name="generate" @click="generate()">Generate</b-button>
 
+        <!--
         <b-modal ref="result-sql" id="result-sql-modal" size="lg" title="Generated Result">
           <b-form-textarea readonly v-model="resultSql" id="result-sql" size="sm" rows="10"></b-form-textarea>
+        </b-modal>
+        -->
+        <b-modal ref="result-sql" id="result-sql-modal" size="lg" title="Generated Result">
+          <b-form-textarea readonly v-model="resultSql" id="result-sql" size="sm" rows="10"></b-form-textarea>
+          <template #modal-footer="{ hide }">
+            <b-button variant="light" size="md" class="clipboard" data-clipboard-target="#result-sql" alt="Copy to clipboard">
+              <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
+            </b-button>
+            <b-button size="md" variant="primary" @click="hide('forget')">
+              <b-icon icon="x" aria-hidden="true"></b-icon> Close
+            </b-button>
+          </template>
         </b-modal>
 
       </b-col>
@@ -131,6 +144,7 @@ import {
 } from 'bootstrap-vue';
 import DbInitialSql from '../libraries/DbInitialSql.js';
 import DbInitialSqlGenerator from '../libraries/DbInitialSqlGenerator.js';
+import Clipboard from 'clipboard';
 
 Vue.use(ButtonPlugin);
 Vue.use(FormCheckboxPlugin);
@@ -149,6 +163,9 @@ export default {
       resultSql: '',
       show: true
     };
+  },
+  mounted() {
+    new Clipboard('.clipboard');
   },
   methods: {
     onReset(evt) {

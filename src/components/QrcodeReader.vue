@@ -24,6 +24,11 @@
           v-model="$data.result"
           readonly
         ></b-form-textarea>
+        <div class="op-btn">
+          <b-button variant="light" size="sm" class="clipboard" data-clipboard-target="#result" title="Copy to clipboard">
+            <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
+          </b-button>
+        </div>
       </b-col>
     </b-row>
   </b-form>
@@ -50,6 +55,7 @@ import {
   FormatException,
 } from '@zxing/library';
 import VueQrcodeReader from "vue-qrcode-reader";
+import Clipboard from 'clipboard';
 
 Vue.use(ButtonPlugin);
 Vue.use(FormFilePlugin);
@@ -70,8 +76,9 @@ export default {
       result: null
     }
   },
-  mounted: function() {
+  mounted() {
     imgElem = document.querySelector('#file .image img:first-child');
+    new Clipboard('.clipboard');
   },
   methods: {
     // @see https://gruhn.github.io/vue-qrcode-reader/demos/DecodeAll.html
@@ -174,5 +181,9 @@ export default {
   font-size: 100%;
   height: 500px;
   min-height: 300px;
+}
+.op-btn {
+  margin-top: 0.5rem;
+  text-align: right;
 }
 </style>
