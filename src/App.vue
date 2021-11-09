@@ -5,7 +5,7 @@
      aria-labelledby="sidebar-no-header-title"
      shadow
      backdrop
-     title="tom-gs.com toolkit"
+     title="Toolkit"
     >
       <template #default="{ hide }">
         <div class="p-3">
@@ -27,7 +27,7 @@
       <a v-b-toggle.sidebar-no-header class="toggle-sidebar">
         <b-icon-list></b-icon-list>
       </a>
-      <span class="site-name">tom-gs.com</span> toolkit - {{ contentName }}
+      <span class="site-name"></span> Toolkit - {{ contentName }}
     </header>
     <b-container class="wrapper" fluid>
       <div class="content">

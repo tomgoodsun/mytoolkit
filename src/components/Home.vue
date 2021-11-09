@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <h3>Welcome to</h3>
-    <h1>tom-gs.com toolkit</h1>
+    <h1>Toolkit</h1>
     <p>Convenient tools for web development.<br />Select from site bar.</p>
   </div>
 </template>
