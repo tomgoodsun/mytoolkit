@@ -30,7 +30,7 @@
 /* eslint-disable */
 import Vue from 'vue';
 import { BootstrapVue, AlertPlugin, BFormTextarea, LayoutPlugin } from 'bootstrap-vue';
-import { format } from "sql-formatter";
+import { format } from 'sql-formatter';
 import Clipboard from 'clipboard';
 
 Vue.use(AlertPlugin);
