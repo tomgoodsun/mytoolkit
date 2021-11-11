@@ -1,24 +1,24 @@
 <template>
   <b-row>
     <b-col col lg="6" md="12" sm="12">
-      <b-alert v-if="$data.errorMessage == ''" variant="success" show>Input SQL string</b-alert>
+      <b-alert v-if="$data.errorMessage == ''" variant="success" show>Input Markup Language string</b-alert>
       <b-alert v-else variant="danger" show>{{ errorMessage }}</b-alert>
       <b-form-textarea
-        id="sql-from"
-        v-model="$data.sqlFrom"
-        placeholder="Enter SQL string..."
+        id="ml-from"
+        v-model="$data.mlFrom"
+        placeholder="Enter Markup Language string..."
       ></b-form-textarea>
     </b-col>
     <b-col col lg="6" md="12" sm="12">
-      <b-alert v-if="sqlTo.length > 0" variant="info" show>SQL parsed</b-alert>
-      <b-alert v-else variant="dark" show>Waiting for SQL input...</b-alert>
+      <b-alert v-if="mlTo.length > 0" variant="info" show>Markup Language parsed</b-alert>
+      <b-alert v-else variant="dark" show>Waiting for Markup Language input...</b-alert>
       <b-form-textarea
-        id="sql-to"
-        v-model="$data.sqlTo"
+        id="ml-to"
+        v-model="$data.mlTo"
         readonly
       ></b-form-textarea>
       <div class="op-btn">
-        <b-button variant="light" size="sm" class="clipboard" data-clipboard-target="#sql-to" title="Copy to clipboard">
+        <b-button variant="light" size="sm" class="clipboard" data-clipboard-target="#ml-to" title="Copy to clipboard">
           <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
         </b-button>
       </div>
@@ -30,7 +30,7 @@
 /* eslint-disable */
 import Vue from 'vue';
 import { BootstrapVue, AlertPlugin, BFormTextarea, LayoutPlugin } from 'bootstrap-vue';
-import { format } from 'sql-formatter';
+import beautify from 'js-beautify';
 import Clipboard from 'clipboard';
 
 Vue.use(AlertPlugin);
@@ -38,34 +38,34 @@ Vue.use(AlertPlugin);
 export default {
   data() {
     return {
-      'sqlFrom': '',
-      'sqlTo': '',
+      'mlFrom': '',
+      'mlTo': '',
       'errorMessage': ''
     };
   },
   created() {
     this.$watch(
-      () => this.$data.sqlFrom,
-      (sqlFrom) => {
+      () => this.$data.mlFrom,
+      (mlFrom) => {
         let that = this;
 
         // 切り替わったことをわかりやすくするため、時間差で処理する
         setTimeout(() => {
-          let parsedSql = '';
+          let parsedMl = '';
           let errorMessage = '';
           try {
-            if (sqlFrom.length > 0) {
-              parsedSql = format(sqlFrom);
+            if (mlFrom.length > 0) {
+              parsedMl = beautify.html(mlFrom, {indent_size: 2, space_in_empty_paren: true});
             }
           } catch (e) {
-            errorMessage = 'SQL Parse Error.';
+            errorMessage = 'Markup Language Parse Error.';
           }
           console.log(errorMessage);
-          that.sqlTo = parsedSql;
+          that.mlTo = parsedMl;
           that.errorMessage = errorMessage;
         }, 500);
 
-        this.sqlTo = '';
+        this.mlTo = '';
       }
     );
   },
@@ -80,7 +80,7 @@ export default {
 </script>
 
 <style>
-#sql-from, #sql-to {
+#ml-from, #ml-to {
   font-family: Monaco, monospace;
   font-size: 100%;
   height: 500px;

@@ -12,6 +12,9 @@
           <nav class="mb-3">
             <b-nav vertical>
               <b-nav-item @click="navEvent" exact-active-class="active" to="/">HOME</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/ml-beautifier">Markup Language Beautifier</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/css-beautifier">CSS Beautifier</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/js-beautifier">JavaScript Beautifier</b-nav-item>
               <b-nav-item @click="navEvent" exact-active-class="active" to="/json-beautifier">JSON Beautifier</b-nav-item>
               <b-nav-item @click="navEvent" exact-active-class="active" to="/sql-beautifier">SQL Beautifier</b-nav-item>
               <b-nav-item @click="navEvent" exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</b-nav-item>
