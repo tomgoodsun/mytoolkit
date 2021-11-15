@@ -53,25 +53,6 @@ import Clipboard from 'clipboard';
 
 var generator = require('generate-password');
 
-import axios from 'axios';
-
-//axios.defaults.baseURL = 'http://localhost:8080';
-axios.defaults.baseURL = 'https://tom-gs.com';
-axios.defaults.headers.post['Origin'] = 'https://tom-gs.com';
-axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
-axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
-axios.defaults.headers.post['Http-Remote-Host'] = 'tom-gs.com';
-//const axios = require('axios');
-//const axiosBase = require('axios');
-//const axios = axiosBase.create({
-//  baseURL: process.env.VUE_APP_HTPASSWD_API, // バックエンドB のURL:port を指定する
-//  headers: {
-//    'Content-Type': 'application/json',
-//    'X-Requested-With': 'XMLHttpRequest'
-//  },
-//  responseType: 'json'
-//});
-
 Vue.use(AlertPlugin);
 
 export default {
@@ -87,14 +68,12 @@ export default {
   },
   methods: {
     generate() {
-      console.log(process.env);
-      console.log(this.source);
-      let sources = this.source.split('\n');
-      let data = [];
-      sources.forEach((line) => {
-        if (0 === this.source.length) {
-          return false;
-        }
+      let source = this.source;
+      let data = new URLSearchParams();
+      if (0 === source.length) {
+        return false;
+      }
+      source.split('\n').forEach((line, index) => {
         let parts = line.split(':');
         if (parts.length < 2) {
           if (0 === parts[0].length) {
@@ -102,34 +81,24 @@ export default {
           }
           parts.push(generator.generate())
         }
-        data.push({
-          user: parts[0],
-          password: parts[1]
-        });
+        data.append(`data[${index}][user]`, parts[0]);
+        data.append(`data[${index}][password]`, parts[1]);
       });
 
-      axios.post(
-        process.env.VUE_APP_HTPASSWD_API,
-        data,
-        {
-          headers: {'Remote-Host': 'tom-gs.com'}
-        },
-        {
-          withCredentials: true
-        }
-      )
-      .then((response) => {
-        console.log('response');
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log('error');
-        console.log(error);
-      })
-      .finally(() => {
-        console.log('finally');
-        console.log(this);
+      var request = new Request(process.env.VUE_APP_HTPASSWD_API,{
+        method: 'post',
+        //headers: {'Remote-Host': 'tom-gs.com'},
+        body: data
       });
+      fetch(request)
+        .then((response) => {
+          console.log(response);
+          if (response.ok) {
+            response.json().then(json => {
+              this.result = json.join('\n');
+            });
+          }
+        });
     }
   },
   components: {
