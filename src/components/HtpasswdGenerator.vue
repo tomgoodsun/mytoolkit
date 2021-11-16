@@ -69,20 +69,25 @@ export default {
   methods: {
     generate() {
       let source = this.source;
+      let newSource = [];
       let data = new URLSearchParams();
       if (0 === source.length) {
         return false;
       }
       source.split('\n').forEach((line, index) => {
         let parts = line.split(':');
-        if (parts.length < 2) {
-          if (0 === parts[0].length) {
-            return false;
-          }
-          parts.push(generator.generate())
+        if (0 === parts.length) {
+          return false;
+        }
+        if (0 === parts[0].length) {
+          return false;
+        }
+        if (parts.length <= 1 || 0 === parts[1].length) {
+          parts[1] = generator.generate();
         }
         data.append(`data[${index}][user]`, parts[0]);
         data.append(`data[${index}][password]`, parts[1]);
+        newSource.push(`${parts[0]}:${parts[1]}`);
       });
 
       var request = new Request(process.env.VUE_APP_HTPASSWD_API,{
@@ -95,6 +100,7 @@ export default {
           console.log(response);
           if (response.ok) {
             response.json().then(json => {
+              this.source = newSource.join('\n');
               this.result = json.join('\n');
             });
           }
