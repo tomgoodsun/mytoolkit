@@ -1,7 +1,9 @@
 <template>
   <b-row>
     <b-col col lg="6" md="12" sm="12">
-      <b-alert v-if="$data.errorMessage == ''" variant="success" show>Input Markup Language string</b-alert>
+      <b-alert v-if="$data.errorMessage == ''" variant="success" show>
+        Input Markup Language string
+      </b-alert>
       <b-alert v-else variant="danger" show>{{ errorMessage }}</b-alert>
       <b-form-textarea
         id="ml-from"
@@ -18,7 +20,13 @@
         readonly
       ></b-form-textarea>
       <div class="op-btn">
-        <b-button variant="light" size="sm" class="clipboard" data-clipboard-target="#ml-to" title="Copy to clipboard">
+        <b-button
+          variant="light"
+          size="sm"
+          class="clipboard"
+          data-clipboard-target="#ml-to"
+          title="Copy to clipboard"
+        >
           <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
         </b-button>
       </div>

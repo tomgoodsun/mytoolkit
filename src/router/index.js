@@ -13,6 +13,7 @@ import SqlBeautifier from '@/components/SqlBeautifier'
 import PasswordGenerator from '@/components/PasswordGenerator'
 import QrcodeReader from '@/components/QrcodeReader'
 import DataUriSchemeGenerator from '@/components/DataUriSchemeGenerator'
+import HtpasswdGenerator from '@/components/HtpasswdGenerator'
 
 Vue.use(LayoutPlugin)
 Vue.use(NavPlugin)
@@ -29,7 +30,8 @@ export default new Router({
     { path: '/db-initial-sql-creator', component: DbInitialSqlCreator },
     { path: '/password-generator', component: PasswordGenerator },
     { path: '/qrcode-reader', component: QrcodeReader },
-    { path: '/data-uri-scheme-generator', component: DataUriSchemeGenerator }
+    { path: '/data-uri-scheme-generator', component: DataUriSchemeGenerator },
+    { path: '/htpasswd-generator', component: HtpasswdGenerator }
   ]
 })
 
