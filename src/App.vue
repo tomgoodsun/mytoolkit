@@ -108,6 +108,7 @@ body {
 .b-sidebar > .b-sidebar-header {
   background-color: #3399cc;
   color: #ffffff;
+  font-display: swap;
   font-family: 'Neutraface 2 Text Bold';
   font-size: 1.5rem !important;
   padding: 0.5rem 1rem 0.5rem 1rem !important;
