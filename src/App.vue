@@ -22,6 +22,7 @@
               <b-nav-item @click="navEvent" exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</b-nav-item>
               <b-nav-item @click="navEvent" exact-active-class="active" to="/password-generator">Password Generator</b-nav-item>
               <b-nav-item @click="navEvent" exact-active-class="active" to="/htpasswd-generator">Htpasswd Generator</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/world-clock">World Clock</b-nav-item>
             </b-nav>
           </nav>
         </div>

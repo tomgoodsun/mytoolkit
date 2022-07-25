@@ -14,6 +14,7 @@ import PasswordGenerator from '@/components/PasswordGenerator'
 import QrcodeReader from '@/components/QrcodeReader'
 import DataUriSchemeGenerator from '@/components/DataUriSchemeGenerator'
 import HtpasswdGenerator from '@/components/HtpasswdGenerator'
+import WorldClock from '@/components/WorldClock'
 
 Vue.use(LayoutPlugin)
 Vue.use(NavPlugin)
@@ -31,7 +32,8 @@ export default new Router({
     { path: '/password-generator', component: PasswordGenerator },
     { path: '/qrcode-reader', component: QrcodeReader },
     { path: '/data-uri-scheme-generator', component: DataUriSchemeGenerator },
-    { path: '/htpasswd-generator', component: HtpasswdGenerator }
+    { path: '/htpasswd-generator', component: HtpasswdGenerator },
+    { path: '/world-clock', component: WorldClock }
   ]
 })
 
