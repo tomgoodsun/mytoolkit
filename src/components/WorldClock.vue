@@ -7,9 +7,11 @@
           2022-01-01 00:00:00.123
         </div>
         <div class="regions">
+          <span class="region-list">
             <span v-for="(region, index) in timezone.regions" :key="index" class="region">
               {{region}}
             </span>
+          </span>
         </div>
       </div>
     </b-col>
@@ -55,22 +57,42 @@ export default {
 <style>
   .timezone .utc {
     float: left;
-    font: 12px Monaco, monospace;
-    width: 70px;
+    /*font: 12px Monaco, Consolas, monospace;*/
+    font-weight: bold;
+    width: 80px;
   }
   .timezone .clock {
     float: left;
-    font: 12px Monaco, monospace;
+    font: 12px Monaco, Consolas, monospace;
     width: 200px;
   }
   .timezone .regions {
     display: inline-block;
     height: 1.2em;
     overflow: hidden;
-    width: calc(100% - 200px - 70px);
+    width: calc(100% - 200px - 80px);
   }
-  .timezone .regions .region {
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
+
+  @media screen and (max-width: 480px) {
+    .timezone {
+      margin: 0 0 1em 0;
+    }
+    .timezone .utc {
+      float: none;
+      font-size: 150%;
+      width: 100%;
+    }
+    .timezone .clock {
+      float: none;
+      font-size: 120%;
+      width: 100%;
+    }
+    .timezone .regions {
+      display: inline-block;
+      height: 1.2em;
+      overflow: hidden;
+      width: 100%;
+    }
+
   }
 </style>
