@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default class WorldClockTimeZones {
 
-  static get LIST () {
+  static get LIST() {
     return [
       {utc: '+1400', offsetMin: 840, regions: ['キリバス - ライン諸島']},
       {utc: '+1300', offsetMin: 780, regions: ['キリバス - フェニックス諸島', 'サモア', 'トンガ', 'トケラウ（ニュージーランド領）']},
@@ -59,7 +59,7 @@ export default class WorldClockTimeZones {
    * 7391201 / 43200 = 171.09261574
    * 7391201 / 720 = 10265.5569444...
    */
-  static get COLOR_DEFINITIONS () {
+  static get COLOR_DEFINITIONS() {
     return [
       ['0000', 'rgb(10, 25, 30)'],
       ['0010', 'rgb(12, 28, 33)'],
@@ -206,6 +206,28 @@ export default class WorldClockTimeZones {
       ['2340', 'rgb(13, 30, 36)'],
       ['2350', 'rgb(12, 28, 33)']
     ];
+  }
+
+  /**
+   * Find color definition
+   *
+   * @param {String} targetTime
+   * @return {String}
+   */
+  static findColor(targetTime) {
+    let time = null;
+    let color = null;
+    //console.log(WorldClockTimeZones.COLOR_DEFINITIONS);
+    for (let i in this.COLOR_DEFINITIONS) {
+      time = this.COLOR_DEFINITIONS[i][0];
+      color = this.COLOR_DEFINITIONS[i][1];
+      //console.log(`${time} > ${targetTime}`);
+      if (time >= targetTime) {
+        break;
+      }
+    }
+    //console.log(`${time} >= ${targetTime} | ${color}`);
+    return color;
   }
 
 };

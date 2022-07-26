@@ -1,6 +1,10 @@
 <template>
   <b-row>
     <b-col col lg="12" md="12" sm="12">
+      <b-alert variant="info" show>
+        Selected time zones are save in Cookie of your browser.
+      </b-alert>
+
       <div v-for="timezone in timezones" :key="timezone.utc" :id=timezone.utc class="timezone">
         <div class="utc">
           UTC {{timezone.utc}}
@@ -23,7 +27,7 @@
 <script>
 /* eslint-disable */
 import Vue from 'vue';
-import { BootstrapVue, LayoutPlugin } from 'bootstrap-vue';
+import { BootstrapVue, AlertPlugin, LayoutPlugin } from 'bootstrap-vue';
 const { DateTime } = require("luxon");
 import WorldClockTimeZones from '../libraries/WorldClockTimeZones.js';
 
@@ -34,22 +38,6 @@ export default {
     };
   },
   mounted() {
-    let findColor = (targetTime) => {
-      let time = null;
-      let color = null;
-      //console.log(WorldClockTimeZones.COLOR_DEFINITIONS);
-      for (let i in WorldClockTimeZones.COLOR_DEFINITIONS) {
-        time = WorldClockTimeZones.COLOR_DEFINITIONS[i][0];
-        color = WorldClockTimeZones.COLOR_DEFINITIONS[i][1];
-        //console.log(`${time} > ${targetTime}`);
-        if (time >= targetTime) {
-          break;
-        }
-      }
-      //console.log(`${time} >= ${targetTime} | ${color}`);
-      return color;
-    };
-
     let counter = () => {
       for (let i in WorldClockTimeZones.LIST) {
         let utc = WorldClockTimeZones.LIST[i].utc;
@@ -61,7 +49,7 @@ export default {
         let dateStr = date.toFormat('yyyy-LL-dd (ccc) HH:mm:ss.SSS');
 
         let element = document.getElementById(utc);
-        element.style.backgroundColor = findColor(targetTime);
+        element.style.backgroundColor = WorldClockTimeZones.findColor(targetTime);
         element
           .querySelectorAll('.clock')
           .forEach((element) => {
@@ -85,7 +73,7 @@ export default {
           let dateStr = tmpDate.toFormat('yyyy-LL-dd (ccc) HH:mm:ss.SSS');
 
           let element = document.getElementById(utc);
-          element.style.backgroundColor = findColor(targetTime);
+          element.style.backgroundColor = WorldClockTimeZones.findColor(targetTime);
           element
             .querySelectorAll('.clock')
             .forEach((element) => {
@@ -103,21 +91,22 @@ export default {
   methods: {
   },
   components: {
+    AlertPlugin
   }
 }
 </script>
 
 <style>
-  /**
-   * noon    : #7ae0ff rgb(120, 220, 255) / decimal 8052991
-   * midnight: #0a191e rgb( 10,  25,  30) / decimal 661790
-   * diff    : 110, 195, 225 / deimal 7391201
-   *
-   * 86400sec. 1440min. 24hrs. / 43200sec. 720min. 12hrs.
-   *
-   * 7391201 / 43200 = 171.09261574
-   * 7391201 / 720 = 10265.5569444...
-   */
+  .timezone {
+    border: 3px solid #fff;
+    color: #fff;
+    margin: 0 0 0.5rem 0;
+    padding: 0.5rem 1rem;
+    /*
+    text-stroke: 0.5px #FFF;
+    -webkit-text-stroke: 0.5px #FFF;
+    */
+  }
   .timezone .utc {
     float: left;
     /*font: 12px Monaco, Consolas, monospace;*/
