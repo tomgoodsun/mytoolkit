@@ -64,7 +64,12 @@ export default {
     };
   },
   mounted() {
+    // First of all, restore settings
     this.restoreSettings();
+
+    /**
+     * Endless update datetime view
+     */
     let counter = () => {
       for (let i in WorldClockTimeZones.LIST) {
         let utc = WorldClockTimeZones.LIST[i].utc;
@@ -85,9 +90,11 @@ export default {
       }
       setTimeout(counter, 1);
     };
-    counter();
 
-    let testCounter = () => {
+    /**
+     * To test background color for datetime
+     */
+     let testCounter = () => {
       let addMin = 0;
       let date = DateTime.local(2022, 1, 1, 0, 0, 0, 0);
       let counter = () => {
@@ -112,10 +119,14 @@ export default {
       };
       counter();
     };
-    //testCounter();
 
-    this.restoreSettings();
+    counter();
+    //testCounter(); // When testing, comment out the above and uncomment this line.
+
+    // Initialize timezone selections
     this.initTimeZoneSelections();
+
+    // Settings is saved in every defined minute.
     setInterval(this.saveSettings(), 60000);
   },
   methods: {
@@ -266,19 +277,36 @@ export default {
   .timezone .utc {
     float: left;
     /*font: 12px Monaco, Consolas, monospace;*/
+    font-size: 150%;
     font-weight: bold;
-    width: 80px;
+    width: 120px;
   }
   .timezone .clock {
+    /*
     float: left;
-    font: 12px Monaco, Consolas, monospace;
     width: 200px;
+    */
+    font: 120% Monaco, Consolas, monospace;
   }
   .timezone .regions {
+    border: 1px solid #ccc;
+    /*
     display: inline-block;
-    height: 1.2em;
+    */
+    height: 40px;
+    padding: 3px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    /*
     overflow: hidden;
     width: calc(100% - 200px - 80px);
+    */
+    width: 100%;
+    word-break: keep-all;
+  }
+  .timezone .regions .region-list .region {
+    background-color: #999;
+    margin-right: 0.5rem;
   }
 
   @media screen and (max-width: 480px) {
