@@ -16,6 +16,7 @@
   "dependencies": {
     "clipboard": "^2.0.8",
     "js-beautify": "^1.14.0",
+    "js-cookie": "^3.0.1",
     "luxon": "^3.0.1",
     "vue-router": "^3.0.1"
   },
