@@ -83,6 +83,17 @@ export default {
     url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.svg#Neutraface 2 Text Bold") format("svg");
 }
 
+@import url(//db.onlinewebfonts.com/c/f6e67539e25adbf860808313c8e75ce5?family=Digital-7);
+@font-face {
+  font-family: "Digital-7";
+  src: url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.eot");
+  src: url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.eot?#iefix") format("embedded-opentype"),
+    url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.woff2") format("woff2"),
+    url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.woff") format("woff"),
+    url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.ttf") format("truetype"),
+    url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.svg#Digital-7") format("svg");
+}
+
 :root {
   --normal-text-color: #2b2b2b;
 }
