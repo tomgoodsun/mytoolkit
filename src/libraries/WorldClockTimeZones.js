@@ -50,6 +50,13 @@ export default class WorldClockTimeZones {
     ];
   }
 
+  static get HOUR_LIST() {
+    return [
+      0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+      13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+    ];
+  }
+
   /**
    * Color definitions
    *
@@ -212,6 +219,20 @@ export default class WorldClockTimeZones {
       ['2340', 'rgb(13, 30, 36)'],
       ['2350', 'rgb(12, 28, 33)']
     ];
+  }
+
+  /**
+   *
+   * @param {string} timezone
+   * @return  {object}
+   */
+  static findTimezone(timezone) {
+    for (let i = 0; i < this.LIST.length; i++) {
+      if (timezone == this.LIST[i].utc) {
+        return this.LIST[i];
+      }
+    }
+    return null;
   }
 
   /**

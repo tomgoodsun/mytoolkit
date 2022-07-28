@@ -39,6 +39,20 @@
               </span>
             </span>
           </div>
+
+          <div class="hour-tiles">
+            <a
+              v-for="hour in hours"
+              :key="hour"
+              class="hour-tile"
+              :data-hour="hour"
+              :data-timezone="timezone.utc"
+              @click="toggleHourTile($event)"
+            >
+              {{hour}}
+            </a>
+          </div>
+
         </div>
       </div>
     </b-col>
@@ -57,6 +71,7 @@ export default {
   data() {
     return {
       timezones: WorldClockTimeZones.LIST,
+      hours: WorldClockTimeZones.HOUR_LIST,
       settings: {
         showingAll: true,
         selectedTimeZoneIds: []
@@ -94,7 +109,7 @@ export default {
     /**
      * To test background color for datetime
      */
-     let testCounter = () => {
+    let testCounter = () => {
       let addMin = 0;
       let date = DateTime.local(2022, 1, 1, 0, 0, 0, 0);
       let counter = () => {
@@ -185,8 +200,10 @@ export default {
 
       this.settings.selectedTimeZoneIds.forEach((id) => {
         let element = document.getElementById(id);
-        if (!element.classList.contains('selected')) {
-          element.classList.add('selected');
+        if (element) {
+          if (!element.classList.contains('selected')) {
+            element.classList.add('selected');
+          }
         }
       });
       this.toggleDisplayOfTimeZones();
@@ -243,9 +260,36 @@ export default {
       if (undefined !== jsonStr) {
         settings = JSON.parse(jsonStr);
       }
-      //this.settings = Object.assign(settings, this.settings);
       this.settings = settings;
       console.log(`Setting restored. ${jsonStr}`);
+    },
+
+    toggleHourTile(evt) {
+      let hour = evt.target.dataset.hour;
+      document
+        .querySelectorAll(`.hour-tile`)
+        .forEach((element) => {
+          console.log(element);
+          element.classList.remove('selected');
+        });
+
+      //this.timezones.forEach((timezone) => {
+      //  let sign = timezone.utc.substr(0, 1);
+      //  let hh = parseInt(timezone.utc.substr(1, 2), 10);
+      //  let mm = parseInt(timezone.utc.substr(3, 2), 10);
+      //  let minutes = (hh * 60 + mm - hour) * ('-' === sign ? -1 : 1);
+      //  let date = DateTime.local().toUTC().plus({minutes: minutes});
+      //  let hrs = date.toFormat('h');
+      //  document
+      //    .getElementById(timezone.utc)
+      //    .querySelectorAll(`.hour-tile[data-hour='${hrs}']`)
+      //    .forEach((element) => {
+      //      console.log(element);
+      //      element.classList.remove('selected');
+      //      element.classList.add('selected');
+      //    });
+      //});
+
     }
   },
   components: {
@@ -285,8 +329,9 @@ export default {
     /*
     float: left;
     width: 200px;
-    */
     font: 120% Monaco, Consolas, monospace;
+    */
+    font: 200% "Digital-7";
   }
   .timezone .regions {
     border: 1px solid #ccc;
@@ -308,6 +353,18 @@ export default {
     background-color: #999;
     margin-right: 0.5rem;
   }
+  .timezone .hour-tiles {
+  }
+  .timezone .hour-tiles .hour-tile {
+    background: #fff;
+    color: #666;
+    display: inline-block;
+    height: 1rem;
+    margin: 2px 3px 0 0;
+    padding: 0 2px 0 2px;
+    text-align: center;
+    width: 2rem;
+  }
 
   @media screen and (max-width: 480px) {
     .timezone {
@@ -320,13 +377,15 @@ export default {
     }
     .timezone .clock {
       float: none;
-      font-size: 120%;
+      font-size: 180%;
       width: 100%;
     }
     .timezone .regions {
       display: inline-block;
+      /*
       height: 1.2em;
       overflow: hidden;
+      */
       width: 100%;
     }
 
