@@ -39,20 +39,6 @@
               </span>
             </span>
           </div>
-
-          <div class="hour-tiles">
-            <a
-              v-for="hour in hours"
-              :key="hour"
-              class="hour-tile"
-              :data-hour="hour"
-              :data-timezone="timezone.utc"
-              @click="toggleHourTile($event)"
-            >
-              {{hour}}
-            </a>
-          </div>
-
         </div>
       </div>
     </b-col>
@@ -262,34 +248,6 @@ export default {
       }
       this.settings = settings;
       console.log(`Setting restored. ${jsonStr}`);
-    },
-
-    toggleHourTile(evt) {
-      let hour = evt.target.dataset.hour;
-      document
-        .querySelectorAll(`.hour-tile`)
-        .forEach((element) => {
-          console.log(element);
-          element.classList.remove('selected');
-        });
-
-      //this.timezones.forEach((timezone) => {
-      //  let sign = timezone.utc.substr(0, 1);
-      //  let hh = parseInt(timezone.utc.substr(1, 2), 10);
-      //  let mm = parseInt(timezone.utc.substr(3, 2), 10);
-      //  let minutes = (hh * 60 + mm - hour) * ('-' === sign ? -1 : 1);
-      //  let date = DateTime.local().toUTC().plus({minutes: minutes});
-      //  let hrs = date.toFormat('h');
-      //  document
-      //    .getElementById(timezone.utc)
-      //    .querySelectorAll(`.hour-tile[data-hour='${hrs}']`)
-      //    .forEach((element) => {
-      //      console.log(element);
-      //      element.classList.remove('selected');
-      //      element.classList.add('selected');
-      //    });
-      //});
-
     }
   },
   components: {
