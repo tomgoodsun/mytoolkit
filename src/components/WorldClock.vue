@@ -279,9 +279,9 @@ export default {
   .timezone .utc {
     float: left;
     /*font: 12px Monaco, Consolas, monospace;*/
-    font-size: 150%;
+    font-size: 180%;
     font-weight: bold;
-    width: 120px;
+    width: 130px;
   }
   .timezone .clock {
     /*
@@ -290,6 +290,7 @@ export default {
     font: 120% Monaco, Consolas, monospace;
     */
     font: 200% "Digital-7";
+    margin-top: 4px;
   }
   .timezone .regions {
     border: 1px solid #ccc;
@@ -311,18 +312,6 @@ export default {
     background-color: #999;
     margin-right: 0.5rem;
   }
-  .timezone .hour-tiles {
-  }
-  .timezone .hour-tiles .hour-tile {
-    background: #fff;
-    color: #666;
-    display: inline-block;
-    height: 1rem;
-    margin: 2px 3px 0 0;
-    padding: 0 2px 0 2px;
-    text-align: center;
-    width: 2rem;
-  }
 
   @media screen and (max-width: 480px) {
     .timezone {
@@ -336,6 +325,7 @@ export default {
     .timezone .clock {
       float: none;
       font-size: 180%;
+      margin-top: 0;
       width: 100%;
     }
     .timezone .regions {
