@@ -39,6 +39,9 @@
         <router-view></router-view>
       </div>
     </b-container>
+    <footer>
+      <cookie-law theme="dark-lime"></cookie-law>
+    </footer>
   </div>
 </template>
 
@@ -46,6 +49,8 @@
 /* eslint-disable */
 import Vue from 'vue';
 import { BootstrapVue, IconsPlugin, SidebarPlugin } from 'bootstrap-vue';
+import CookieLaw from 'vue-cookie-law';
+
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(SidebarPlugin);
@@ -67,6 +72,9 @@ export default {
     navEvent(evt) {
       this.contentName = evt.target.innerHTML;
     }
+  },
+  components: {
+    CookieLaw
   }
 }
 </script>
