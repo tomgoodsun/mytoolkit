@@ -2,21 +2,21 @@
   <b-row>
     <b-col col lg="6" md="12" sm="12">
       <b-alert v-if="$data.errorMessage == ''" variant="success" show>
-        Input SQL string
+        Input CSS string
       </b-alert>
       <b-alert v-else variant="danger" show>{{ errorMessage }}</b-alert>
       <b-form-textarea
-        id="sql-from"
-        v-model="$data.sqlFrom"
-        placeholder="Enter SQL string..."
+        id="css-from"
+        v-model="$data.cssFrom"
+        placeholder="Enter CSS string..."
       ></b-form-textarea>
     </b-col>
     <b-col col lg="6" md="12" sm="12">
-      <b-alert v-if="sqlTo.length > 0" variant="info" show>SQL parsed</b-alert>
-      <b-alert v-else variant="dark" show>Waiting for SQL input...</b-alert>
+      <b-alert v-if="cssTo.length > 0" variant="info" show>CSS parsed</b-alert>
+      <b-alert v-else variant="dark" show>Waiting for CSS input...</b-alert>
       <b-form-textarea
-        id="sql-to"
-        v-model="$data.sqlTo"
+        id="css-to"
+        v-model="$data.cssTo"
         readonly
       ></b-form-textarea>
       <div class="op-btn">
@@ -24,7 +24,7 @@
           variant="light"
           size="sm"
           class="clipboard"
-          data-clipboard-target="#sql-to"
+          data-clipboard-target="#css-to"
           title="Copy to clipboard"
         >
           <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
@@ -38,7 +38,7 @@
 /* eslint-disable */
 import Vue from 'vue';
 import { BootstrapVue, AlertPlugin, BFormTextarea, LayoutPlugin } from 'bootstrap-vue';
-import { format } from 'sql-formatter';
+import beautify from 'js-beautify';
 import Clipboard from 'clipboard';
 
 Vue.use(AlertPlugin);
@@ -46,34 +46,34 @@ Vue.use(AlertPlugin);
 export default {
   data() {
     return {
-      'sqlFrom': '',
-      'sqlTo': '',
+      'cssFrom': '',
+      'cssTo': '',
       'errorMessage': ''
     };
   },
   created() {
     this.$watch(
-      () => this.$data.sqlFrom,
-      (sqlFrom) => {
+      () => this.$data.cssFrom,
+      (cssFrom) => {
         let that = this;
 
         // 切り替わったことをわかりやすくするため、時間差で処理する
         setTimeout(() => {
-          let parsedSql = '';
+          let parsedCss = '';
           let errorMessage = '';
           try {
-            if (sqlFrom.length > 0) {
-              parsedSql = format(sqlFrom);
+            if (cssFrom.length > 0) {
+              parsedCss = beautify.css(cssFrom, {indent_size: 2, space_in_empty_paren: true});
             }
           } catch (e) {
-            errorMessage = 'SQL Parse Error.';
+            errorMessage = 'CSS Parse Error.';
           }
           console.log(errorMessage);
-          that.sqlTo = parsedSql;
+          that.cssTo = parsedCss;
           that.errorMessage = errorMessage;
         }, 500);
 
-        this.sqlTo = '';
+        this.cssTo = '';
       }
     );
   },
@@ -88,7 +88,7 @@ export default {
 </script>
 
 <style>
-#sql-from, #sql-to {
+#css-from, #css-to {
   font-family: Monaco, monospace;
   font-size: 100%;
   height: 500px;

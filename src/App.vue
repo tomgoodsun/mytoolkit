@@ -12,12 +12,17 @@
           <nav class="mb-3">
             <b-nav vertical>
               <b-nav-item @click="navEvent" exact-active-class="active" to="/">HOME</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/ml-beautifier">Markup Language Beautifier</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/css-beautifier">CSS Beautifier</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/js-beautifier">JavaScript Beautifier</b-nav-item>
               <b-nav-item @click="navEvent" exact-active-class="active" to="/json-beautifier">JSON Beautifier</b-nav-item>
               <b-nav-item @click="navEvent" exact-active-class="active" to="/sql-beautifier">SQL Beautifier</b-nav-item>
               <b-nav-item @click="navEvent" exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</b-nav-item>
               <b-nav-item @click="navEvent" exact-active-class="active" to="/qrcode-reader">QR Code Reader</b-nav-item>
               <b-nav-item @click="navEvent" exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</b-nav-item>
               <b-nav-item @click="navEvent" exact-active-class="active" to="/password-generator">Password Generator</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/htpasswd-generator">Htpasswd Generator</b-nav-item>
+              <b-nav-item @click="navEvent" exact-active-class="active" to="/world-clock">World Clock</b-nav-item>
             </b-nav>
           </nav>
         </div>
@@ -34,6 +39,9 @@
         <router-view></router-view>
       </div>
     </b-container>
+    <footer>
+      <cookie-law theme="dark-lime"></cookie-law>
+    </footer>
   </div>
 </template>
 
@@ -41,6 +49,8 @@
 /* eslint-disable */
 import Vue from 'vue';
 import { BootstrapVue, IconsPlugin, SidebarPlugin } from 'bootstrap-vue';
+import CookieLaw from 'vue-cookie-law';
+
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(SidebarPlugin);
@@ -62,6 +72,9 @@ export default {
     navEvent(evt) {
       this.contentName = evt.target.innerHTML;
     }
+  },
+  components: {
+    CookieLaw
   }
 }
 </script>
@@ -76,6 +89,17 @@ export default {
     url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.woff") format("woff"),
     url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.ttf") format("truetype"),
     url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.svg#Neutraface 2 Text Bold") format("svg");
+}
+
+@import url(//db.onlinewebfonts.com/c/f6e67539e25adbf860808313c8e75ce5?family=Digital-7);
+@font-face {
+  font-family: "Digital-7";
+  src: url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.eot");
+  src: url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.eot?#iefix") format("embedded-opentype"),
+    url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.woff2") format("woff2"),
+    url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.woff") format("woff"),
+    url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.ttf") format("truetype"),
+    url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.svg#Digital-7") format("svg");
 }
 
 :root {
@@ -104,6 +128,7 @@ body {
 .b-sidebar > .b-sidebar-header {
   background-color: #3399cc;
   color: #ffffff;
+  font-display: swap;
   font-family: 'Neutraface 2 Text Bold';
   font-size: 1.5rem !important;
   padding: 0.5rem 1rem 0.5rem 1rem !important;
