@@ -50,28 +50,71 @@
     </b-col>
     <b-col col lg="6" md="12" sm="12">
       <h3>Password Results</h3>
-        <h4>
+      <h4>
         Drawn
-        <b-button variant="primary" size="sm" name="generate" @click="draw()">Draw from results</b-button>
-        <b-button variant="light" size="sm" class="clipboard" data-clipboard-target="#drawn-result" title="Copy to clipboard">
+        <b-button
+          variant="primary"
+          size="sm"
+          name="generate"
+          @click="draw()"
+        >
+          Draw from results
+        </b-button>
+        <b-button
+          variant="light"
+          size="sm"
+          class="clipboard"
+          data-clipboard-target="#drawn-result"
+          title="Copy to clipboard"
+        >
           <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
         </b-button>
+        <b-button variant="light" size="sm" class="stock" @click="stock()">Stock</b-button>
       </h4>
       <div id="drawn-result">
         {{ drawnPassword }}
       </div>
       <h4>Generated</h4>
-      <ul id="result">
-        <li
-         v-for="password in passwords"
-         v-bind:key="password.id"
-         v-bind:class="{'is-selected': password.isSelected}"
-         class="password"
+      <div id="result-area">
+        <ul id="result">
+          <li
+           v-for="password in passwords"
+           v-bind:key="password.id"
+           v-bind:class="{'is-selected': password.isSelected}"
+           class="password"
+          >
+            {{ password.password }}
+          </li>
+        </ul>
+      </div>
+
+      <h4>
+        Stock
+        <b-button
+          variant="light"
+          size="sm"
+          class="clipboard"
+          data-clipboard-target="#password-stocker"
+          title="Copy to clipboard"
         >
-          {{ password.password }}
-        </li>
-      </ul>
-    </b-col>
+          <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
+        </b-button>
+        <b-button
+          variant="light"
+          size="sm"
+          class="clear-stock"
+          @click="clearStock()"
+        >
+          Clear
+        </b-button>
+      </h4>
+
+      <b-form-textarea
+        id="password-stocker"
+        v-model="$data.stockedPasswords"
+        readonly
+      ></b-form-textarea>
+     </b-col>
   </b-row>
 </template>
 
@@ -85,7 +128,8 @@ import {
   FormGroupPlugin,
   FormInputPlugin,
   FormPlugin,
-  LayoutPlugin,
+  BFormTextarea,
+  LayoutPlugin
 } from 'bootstrap-vue';
 import Clipboard from 'clipboard';
 
@@ -122,10 +166,30 @@ export default {
       samplingNum: 100,
       passwords: [],
       drawnPassword: '',
+      stockedPasswords: '',
     };
   },
   mounted() {
     new Clipboard('.clipboard');
+  },
+  updated() {
+    let resultAreaElem = this.$el.querySelector('#result-area'),
+      resultElem = this.$el.querySelector('#result'),
+      selectedElem = this.$el.querySelector('#result .is-selected');
+    resultAreaElem.scrollTop = 0;
+
+    if (selectedElem) {
+      let parentPos = resultElem.getBoundingClientRect(),
+        childPos = selectedElem.getBoundingClientRect(),
+        relativePos = {};
+
+      relativePos.top = childPos.top - parentPos.top,
+      relativePos.right = childPos.right - parentPos.right,
+      relativePos.bottom = childPos.bottom - parentPos.bottom,
+      relativePos.left = childPos.left - parentPos.left;
+
+      resultAreaElem.scrollTop = relativePos.top;
+    }
   },
   methods: {
     getRandomInt(min, max) {
@@ -164,14 +228,37 @@ export default {
         this.passwords[index].isSelected = true;
         this.drawnPassword = this.passwords[index].password;
       }
+    },
+    stock() {
+      if (this.drawnPassword.length > 0) {
+        let stockedPasswords = this.stockedPasswords.split('\n');
+        if (stockedPasswords.includes(this.drawnPassword)) {
+          alert('This word is already stocked.');
+          return;
+        }
+        this.stockedPasswords += this.drawnPassword + '\n';
+        let stocker = this.$el.querySelector('#password-stocker');
+        stocker.scrollTop = stocker.scrollHeight;
+      }
+    },
+    clearStock() {
+      this.stockedPasswords = '';
     }
   },
   components: {
+    BFormTextarea
   }
 }
 </script>
 
 <style>
+#result-area {
+  border: 1px solid #eee;
+  height: 200px;
+  margin-bottom: 10px;
+  min-height: 100px;
+  overflow-y: scroll;
+}
 #result {
   list-style: none;
   margin: 0;
@@ -197,5 +284,11 @@ export default {
   height: 1.5em;
   min-height: 1.5em;
   text-align: center;
+}
+#password-stocker {
+  font-family: Monaco, monospace;
+  font-size: 100%;
+  height: 100px;
+  min-height: 100px;
 }
 </style>
