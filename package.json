@@ -94,7 +94,7 @@
     "ssri": ">=6.0.2",
     "trim-newlines": ">=3.0.1",
     "uglifyjs-webpack-plugin": "^1.1.1",
-    "url-loader": "^0.5.8",
+    "url-loader": "^4.1.1",
     "vue": "^2.6.13",
     "vue-jest": "^1.0.2",
     "vue-loader": "^13.3.0",
