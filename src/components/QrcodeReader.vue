@@ -13,7 +13,7 @@
         <div class="mt-3 image">
           <img src="">
         </div>
-        <div class="mt-3 qr-code-reader">
+        <div class="mt-3 qr-code-reader" v-bind:class="{'camera-available': cameraAvailable}">
           <qrcode-stream class="qr-reader" @decode="onDecode" @init="onInit" />
         </div>
       </b-col>
@@ -84,7 +84,7 @@ export default {
   data() {
     return {
       alertMsg: '',
-      file: null,
+      cameraAvailable: false,
       result: '',
       status: 'info',
       errorMessage: ''
@@ -98,15 +98,17 @@ export default {
     // @see https://gruhn.github.io/vue-qrcode-reader/demos/DecodeAll.html
     onDecode (result) {
       this.status = 'success';
-      this.result = result
+      this.result = result;
       imgElem.src = '';
       imgElem.alt = '';
     },
     async onInit (promise) {
       try {
         this.status = 'info';
-        await promise
+        await promise;
+        this.cameraAvailable = true;
       } catch (error) {
+        this.cameraAvailable = false;
         if (error.name === 'NotAllowedError') {
           this.status = 'info';
           this.errorMessage = "INFO: you need to grant camera access permisson";
@@ -205,6 +207,10 @@ export default {
 #file .qr-code-reader {
   max-height: 100px;
   max-width: 100%;
+}
+#file .qr-code-reader.camera-available {
+  margin-bottom: 20px;
+  max-height: 300px;
 }
 #file .qr-code-reader * {
   max-height: 300px;
