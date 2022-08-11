@@ -19,7 +19,8 @@
       </b-col>
 
       <b-col col lg="6" md="12" sm="12">
-        <b-alert v-if="$data.result.length > 0" variant="info" show>QR code has been read.</b-alert>
+        <b-alert v-if="$data.status=='error'" variant="danger" show>{{ errorMessage }}</b-alert>
+        <b-alert v-else-if="$data.status== 'success'" variant="info" show>QR code has been read.</b-alert>
         <b-alert v-else variant="dark" show>Waiting for QR code...</b-alert>
 
         <b-form-textarea
@@ -85,6 +86,7 @@ export default {
       alertMsg: '',
       file: null,
       result: '',
+      status: 'info',
       errorMessage: ''
     }
   },
@@ -101,25 +103,34 @@ export default {
     },
     async onInit (promise) {
       try {
+        this.status = 'info';
         await promise
       } catch (error) {
         if (error.name === 'NotAllowedError') {
-          this.errorMessage = this.error = "ERROR: you need to grant camera access permisson"
+          this.status = 'info';
+          this.errorMessage = "INFO: you need to grant camera access permisson";
         } else if (error.name === 'NotFoundError') {
-          this.errorMessage = this.error = "ERROR: no camera on this device"
+          this.status = 'info';
+          this.errorMessage = "INFO: no camera on this device";
         } else if (error.name === 'NotSupportedError') {
-          this.errorMessage = this.error = "ERROR: secure context required (HTTPS, localhost)"
+          this.status = 'error';
+          this.errorMessage = "ERROR: secure context required (HTTPS, localhost)";
         } else if (error.name === 'NotReadableError') {
-          this.errorMessage = this.error = "ERROR: is the camera already in use?"
+          this.status = 'error';
+          this.errorMessage = "ERROR: is the camera already in use?";
         } else if (error.name === 'OverconstrainedError') {
-          this.errorMessage = this.error = "ERROR: installed cameras are not suitable"
+          this.status = 'error';
+          this.errorMessage = "ERROR: installed cameras are not suitable";
         } else if (error.name === 'StreamApiNotSupportedError') {
-          this.errorMessage = this.error = "ERROR: Stream API is not supported in this browser"
+          this.status = 'error';
+          this.errorMessage = "ERROR: Stream API is not supported in this browser";
         }
+        console.error(this.errorMessage);
       }
     },
 
     readFromFile(evt) {
+      this.status = 'info';
       let that = this;
       imgElem.src = '';
       imgElem.alt = '';
@@ -130,10 +141,13 @@ export default {
         imgElem.src = fr.result;
         imgElem.alt = file.name;
         codeReader.decodeFromImage(imgElem).then((result) => {
+          that.status = 'success';
           that.result = result.text;
           //resultForm.select();
           //console.log(resultForm);
         }).catch((err) => {
+          that.status = 'error';
+          that.errorMessage = err;
           console.error(err)
         });
       };
@@ -146,24 +160,30 @@ export default {
       }).catch((err) => {
         console.error(err)
         this.result = err;
+        this.status = 'error';
+        this.errorMessage = err;
       })
     },
     decodeContinuously(codeReader, selectedDeviceId) {
       codeReader.decodeFromInputVideoDeviceContinuously(selectedDeviceId, 'video', (result, err) => {
         console.log(result);
         if (result) {
+          this.status = 'success';
           this.errorMessage = 'Found QR code!';
           console.log('Found QR code!', result)
           this.result = result.text;
         }
         if (err) {
           if (err instanceof NotFoundException) {
+            this.status = 'error';
             this.errorMessage = 'No QR code found.';
           }
           if (err instanceof ChecksumException) {
+            this.status = 'error';
             this.errorMessage = 'A code was found, but it\'s read value was not valid.';
           }
           if (err instanceof FormatException) {
+            this.status = 'error';
             this.errorMessage = 'A code was found, but it was in a invalid format.';
           }
         }
