@@ -19,13 +19,22 @@
       </b-col>
 
       <b-col col lg="6" md="12" sm="12">
+        <b-alert v-if="$data.result.length > 0" variant="info" show>QR code has been read.</b-alert>
+        <b-alert v-else variant="dark" show>Waiting for QR code...</b-alert>
+
         <b-form-textarea
           id="result"
           v-model="$data.result"
           readonly
         ></b-form-textarea>
         <div class="op-btn">
-          <b-button variant="light" size="sm" class="clipboard" data-clipboard-target="#result" title="Copy to clipboard">
+          <b-button
+            variant="light"
+            size="sm"
+            class="clipboard"
+            data-clipboard-target="#result"
+            title="Copy to clipboard"
+          >
             <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
           </b-button>
         </div>
@@ -38,6 +47,7 @@
 /* eslint-disable */
 import Vue from 'vue';
 import {
+  AlertPlugin,
   BFormTextarea,
   BootstrapVue,
   ButtonPlugin,
@@ -62,6 +72,7 @@ Vue.use(FormFilePlugin);
 Vue.use(FormGroupPlugin);
 Vue.use(FormInputPlugin);
 Vue.use(FormPlugin);
+Vue.use(AlertPlugin);
 Vue.use(VueQrcodeReader);
 
 const codeReader = new BrowserMultiFormatReader();
@@ -73,7 +84,8 @@ export default {
     return {
       alertMsg: '',
       file: null,
-      result: null
+      result: '',
+      errorMessage: ''
     }
   },
   mounted() {
@@ -92,17 +104,17 @@ export default {
         await promise
       } catch (error) {
         if (error.name === 'NotAllowedError') {
-          this.error = "ERROR: you need to grant camera access permisson"
+          this.errorMessage = this.error = "ERROR: you need to grant camera access permisson"
         } else if (error.name === 'NotFoundError') {
-          this.error = "ERROR: no camera on this device"
+          this.errorMessage = this.error = "ERROR: no camera on this device"
         } else if (error.name === 'NotSupportedError') {
-          this.error = "ERROR: secure context required (HTTPS, localhost)"
+          this.errorMessage = this.error = "ERROR: secure context required (HTTPS, localhost)"
         } else if (error.name === 'NotReadableError') {
-          this.error = "ERROR: is the camera already in use?"
+          this.errorMessage = this.error = "ERROR: is the camera already in use?"
         } else if (error.name === 'OverconstrainedError') {
-          this.error = "ERROR: installed cameras are not suitable"
+          this.errorMessage = this.error = "ERROR: installed cameras are not suitable"
         } else if (error.name === 'StreamApiNotSupportedError') {
-          this.error = "ERROR: Stream API is not supported in this browser"
+          this.errorMessage = this.error = "ERROR: Stream API is not supported in this browser"
         }
       }
     },
@@ -140,18 +152,19 @@ export default {
       codeReader.decodeFromInputVideoDeviceContinuously(selectedDeviceId, 'video', (result, err) => {
         console.log(result);
         if (result) {
+          this.errorMessage = 'Found QR code!';
           console.log('Found QR code!', result)
           this.result = result.text;
         }
         if (err) {
           if (err instanceof NotFoundException) {
-            console.log('No QR code found.')
+            this.errorMessage = 'No QR code found.';
           }
           if (err instanceof ChecksumException) {
-            console.log('A code was found, but it\'s read value was not valid.')
+            this.errorMessage = 'A code was found, but it\'s read value was not valid.';
           }
           if (err instanceof FormatException) {
-            console.log('A code was found, but it was in a invalid format.')
+            this.errorMessage = 'A code was found, but it was in a invalid format.';
           }
         }
       })
