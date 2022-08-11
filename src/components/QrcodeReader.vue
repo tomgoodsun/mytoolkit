@@ -97,6 +97,7 @@ export default {
   methods: {
     // @see https://gruhn.github.io/vue-qrcode-reader/demos/DecodeAll.html
     onDecode (result) {
+      this.status = 'success';
       this.result = result
       imgElem.src = '';
       imgElem.alt = '';
