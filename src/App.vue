@@ -80,6 +80,7 @@ export default {
 </script>
 
 <style>
+/*
 @import url(//db.onlinewebfonts.com/c/034590c9705a820856d89653415479ff?family=Neutraface+2+Text+Bold);
 @font-face {
   font-family: "Neutraface 2 Text Bold";
@@ -90,6 +91,7 @@ export default {
     url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.ttf") format("truetype"),
     url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.svg#Neutraface 2 Text Bold") format("svg");
 }
+*/
 
 @import url(//db.onlinewebfonts.com/c/f6e67539e25adbf860808313c8e75ce5?family=Digital-7);
 @font-face {
@@ -129,7 +131,7 @@ body {
   background-color: #3399cc;
   color: #ffffff;
   font-display: swap;
-  font-family: 'Neutraface 2 Text Bold';
+  /*font-family: 'Neutraface 2 Text Bold';*/
   font-size: 1.5rem !important;
   padding: 0.5rem 1rem 0.5rem 1rem !important;
 }
