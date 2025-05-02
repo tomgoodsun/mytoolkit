@@ -19,27 +19,13 @@
       </b-alert>
 
       <div id="timezone-list">
-        <div
+        <WorldClockTimeZone
           v-for="timezone in timezones"
           :key="timezone.utc"
-          :id=timezone.utc
           class="timezone"
           @click="toggleTimeZone($event)"
-        >
-          <div class="utc">
-            UTC {{timezone.utc}}
-          </div>
-          <div class="clock">
-            2022-01-01 00:00:00.123
-          </div>
-          <div class="regions">
-            <span class="region-list">
-              <span v-for="(region, index) in timezone.regions" :key="index" class="region">
-                {{region}}
-              </span>
-            </span>
-          </div>
-        </div>
+          v-bind="{timezone: timezone}"
+        />
       </div>
     </b-col>
   </b-row>
@@ -52,6 +38,7 @@ import { BootstrapVue, AlertPlugin, LayoutPlugin } from 'bootstrap-vue';
 const { DateTime } = require("luxon");
 import Cookies from 'js-cookie';
 import WorldClockTimeZones from '../libraries/WorldClockTimeZones.js';
+import WorldClockTimeZone from './WorldClockTimeZone.vue';
 
 export default {
   data() {
@@ -67,62 +54,6 @@ export default {
   mounted() {
     // First of all, restore settings
     this.restoreSettings();
-
-    /**
-     * Endless update datetime view
-     */
-    let counter = () => {
-      for (let i in WorldClockTimeZones.LIST) {
-        let utc = WorldClockTimeZones.LIST[i].utc;
-        let date = DateTime
-          .local()
-          .toUTC(WorldClockTimeZones.LIST[i].offsetMin);
-
-        let targetTime = date.toFormat('HHmm');
-        let dateStr = date.toFormat('yyyy-LL-dd (ccc) HH:mm:ss.SSS');
-
-        let element = document.getElementById(utc);
-        element.style.backgroundColor = WorldClockTimeZones.findColor(targetTime);
-        element
-          .querySelectorAll('.clock')
-          .forEach((element) => {
-            element.innerHTML = dateStr;
-          });
-      }
-      setTimeout(counter, 1);
-    };
-
-    /**
-     * To test background color for datetime
-     */
-    let testCounter = () => {
-      let addMin = 0;
-      let date = DateTime.local(2022, 1, 1, 0, 0, 0, 0);
-      let counter = () => {
-        for (let i in WorldClockTimeZones.LIST) {
-          let utc = WorldClockTimeZones.LIST[i].utc;
-          let tmpDate = date.plus({minutes: addMin}).toUTC(WorldClockTimeZones.LIST[i].offsetMin);
-
-          let targetTime = tmpDate.toFormat('HHmm');
-
-          let dateStr = tmpDate.toFormat('yyyy-LL-dd (ccc) HH:mm:ss.SSS');
-
-          let element = document.getElementById(utc);
-          element.style.backgroundColor = WorldClockTimeZones.findColor(targetTime);
-          element
-            .querySelectorAll('.clock')
-            .forEach((element) => {
-              element.innerHTML = dateStr;
-            });
-        }
-        addMin += 4;
-        setTimeout(counter, 1);
-      };
-      counter();
-    };
-
-    counter();
-    //testCounter(); // When testing, comment out the above and uncomment this line.
 
     // Initialize timezone selections
     this.initTimeZoneSelections();
@@ -251,7 +182,8 @@ export default {
     }
   },
   components: {
-    AlertPlugin
+    AlertPlugin,
+    WorldClockTimeZone
   }
 }
 </script>
