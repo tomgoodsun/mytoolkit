@@ -1,194 +1,152 @@
 <template>
-  <b-row>
-    <b-col col lg="12" md="12" sm="12">
+  <BRow>
+    <BCol col lg="12" md="12" sm="12">
       <div id="timezone-filter">
-        <b-button
+        <BButton
           variant="light"
           size="md"
           class="filter"
           alt="Show selected"
-          @click="toggleFilter($event)"
+          @click="toggleFilter"
         >
-          <b-icon icon="filter-circle" aria-hidden="true" class="off"></b-icon>
-          <b-icon icon="filter-circle-fill" aria-hidden="true" class="on"></b-icon>
-        </b-button>
+          <svg v-show="!settings.showingAll" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter-circle-fill on" viewBox="0 0 16 16">
+            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16M3.5 5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1M5 8.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m2 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5"/>
+          </svg>
+          <svg v-show="settings.showingAll" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter-circle off" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+            <path d="M3.5 5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1M5 8.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m2 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5"/>
+          </svg>
+        </BButton>
       </div>
 
-      <b-alert variant="info" show>
+      <BAlert variant="info" :model-value="true">
         Selected time zones are save in Cookie of your browser.
-      </b-alert>
+      </BAlert>
 
       <div id="timezone-list">
         <WorldClockTimeZone
           v-for="timezone in timezones"
           :key="timezone.utc"
           class="timezone"
-          @click="toggleTimeZone($event)"
-          v-bind="{timezone: timezone}"
+          @click="toggleTimeZone"
+          :timezone="timezone"
         />
       </div>
-    </b-col>
-  </b-row>
+    </BCol>
+  </BRow>
 </template>
 
 <script>
-/* eslint-disable */
-import Vue from 'vue';
-import { BootstrapVue, AlertPlugin, LayoutPlugin } from 'bootstrap-vue';
-const { DateTime } = require("luxon");
-import Cookies from 'js-cookie';
-import WorldClockTimeZones from '../libraries/WorldClockTimeZones.js';
-import WorldClockTimeZone from './WorldClockTimeZone.vue';
+import { ref, reactive, onMounted } from 'vue'
+import { BRow, BCol, BButton, BAlert } from 'bootstrap-vue-next'
+import Cookies from 'js-cookie'
+import WorldClockTimeZones from '../libraries/WorldClockTimeZones.js'
+import WorldClockTimeZone from './WorldClockTimeZone.vue'
 
 export default {
-  data() {
-    return {
-      timezones: WorldClockTimeZones.LIST,
-      hours: WorldClockTimeZones.HOUR_LIST,
-      settings: {
-        showingAll: true,
-        selectedTimeZoneIds: []
-      }
-    };
+  components: {
+    BRow,
+    BCol,
+    BButton,
+    BAlert,
+    WorldClockTimeZone
   },
-  mounted() {
-    // First of all, restore settings
-    this.restoreSettings();
+  setup() {
+    const timezones = ref(WorldClockTimeZones.LIST)
+    const hours = ref(WorldClockTimeZones.HOUR_LIST)
+    const settings = reactive({
+      showingAll: true,
+      selectedTimeZoneIds: []
+    })
 
-    // Initialize timezone selections
-    this.initTimeZoneSelections();
+    const toggleFilter = () => {
+      settings.showingAll = !settings.showingAll
+      toggleDisplayOfTimeZones()
+      saveSettings()
+    }
 
-    // Settings is saved in every defined minute.
-    setInterval(this.saveSettings(), 60000);
-  },
-  methods: {
-    /**
-     * Toggle filter button and display
-     */
-    toggleFilter() {
-      let element = document.getElementById('timezone-filter');
-      let onElement = element.querySelectorAll('.on')[0];
-      let offElement = element.querySelectorAll('.off')[0];
-      if (this.settings.showingAll) {
-        this.settings.showingAll = false;
-        onElement.style.display = '';
-        offElement.style.display = 'none';
-      } else {
-        this.settings.showingAll = true;
-        onElement.style.display = 'none';
-        offElement.style.display = '';
-      }
-      this.toggleDisplayOfTimeZones();
-      this.saveSettings();
-    },
-
-    /**
-     * Toggle timezone selection
-     *
-     * @param {Event} evt
-     */
-    toggleTimeZone(evt) {
-      let element = evt.target;
-      console.log(element.classList);
+    const toggleTimeZone = (evt) => {
+      let element = evt.target
       while (!element.classList.contains('timezone')) {
-        if ('body' === element.tagName) {
-          break;
+        if (element.tagName === 'BODY') {
+          break
         }
-        element = element.parentNode;
+        element = element.parentNode
       }
-      element.classList.toggle('selected');
-      this.saveSettings();
-    },
+      element.classList.toggle('selected')
+      saveSettings()
+    }
 
-    /**
-     * Initialize display settings
-     */
-    initTimeZoneSelections() {
-      let element = document.getElementById('timezone-filter');
-      let onElement = element.querySelectorAll('.on')[0];
-      let offElement = element.querySelectorAll('.off')[0];
-      if (this.settings.showingAll) {
-        onElement.style.display = 'none';
-        offElement.style.display = '';
-      } else {
-        onElement.style.display = '';
-        offElement.style.display = 'none';
-      }
-
-      this.settings.selectedTimeZoneIds.forEach((id) => {
-        let element = document.getElementById(id);
-        if (element) {
-          if (!element.classList.contains('selected')) {
-            element.classList.add('selected');
-          }
+    const initTimeZoneSelections = () => {
+      settings.selectedTimeZoneIds.forEach((id) => {
+        const element = document.getElementById(id)
+        if (element && !element.classList.contains('selected')) {
+          element.classList.add('selected')
         }
-      });
-      this.toggleDisplayOfTimeZones();
-    },
+      })
+      toggleDisplayOfTimeZones()
+    }
 
-    /**
-     * Toggle display of timezones
-     */
-    toggleDisplayOfTimeZones() {
+    const toggleDisplayOfTimeZones = () => {
       document
         .querySelectorAll('#timezone-list .timezone')
         .forEach((element) => {
-          if (this.settings.showingAll) {
-            element.style.display = 'block';
+          if (settings.showingAll) {
+            element.style.display = 'block'
           } else {
-            if (element.classList.contains('selected')) {
-              element.style.display = 'block';
-            } else {
-              element.style.display = 'none';
-            }
+            element.style.display = element.classList.contains('selected') ? 'block' : 'none'
           }
-        });
-    },
+        })
+    }
 
-    /**
-     * Save settings to Cookie
-     */
-    saveSettings() {
-      this.settings.selectedTimeZoneIds = [];
+    const saveSettings = () => {
+      settings.selectedTimeZoneIds = []
       document
         .querySelectorAll('#timezone-list .selected')
         .forEach((element) => {
-          this.settings.selectedTimeZoneIds.push(element.id);
-        });
+          settings.selectedTimeZoneIds.push(element.id)
+        })
 
-        let jsonStr = JSON.stringify(this.settings);
-        Cookies.set(
-          'world-clock-settings',
-          jsonStr,
-          {
-            expires: 7,
-            path: location.pathname
-          }
-        );
-        console.log(`Setting saved. ${jsonStr}`);
-    },
-
-    /**
-     * Fetch settings from Cookie
-     */
-    restoreSettings() {
-      let jsonStr = Cookies.get('world-clock-settings');
-      let settings = {};
-      if (undefined !== jsonStr) {
-        settings = JSON.parse(jsonStr);
-      }
-      this.settings = settings;
-      console.log(`Setting restored. ${jsonStr}`);
+      const jsonStr = JSON.stringify(settings)
+      Cookies.set(
+        'world-clock-settings',
+        jsonStr,
+        {
+          expires: 7,
+          path: location.pathname
+        }
+      )
+      console.log(`Setting saved. ${jsonStr}`)
     }
-  },
-  components: {
-    AlertPlugin,
-    WorldClockTimeZone
+
+    const restoreSettings = () => {
+      const jsonStr = Cookies.get('world-clock-settings')
+      if (jsonStr !== undefined) {
+        const restoredSettings = JSON.parse(jsonStr)
+        settings.showingAll = restoredSettings.showingAll
+        settings.selectedTimeZoneIds = restoredSettings.selectedTimeZoneIds
+      }
+      console.log(`Setting restored. ${jsonStr}`)
+    }
+
+    onMounted(() => {
+      restoreSettings()
+      initTimeZoneSelections()
+      setInterval(saveSettings, 60000)
+    })
+
+    return {
+      timezones,
+      hours,
+      settings,
+      toggleFilter,
+      toggleTimeZone
+    }
   }
 }
 </script>
 
-<style>
+<style scoped>
   #timezone-filter {
     position: fixed;
     top: 0.5rem;
@@ -203,44 +161,27 @@ export default {
     color: #fff;
     margin: 0 0 0.5rem 0;
     padding: 0.5rem 1rem;
-    /*
-    text-stroke: 0.5px #FFF;
-    -webkit-text-stroke: 0.5px #FFF;
-    */
   }
-  .timezone .utc {
+  .timezone :deep(.utc) {
     float: left;
-    /*font: 12px Monaco, Consolas, monospace;*/
     font-size: 180%;
     font-weight: bold;
     width: 130px;
   }
-  .timezone .clock {
-    /*
-    float: left;
-    width: 200px;
-    font: 120% Monaco, Consolas, monospace;
-    */
+  .timezone :deep(.clock) {
     font: 200% "Digital-7";
     margin-top: 4px;
   }
-  .timezone .regions {
+  .timezone :deep(.regions) {
     border: 1px solid #ccc;
-    /*
-    display: inline-block;
-    */
     height: 40px;
     padding: 3px;
     overflow-x: hidden;
     overflow-y: scroll;
-    /*
-    overflow: hidden;
-    width: calc(100% - 200px - 80px);
-    */
     width: 100%;
     word-break: keep-all;
   }
-  .timezone .regions .region-list .region {
+  .timezone :deep(.regions .region-list .region) {
     background-color: #999;
     margin-right: 0.5rem;
   }
@@ -249,25 +190,20 @@ export default {
     .timezone {
       margin: 0 0 1em 0;
     }
-    .timezone .utc {
+    .timezone :deep(.utc) {
       float: none;
       font-size: 150%;
       width: 100%;
     }
-    .timezone .clock {
+    .timezone :deep(.clock) {
       float: none;
       font-size: 180%;
       margin-top: 0;
       width: 100%;
     }
-    .timezone .regions {
+    .timezone :deep(.regions) {
       display: inline-block;
-      /*
-      height: 1.2em;
-      overflow: hidden;
-      */
       width: 100%;
     }
-
   }
 </style>

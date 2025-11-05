@@ -1,24 +1,24 @@
 <template>
-  <b-row>
-    <b-col col lg="6" md="12" sm="12">
-      <b-form-group id="input-group-min" label="Min Length:" label-for="min-exclude">
-        <b-form-input
+  <BRow>
+    <BCol col lg="6" md="12" sm="12">
+      <BFormGroup id="input-group-min" label="Min Length:" label-for="min-exclude">
+        <BFormInput
           id="min-exclude"
           name="min-exclude"
           v-model="minLength"
-        ></b-form-input>
-      </b-form-group>
+        ></BFormInput>
+      </BFormGroup>
 
-      <b-form-group id="input-group-max" label="Max Length:" label-for="max-exclude">
-        <b-form-input
+      <BFormGroup id="input-group-max" label="Max Length:" label-for="max-exclude">
+        <BFormInput
           id="max-exclude"
           name="max-exclude"
           v-model="maxLength"
-        ></b-form-input>
-      </b-form-group>
+        ></BFormInput>
+      </BFormGroup>
 
-      <b-form-group id="input-group-settings" label="Setting:" label-for="settings">
-        <b-form-checkbox
+      <BFormGroup id="input-group-settings" label="Setting:" label-for="settings">
+        <BFormCheckbox
           v-for="form in forms"
           v-model="checked"
           :key="form.id"
@@ -26,50 +26,53 @@
           name="settings"
         >
           {{ form.name }}
-        </b-form-checkbox>
-      </b-form-group>
+        </BFormCheckbox>
+      </BFormGroup>
 
-      <b-form-group id="input-group-exclude" label="Exclude Chars:" label-for="exclude">
-        <b-form-input
+      <BFormGroup id="input-group-exclude" label="Exclude Chars:" label-for="exclude">
+        <BFormInput
           id="exclude"
           name="exclude"
           v-model="excludeChars"
-        ></b-form-input>
-      </b-form-group>
+        ></BFormInput>
+      </BFormGroup>
 
-      <b-form-group id="input-group-num" label="Sampling Num:" label-for="num">
-        <b-form-input
+      <BFormGroup id="input-group-num" label="Sampling Num:" label-for="num">
+        <BFormInput
           id="num"
           name="num"
           v-model="samplingNum"
-        ></b-form-input>
-      </b-form-group>
+        ></BFormInput>
+      </BFormGroup>
 
-      <b-button variant="outline-primary" name="generate" @click="generate()">Generate</b-button>
+      <BButton variant="outline-primary" name="generate" @click="generate()">Generate</BButton>
 
-    </b-col>
-    <b-col col lg="6" md="12" sm="12">
+    </BCol>
+    <BCol col lg="6" md="12" sm="12">
       <h3>Password Results</h3>
       <h4>
         Drawn
-        <b-button
+        <BButton
           variant="primary"
           size="sm"
           name="generate"
           @click="draw()"
         >
           Draw from results
-        </b-button>
-        <b-button
+        </BButton>
+        <BButton
           variant="light"
           size="sm"
           class="clipboard"
           data-clipboard-target="#drawn-result"
           title="Copy to clipboard"
         >
-          <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
-        </b-button>
-        <b-button variant="light" size="sm" class="stock" @click="stock()">Stock</b-button>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+          </svg> Copy
+        </BButton>
+        <BButton variant="light" size="sm" class="stock" @click="stock()">Stock</BButton>
       </h4>
       <div id="drawn-result">
         {{ drawnPassword }}
@@ -79,8 +82,8 @@
         <ul id="result">
           <li
            v-for="password in passwords"
-           v-bind:key="password.id"
-           v-bind:class="{'is-selected': password.isSelected}"
+           :key="password.id"
+           :class="{'is-selected': password.isSelected}"
            class="password"
           >
             {{ password.password }}
@@ -90,205 +93,135 @@
 
       <h4>
         Stock
-        <b-button
+        <BButton
           variant="light"
           size="sm"
           class="clipboard"
           data-clipboard-target="#password-stocker"
           title="Copy to clipboard"
         >
-          <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
-        </b-button>
-        <b-button
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+          </svg> Copy
+        </BButton>
+        <BButton
           variant="light"
           size="sm"
           class="clear-stock"
           @click="clearStock()"
         >
           Clear
-        </b-button>
+        </BButton>
       </h4>
 
-      <b-form-textarea
+      <BFormTextarea
         id="password-stocker"
-        v-model="$data.stockedPasswords"
+        v-model="stockedPasswords"
         readonly
-      ></b-form-textarea>
-     </b-col>
-  </b-row>
+      ></BFormTextarea>
+     </BCol>
+  </BRow>
 </template>
 
 <script>
-/* eslint-disable */
-import Vue from 'vue';
-import {
-  BootstrapVue,
-  ButtonPlugin,
-  FormCheckboxPlugin,
-  FormGroupPlugin,
-  FormInputPlugin,
-  FormPlugin,
-  BFormTextarea,
-  LayoutPlugin
-} from 'bootstrap-vue';
-import Clipboard from 'clipboard';
-
-Vue.use(ButtonPlugin);
-Vue.use(FormCheckboxPlugin);
-Vue.use(FormGroupPlugin);
-Vue.use(FormInputPlugin);
-Vue.use(FormPlugin);
-
-var generator = require('generate-password');
+import { ref, onMounted, onUpdated } from 'vue'
+import { BRow, BCol, BButton, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea } from 'bootstrap-vue-next'
+import Clipboard from 'clipboard'
+import generator from 'generate-password'
 
 export default {
-  data() {
-    return {
-      forms: [
-        {id: 'length', name: 'Length'},
-        {id: 'numbers', name: 'Include Numbers'},
-        {id: 'symbols', name: 'Include Symbols'},
-        {id: 'excludeSimilarCharacters', name: 'Exclude Similar Chars'},
-        {id: 'exclude', name: 'Exclude'},
-        {id: 'strict', name: 'Strict'},
-      ],
-      checked: [
-        'length',
-        'numbers',
-        'symbols',
-        'excludeSimilarCharacters',
-        'exclude',
-        'strict',
-      ],
-      minLength: 6,
-      maxLength: 10,
-      excludeChars: '',
-      samplingNum: 100,
-      passwords: [],
-      drawnPassword: '',
-      stockedPasswords: '',
-    };
-  },
-  mounted() {
-    new Clipboard('.clipboard');
-  },
-  updated() {
-    let resultAreaElem = this.$el.querySelector('#result-area'),
-      resultElem = this.$el.querySelector('#result'),
-      selectedElem = this.$el.querySelector('#result .is-selected');
-    resultAreaElem.scrollTop = 0;
-
-    if (selectedElem) {
-      let parentPos = resultElem.getBoundingClientRect(),
-        childPos = selectedElem.getBoundingClientRect(),
-        relativePos = {};
-
-      relativePos.top = childPos.top - parentPos.top,
-      relativePos.right = childPos.right - parentPos.right,
-      relativePos.bottom = childPos.bottom - parentPos.bottom,
-      relativePos.left = childPos.left - parentPos.left;
-
-      resultAreaElem.scrollTop = relativePos.top;
-    }
-  },
-  methods: {
-    getRandomInt(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    },
-
-    generate() {
-      this.drawnPassword = '';
-      let passwords = [];
-      let options = {};
-
-      this.forms.forEach(function (currentValue) {
-        options[currentValue] = false;
-      });
-      this.checked.forEach(function (currentValue) {
-        options[currentValue] = true;
-      });
-      options.exclude = this.excludeChars;
-
-      for (let i = 0; i < this.samplingNum; i++) {
-        options.length = this.getRandomInt(this.minLength, this.maxLength);
-        passwords.push({
-          id: i,
-          password: generator.generate(options),
-          isSelected: false
-        });
-      }
-      this.passwords = passwords;
-    },
-    draw() {
-      if (this.passwords.length > 0) {
-        for (let i = 0; i < this.passwords.length; i++) {
-          this.passwords[i].isSelected = false;
-        }
-        let index = this.getRandomInt(0, this.passwords.length - 1);
-        this.passwords[index].isSelected = true;
-        this.drawnPassword = this.passwords[index].password;
-      }
-    },
-    stock() {
-      if (this.drawnPassword.length > 0) {
-        let stockedPasswords = this.stockedPasswords.split('\n');
-        if (stockedPasswords.includes(this.drawnPassword)) {
-          alert('This word is already stocked.');
-          return;
-        }
-        this.stockedPasswords += this.drawnPassword + '\n';
-        let stocker = this.$el.querySelector('#password-stocker');
-        stocker.scrollTop = stocker.scrollHeight;
-      }
-    },
-    clearStock() {
-      this.stockedPasswords = '';
-    }
-  },
   components: {
-    BFormTextarea
+    BRow, BCol, BButton, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea
+  },
+  setup() {
+    const forms = ref([
+      { id: 'length', name: 'Length' },
+      { id: 'numbers', name: 'Include Numbers' },
+      { id: 'symbols', name: 'Include Symbols' },
+      { id: 'excludeSimilarCharacters', name: 'Exclude Similar Chars' },
+      { id: 'exclude', name: 'Exclude' },
+      { id: 'strict', name: 'Strict' }
+    ])
+
+    const checked = ref(['length', 'numbers', 'symbols', 'excludeSimilarCharacters', 'exclude', 'strict'])
+    const minLength = ref(6)
+    const maxLength = ref(10)
+    const excludeChars = ref('')
+    const samplingNum = ref(100)
+    const passwords = ref([])
+    const drawnPassword = ref('')
+    const stockedPasswords = ref('')
+
+    const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
+
+    const generate = () => {
+      drawnPassword.value = ''
+      const passwordList = []
+      const options = {}
+
+      forms.value.forEach(cv => { options[cv.id] = false })
+      checked.value.forEach(cv => { options[cv] = true })
+      options.exclude = excludeChars.value
+
+      for (let i = 0; i < samplingNum.value; i++) {
+        options.length = getRandomInt(minLength.value, maxLength.value)
+        passwordList.push({ id: i, password: generator.generate(options), isSelected: false })
+      }
+      passwords.value = passwordList
+    }
+
+    const draw = () => {
+      if (passwords.value.length > 0) {
+        passwords.value.forEach(p => { p.isSelected = false })
+        const index = getRandomInt(0, passwords.value.length - 1)
+        passwords.value[index].isSelected = true
+        drawnPassword.value = passwords.value[index].password
+      }
+    }
+
+    const stock = () => {
+      if (drawnPassword.value.length > 0) {
+        const arr = stockedPasswords.value.split('\n')
+        if (arr.includes(drawnPassword.value)) {
+          alert('This word is already stocked.')
+          return
+        }
+        stockedPasswords.value += drawnPassword.value + '\n'
+        const stocker = document.querySelector('#password-stocker')
+        if (stocker) stocker.scrollTop = stocker.scrollHeight
+      }
+    }
+
+    const clearStock = () => { stockedPasswords.value = '' }
+
+    onMounted(() => { new Clipboard('.clipboard') })
+
+    onUpdated(() => {
+      const area = document.querySelector('#result-area')
+      const result = document.querySelector('#result')
+      const selected = document.querySelector('#result .is-selected')
+
+      if (area) {
+        area.scrollTop = 0
+        if (selected && result) {
+          const pPos = result.getBoundingClientRect()
+          const cPos = selected.getBoundingClientRect()
+          area.scrollTop = cPos.top - pPos.top
+        }
+      }
+    })
+
+    return { forms, checked, minLength, maxLength, excludeChars, samplingNum, passwords, drawnPassword, stockedPasswords, generate, draw, stock, clearStock }
   }
 }
 </script>
 
 <style>
-#result-area {
-  border: 1px solid #eee;
-  height: 200px;
-  margin-bottom: 10px;
-  min-height: 100px;
-  overflow-y: scroll;
-}
-#result {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-#drawn-result,
-#result .password {
-  background: #eee;
-  color: #666;
-  display: inline-block;
-  font: 12px Monaco, monospace;
-  margin: 3px 2px 3px 2px;
-  padding: 3px 5px 3px 5px;
-}
-#result .is-selected {
-  background: #666;
-  color: #eee;
-}
-
-#drawn-result {
-  display: block;
-  font-size: 30px;
-  height: 1.5em;
-  min-height: 1.5em;
-  text-align: center;
-}
-#password-stocker {
-  font-family: Monaco, monospace;
-  font-size: 100%;
-  height: 100px;
-  min-height: 100px;
-}
+#result-area { border: 1px solid #eee; height: 200px; margin-bottom: 10px; min-height: 100px; overflow-y: scroll; }
+#result { list-style: none; margin: 0; padding: 0; }
+#drawn-result, #result .password { background: #eee; color: #666; display: inline-block; font: 12px Monaco, monospace; margin: 3px 2px; padding: 3px 5px; }
+#result .is-selected { background: #666; color: #eee; }
+#drawn-result { display: block; font-size: 30px; height: 1.5em; min-height: 1.5em; text-align: center; }
+#password-stocker { font-family: Monaco, monospace; font-size: 100%; height: 100px; min-height: 100px; }
 </style>

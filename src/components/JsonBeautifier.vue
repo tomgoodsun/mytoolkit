@@ -1,87 +1,87 @@
 <template>
-  <b-row>
-    <b-col col lg="6" md="12" sm="12">
-      <b-alert v-if="$data.errorMessage == ''" variant="success" show>
+  <BRow>
+    <BCol col lg="6" md="12" sm="12">
+      <BAlert v-if="errorMessage === ''" variant="success" :model-value="true">
         Input JSON string
-      </b-alert>
-      <b-alert v-else variant="danger" show>{{ errorMessage }}</b-alert>
-      <b-form-textarea
+      </BAlert>
+      <BAlert v-else variant="danger" :model-value="true">{{ errorMessage }}</BAlert>
+      <BFormTextarea
         id="json-from"
-        v-model="$data.jsonFrom"
+        v-model="jsonFrom"
         placeholder="Enter JSON string..."
-      ></b-form-textarea>
-    </b-col>
-    <b-col col lg="6" md="12" sm="12">
-      <b-alert v-if="jsonTo.length > 0" variant="info" show>JSON parsed</b-alert>
-      <b-alert v-else variant="dark" show>Waiting for JSON input...</b-alert>
-      <b-form-textarea
+      ></BFormTextarea>
+    </BCol>
+    <BCol col lg="6" md="12" sm="12">
+      <BAlert v-if="jsonTo.length > 0" variant="info" :model-value="true">JSON parsed</BAlert>
+      <BAlert v-else variant="dark" :model-value="true">Waiting for JSON input...</BAlert>
+      <BFormTextarea
         id="json-to"
-        v-model="$data.jsonTo"
+        v-model="jsonTo"
         readonly
-      ></b-form-textarea>
+      ></BFormTextarea>
       <div class="op-btn">
-        <b-button
+        <BButton
           variant="light"
           size="sm"
           class="clipboard"
           data-clipboard-target="#json-to"
           title="Copy to clipboard"
         >
-          <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
-        </b-button>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+          </svg> Copy
+        </BButton>
       </div>
-    </b-col>
-  </b-row>
+    </BCol>
+  </BRow>
 </template>
 
 <script>
-/* eslint-disable */
-import Vue from 'vue';
-import { BootstrapVue, AlertPlugin, BFormTextarea, LayoutPlugin } from 'bootstrap-vue';
-import Clipboard from 'clipboard';
-
-Vue.use(AlertPlugin);
+import { ref, watch, onMounted } from 'vue'
+import { BRow, BCol, BAlert, BFormTextarea, BButton } from 'bootstrap-vue-next'
+import Clipboard from 'clipboard'
 
 export default {
-  data() {
-    return {
-      'jsonFrom': '',
-      'jsonTo': '',
-      'errorMessage': ''
-    };
-  },
-  created() {
-    this.$watch(
-      () => this.$data.jsonFrom,
-      (jsonFrom) => {
-        let that = this;
-
-        // 切り替わったことをわかりやすくするため、時間差で処理する
-        setTimeout(() => {
-          let parsedJson = '';
-          let errorMessage = '';
-          try {
-            if (jsonFrom.length > 0) {
-              parsedJson = JSON.stringify(JSON.parse(jsonFrom), null, 2);
-            }
-          } catch (e) {
-            errorMessage = 'JSON Parse Error.';
-          }
-          console.log(errorMessage);
-          that.jsonTo = parsedJson;
-          that.errorMessage = errorMessage;
-        }, 500);
-
-        this.jsonTo = '';
-      }
-    );
-  },
-  mounted() {
-    new Clipboard('.clipboard');
-  },
   components: {
-    AlertPlugin,
-    BFormTextarea
+    BRow,
+    BCol,
+    BAlert,
+    BFormTextarea,
+    BButton
+  },
+  setup() {
+    const jsonFrom = ref('')
+    const jsonTo = ref('')
+    const errorMessage = ref('')
+
+    watch(jsonFrom, (newValue) => {
+      setTimeout(() => {
+        let parsedJson = ''
+        let error = ''
+        try {
+          if (newValue.length > 0) {
+            parsedJson = JSON.stringify(JSON.parse(newValue), null, 2)
+          }
+        } catch (e) {
+          error = 'JSON Parse Error.'
+        }
+        jsonTo.value = parsedJson
+        errorMessage.value = error
+      }, 500)
+
+      jsonTo.value = ''
+    })
+
+    onMounted(() => {
+      new Clipboard('.clipboard')
+    })
+
+    return {
+      jsonFrom,
+      jsonTo,
+      errorMessage
+    }
   }
 }
 </script>
