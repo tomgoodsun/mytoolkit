@@ -1,6 +1,6 @@
 <template>
   <BRow>
-    <BCol col lg="6" md="12" sm="12">
+    <BCol col lg="6" md="12" sm="12" class="input-area">
       <BFormGroup id="input-group-min" label="Min Length:" label-for="min-exclude">
         <BFormInput
           id="min-exclude"
@@ -48,7 +48,7 @@
       <BButton variant="outline-primary" name="generate" @click="generate()">Generate</BButton>
 
     </BCol>
-    <BCol col lg="6" md="12" sm="12">
+    <BCol col lg="6" md="12" sm="12" class="result-area">
       <h3>Password Results</h3>
       <h4>
         Drawn
@@ -261,4 +261,6 @@ export default {
 #result .is-selected { background: #666; color: #eee; }
 #drawn-result { display: block; font-size: 30px; height: 1.5em; min-height: 1.5em; text-align: center; }
 #password-stocker { font-family: Monaco, monospace; font-size: 100%; height: 100px; min-height: 100px; }
+.input-area button[name="generate"] { margin-top: 1rem; }
+.result-area button { margin-left: 5px !important; }
 </style>

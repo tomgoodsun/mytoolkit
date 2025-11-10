@@ -1,7 +1,7 @@
 <template>
   <BForm @reset="onReset" v-if="show">
     <BRow>
-      <BCol col lg="6" md="12" sm="12">
+      <BCol col lg="6" md="12" sm="12" class="input-area">
         <BFormGroup id="input-group-database" label="Database:" label-for="database">
           <BFormInput
             id="database"
@@ -82,7 +82,10 @@
           <BFormTextarea readonly v-model="resultSql" id="result-sql" size="sm" rows="10"></BFormTextarea>
           <template #footer="{ hide }">
             <BButton variant="light" size="md" class="clipboard" data-clipboard-target="#result-sql" alt="Copy to clipboard">
-              📋 Copy
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+              </svg> Copy
             </BButton>
             <BButton size="md" variant="primary" @click="hide()">
               ✕ Close
@@ -92,7 +95,7 @@
 
       </BCol>
 
-      <BCol col lg="6" md="12" sm="12">
+      <BCol col lg="6" md="12" sm="12" class="result-area">
 
         <BFormGroup label="Privileges: " id="privileges">
           <div class="buttons">
@@ -229,17 +232,17 @@ export default {
 </script>
 
 <style>
-#json-from, #json-to {
-  font-family: Monaco, monospace;
-  font-size: 100%;
-  height: 500px;
-  min-height: 300px;
-}
 #result-sql {
   color: var(--normal-text-color) !important;
   font-family: Monaco, monospace;
 }
 #privileges .buttons button {
   margin-bottom: 5px;
+}
+.input-area button {
+  margin-top: 1rem;
+}
+.result-area .buttons button {
+  margin-right: 5px;
 }
 </style>
