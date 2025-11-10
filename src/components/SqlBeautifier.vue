@@ -11,7 +11,7 @@
         placeholder="Enter SQL string..."
       ></BFormTextarea>
     </BCol>
-    <BCol col lg="12" md="12" sm="12">
+    <BCol col lg="6" md="12" sm="12">
       <BAlert v-if="sqlTo.length > 0" variant="info" :model-value="true">SQL parsed</BAlert>
       <BAlert v-else variant="dark" :model-value="true">Waiting for SQL input...</BAlert>
       <BFormTextarea
