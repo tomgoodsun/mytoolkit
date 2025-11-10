@@ -139,12 +139,12 @@ export default {
       { id: 'length', name: 'Length' },
       { id: 'numbers', name: 'Include Numbers' },
       { id: 'symbols', name: 'Include Symbols' },
-      { id: 'excludeSimilarCharacters', name: 'Exclude Similar Chars' },
+      { id: 'noDuplicateCharacters', name: 'No Duplicate Characters' },
       { id: 'exclude', name: 'Exclude' },
       { id: 'strict', name: 'Strict' }
     ])
 
-    const checked = ref(['length', 'numbers', 'symbols', 'excludeSimilarCharacters', 'exclude', 'strict'])
+    const checked = ref(['length', 'numbers', 'symbols', 'noDuplicateCharacters', 'exclude', 'strict'])
     const minLength = ref(6)
     const maxLength = ref(10)
     const excludeChars = ref('')
@@ -170,12 +170,9 @@ export default {
       if (checked.value.includes('symbols')) {
         options.characters.push({ characters: '!@#$%^&*()_+-=[]{}|;:,.<>?' })
       }
-      
+
       // Always include letters unless explicitly excluded
       let letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-      if (checked.value.includes('excludeSimilarCharacters')) {
-        letters = letters.replace(/[ilLI|`oO0]/g, '')
-      }
       if (checked.value.includes('exclude') && excludeChars.value) {
         const excludeList = excludeChars.value.split('')
         excludeList.forEach(char => {
@@ -184,14 +181,29 @@ export default {
       }
       options.characters.push({ characters: letters })
 
+      const noDuplicates = checked.value.includes('noDuplicateCharacters')
+
       for (let i = 0; i < samplingNum.value; i++) {
         options.length = getRandomInt(minLength.value, maxLength.value)
+        let password = ''
         try {
-          passwordList.push({ id: i, password: randomPassword(options), isSelected: false })
+          if (noDuplicates) {
+            // Generate password without duplicate characters
+            const allChars = options.characters.map(c => c.characters).join('')
+            const uniqueChars = [...new Set(allChars.split(''))]
+            const maxPossibleLength = Math.min(options.length, uniqueChars.length)
+
+            // Shuffle and pick characters
+            const shuffled = uniqueChars.sort(() => 0.5 - Math.random())
+            password = shuffled.slice(0, maxPossibleLength).join('')
+          } else {
+            password = randomPassword(options)
+          }
         } catch (e) {
           // If character set is empty, use default
-          passwordList.push({ id: i, password: randomPassword({ length: options.length }), isSelected: false })
+          password = randomPassword({ length: options.length })
         }
+        passwordList.push({ id: i, password: password, isSelected: false })
       }
       passwords.value = passwordList
     }
