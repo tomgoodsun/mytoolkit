@@ -1,17 +1,17 @@
 <template>
-  <b-form>
-    <b-row>
-      <b-col col lg="12" md="12" sm="12" id="file">
-        <b-form-file
+  <BForm>
+    <BRow>
+      <BCol col lg="12" md="12" sm="12" id="file">
+        <BFormFile
           accept="image/*"
           plain
           multiple
-          v-on:change="readFromFile"
-        ></b-form-file>
+          @change="readFromFile"
+        ></BFormFile>
         <div class="mt-3 images">
           <div class="result">
 
-            <div v-for="(value) in result" v-bind:key="value.name" class="img-line">
+            <div v-for="(value) in result" :key="value.name" class="img-line">
               <div class="img-name">{{ value.file.name }}</div>
               <div class="img">
                 <img
@@ -23,42 +23,43 @@
               <div class="data-uri-scheme">
                 <textarea
                   :id="value.id"
-                  v-bind:value="value.event.srcElement.result"
+                  :value="value.event.srcElement.result"
                 >
                 </textarea>
               </div>
               <div class="op-btn">
-                <b-button
+                <BButton
                   variant="light"
                   size="sm"
                   class="clipboard"
                   :data-clipboard-target="value.target"
                   title="Copy to clipboard"
                 >
-                  <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
-                </b-button>
+                  📋 Copy
+                </BButton>
               </div>
             </div>
 
           </div>
         </div>
-      </b-col>
-    </b-row>
-  </b-form>
+      </BCol>
+    </BRow>
+  </BForm>
 </template>
 
 <script>
 /* eslint-disable */
-import Vue from 'vue';
 import {
+  BForm,
   BFormTextarea,
-  BootstrapVue,
-  FormFilePlugin,
-  FormGroupPlugin,
-  FormInputPlugin,
-  FormPlugin,
-  LayoutPlugin,
-} from 'bootstrap-vue';
+  BFormFile,
+  BFormGroup,
+  BFormInput,
+  BButton,
+  BRow,
+  BCol
+} from 'bootstrap-vue-next'
+import { ref, onMounted } from 'vue'
 import {
   BrowserQRCodeReader,
   BrowserMultiFormatReader,
@@ -66,48 +67,34 @@ import {
   NotFoundException,
   ChecksumException,
   FormatException,
-} from '@zxing/library';
-import Clipboard from 'clipboard';
+} from '@zxing/library'
+import Clipboard from 'clipboard'
 
-Vue.use(FormFilePlugin);
-Vue.use(FormGroupPlugin);
-Vue.use(FormInputPlugin);
-Vue.use(FormPlugin);
-
-let resultAreas = [];
-let fileCount = 0;
-let frResults = [];
-let frResultCount = 0;
+let resultAreas = []
+let fileCount = 0
+let frResults = []
+let frResultCount = 0
 
 export default {
-  data() {
-    return {
-      result: []
-    }
+  components: {
+    BForm,
+    BFormTextarea,
+    BFormFile,
+    BFormGroup,
+    BFormInput,
+    BButton,
+    BRow,
+    BCol
   },
-  mounted() {
-    resultAreas = document.querySelectorAll('.result');
-  },
-  methods: {
-    readFromFile(evt) {
-      resultAreas.forEach(element => {
-        element.innerHTML = '';
-      });
-      let files = evt.target.files;
+  setup() {
+    const result = ref([])
 
-      fileCount = files.length;
-      frResults = [];
-      this.result = [];
-      frResultCount = 0;
+    onMounted(() => {
+      resultAreas = document.querySelectorAll('.result')
+    })
 
-      for (let i = 0; i < fileCount; i++) {
-        this.loadImage(i, files[i]);
-      };
-      this.checkImageLoading();
-    },
-
-    loadImage(index, file) {
-      let fr = new FileReader();
+    const loadImage = (index, file) => {
+      let fr = new FileReader()
       fr.onload = function (evt) {
         frResults[index] = {
           index: index,
@@ -115,25 +102,40 @@ export default {
           target: '#data-uri-scheme-result-' + index,
           file: file,
           event: evt
-        };
-        frResultCount++;
-      };
-      fr.readAsDataURL(file);
-    },
-
-    checkImageLoading() {
-      console.log(frResults);
-      if (fileCount == frResultCount) {
-        this.result = frResults;
-        new Clipboard('.clipboard');
-        return;
+        }
+        frResultCount++
       }
-      setTimeout(this.checkImageLoading, 500);
+      fr.readAsDataURL(file)
     }
 
-  },
-  components: {
-    BFormTextarea
+    const checkImageLoading = () => {
+      console.log(frResults)
+      if (fileCount == frResultCount) {
+        result.value = frResults
+        new Clipboard('.clipboard')
+        return
+      }
+      setTimeout(checkImageLoading, 500)
+    }
+
+    const readFromFile = (evt) => {
+      let files = evt.target.files
+
+      fileCount = files.length
+      frResults = []
+      result.value = []
+      frResultCount = 0
+
+      for (let i = 0; i < fileCount; i++) {
+        loadImage(i, files[i])
+      }
+      checkImageLoading()
+    }
+
+    return {
+      result,
+      readFromFile
+    }
   }
 }
 </script>

@@ -1,200 +1,213 @@
 <template>
-  <b-form>
-    <b-row>
-      <b-col col lg="6" md="12" sm="12" id="file">
-        <b-form-file
+  <BForm>
+    <BRow>
+      <BCol col lg="6" md="12" sm="12" id="file">
+        <BFormFile
           v-model="file"
           accept="image/*"
           plain
           capture
-          v-on:change="readFromFile"
-        ></b-form-file>
+          @change="readFromFile"
+        ></BFormFile>
         <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
         <div class="mt-3 image">
           <img src="">
         </div>
-        <div class="mt-3 qr-code-reader" v-bind:class="{'camera-available': cameraAvailable}">
+        <div class="mt-3 qr-code-reader" :class="{'camera-available': cameraAvailable}">
           <qrcode-stream class="qr-reader" @decode="onDecode" @init="onInit" />
         </div>
-      </b-col>
+      </BCol>
 
-      <b-col col lg="6" md="12" sm="12">
-        <b-alert v-if="$data.status=='error'" variant="danger" show>{{ errorMessage }}</b-alert>
-        <b-alert v-else-if="$data.status== 'success'" variant="info" show>QR code has been read.</b-alert>
-        <b-alert v-else variant="dark" show>Waiting for QR code...</b-alert>
+      <BCol col lg="6" md="12" sm="12">
+        <BAlert v-if="status=='error'" variant="danger" :model-value="true">{{ errorMessage }}</BAlert>
+        <BAlert v-else-if="status=='success'" variant="info" :model-value="true">QR code has been read.</BAlert>
+        <BAlert v-else variant="dark" :model-value="true">Waiting for QR code...</BAlert>
 
-        <b-form-textarea
+        <BFormTextarea
           id="result"
-          v-model="$data.result"
+          v-model="result"
           readonly
-        ></b-form-textarea>
+        ></BFormTextarea>
         <div class="op-btn">
-          <b-button
+          <BButton
             variant="light"
             size="sm"
             class="clipboard"
             data-clipboard-target="#result"
             title="Copy to clipboard"
           >
-            <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
-          </b-button>
+            📋 Copy
+          </BButton>
         </div>
-      </b-col>
-    </b-row>
-  </b-form>
+      </BCol>
+    </BRow>
+  </BForm>
 </template>
 
 <script>
 /* eslint-disable */
-import Vue from 'vue';
 import {
-  AlertPlugin,
+  BAlert,
+  BForm,
   BFormTextarea,
-  BootstrapVue,
-  ButtonPlugin,
-  FormFilePlugin,
-  FormGroupPlugin,
-  FormInputPlugin,
-  FormPlugin,
-  LayoutPlugin,
-} from 'bootstrap-vue';
+  BFormFile,
+  BFormGroup,
+  BFormInput,
+  BButton,
+  BRow,
+  BCol
+} from 'bootstrap-vue-next'
+import { ref, onMounted } from 'vue'
 import {
   BrowserQRCodeReader,
   BrowserMultiFormatReader,
   NotFoundException,
   ChecksumException,
   FormatException,
-} from '@zxing/library';
-import VueQrcodeReader from "vue-qrcode-reader";
-import Clipboard from 'clipboard';
+} from '@zxing/library'
+import { QrcodeStream } from 'vue-qrcode-reader'
+import Clipboard from 'clipboard'
 
-Vue.use(ButtonPlugin);
-Vue.use(FormFilePlugin);
-Vue.use(FormGroupPlugin);
-Vue.use(FormInputPlugin);
-Vue.use(FormPlugin);
-Vue.use(AlertPlugin);
-Vue.use(VueQrcodeReader);
-
-const codeReader = new BrowserMultiFormatReader();
-let selectedDeviceId;
-let imgElem;
+const codeReader = new BrowserMultiFormatReader()
+let selectedDeviceId
+let imgElem
 
 export default {
-  data() {
-    return {
-      alertMsg: '',
-      cameraAvailable: false,
-      result: '',
-      status: 'info',
-      errorMessage: ''
+  components: {
+    BAlert,
+    BForm,
+    BFormTextarea,
+    BFormFile,
+    BFormGroup,
+    BFormInput,
+    BButton,
+    BRow,
+    BCol,
+    QrcodeStream
+  },
+  setup() {
+    const file = ref(null)
+    const alertMsg = ref('')
+    const cameraAvailable = ref(false)
+    const result = ref('')
+    const status = ref('info')
+    const errorMessage = ref('')
+
+    onMounted(() => {
+      imgElem = document.querySelector('#file .image img:first-child')
+      new Clipboard('.clipboard')
+    })
+
+    const onDecode = (decodedResult) => {
+      status.value = 'success'
+      result.value = decodedResult
+      imgElem.src = ''
+      imgElem.alt = ''
     }
-  },
-  mounted() {
-    imgElem = document.querySelector('#file .image img:first-child');
-    new Clipboard('.clipboard');
-  },
-  methods: {
-    // @see https://gruhn.github.io/vue-qrcode-reader/demos/DecodeAll.html
-    onDecode (result) {
-      this.status = 'success';
-      this.result = result;
-      imgElem.src = '';
-      imgElem.alt = '';
-    },
-    async onInit (promise) {
+
+    const onInit = async (promise) => {
       try {
-        this.status = 'info';
-        await promise;
-        this.cameraAvailable = true;
+        status.value = 'info'
+        await promise
+        cameraAvailable.value = true
       } catch (error) {
-        this.cameraAvailable = false;
+        cameraAvailable.value = false
         if (error.name === 'NotAllowedError') {
-          this.status = 'info';
-          this.errorMessage = "INFO: you need to grant camera access permisson";
+          status.value = 'info'
+          errorMessage.value = "INFO: you need to grant camera access permisson"
         } else if (error.name === 'NotFoundError') {
-          this.status = 'info';
-          this.errorMessage = "INFO: no camera on this device";
+          status.value = 'info'
+          errorMessage.value = "INFO: no camera on this device"
         } else if (error.name === 'NotSupportedError') {
-          this.status = 'error';
-          this.errorMessage = "ERROR: secure context required (HTTPS, localhost)";
+          status.value = 'error'
+          errorMessage.value = "ERROR: secure context required (HTTPS, localhost)"
         } else if (error.name === 'NotReadableError') {
-          this.status = 'error';
-          this.errorMessage = "ERROR: is the camera already in use?";
+          status.value = 'error'
+          errorMessage.value = "ERROR: is the camera already in use?"
         } else if (error.name === 'OverconstrainedError') {
-          this.status = 'error';
-          this.errorMessage = "ERROR: installed cameras are not suitable";
+          status.value = 'error'
+          errorMessage.value = "ERROR: installed cameras are not suitable"
         } else if (error.name === 'StreamApiNotSupportedError') {
-          this.status = 'error';
-          this.errorMessage = "ERROR: Stream API is not supported in this browser";
+          status.value = 'error'
+          errorMessage.value = "ERROR: Stream API is not supported in this browser"
         }
-        console.error(this.errorMessage);
+        console.error(errorMessage.value)
       }
-    },
+    }
 
-    readFromFile(evt) {
-      this.status = 'info';
-      let that = this;
-      imgElem.src = '';
-      imgElem.alt = '';
+    const readFromFile = (evt) => {
+      status.value = 'info'
+      imgElem.src = ''
+      imgElem.alt = ''
 
-      let file = evt.target.files[0];
-      let fr = new FileReader();
+      let fileObj = evt.target.files[0]
+      let fr = new FileReader()
       fr.onload = function () {
-        imgElem.src = fr.result;
-        imgElem.alt = file.name;
-        codeReader.decodeFromImage(imgElem).then((result) => {
-          that.status = 'success';
-          that.result = result.text;
-          //resultForm.select();
-          //console.log(resultForm);
+        imgElem.src = fr.result
+        imgElem.alt = fileObj.name
+        codeReader.decodeFromImage(imgElem).then((resultObj) => {
+          status.value = 'success'
+          result.value = resultObj.text
         }).catch((err) => {
-          that.status = 'error';
-          that.errorMessage = err;
+          status.value = 'error'
+          errorMessage.value = err
           console.error(err)
-        });
-      };
-      fr.readAsDataURL(file);
-    },
-    decodeOnce(codeReader, selectedDeviceId) {
-      codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((result) => {
-        console.log(result)
-        this.result = result.text;
+        })
+      }
+      fr.readAsDataURL(fileObj)
+    }
+
+    const decodeOnce = (codeReader, selectedDeviceId) => {
+      codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((resultObj) => {
+        console.log(resultObj)
+        result.value = resultObj.text
       }).catch((err) => {
         console.error(err)
-        this.result = err;
-        this.status = 'error';
-        this.errorMessage = err;
+        result.value = err
+        status.value = 'error'
+        errorMessage.value = err
       })
-    },
-    decodeContinuously(codeReader, selectedDeviceId) {
-      codeReader.decodeFromInputVideoDeviceContinuously(selectedDeviceId, 'video', (result, err) => {
-        console.log(result);
-        if (result) {
-          this.status = 'success';
-          this.errorMessage = 'Found QR code!';
-          console.log('Found QR code!', result)
-          this.result = result.text;
+    }
+
+    const decodeContinuously = (codeReader, selectedDeviceId) => {
+      codeReader.decodeFromInputVideoDeviceContinuously(selectedDeviceId, 'video', (resultObj, err) => {
+        console.log(resultObj)
+        if (resultObj) {
+          status.value = 'success'
+          errorMessage.value = 'Found QR code!'
+          console.log('Found QR code!', resultObj)
+          result.value = resultObj.text
         }
         if (err) {
           if (err instanceof NotFoundException) {
-            this.status = 'error';
-            this.errorMessage = 'No QR code found.';
+            status.value = 'error'
+            errorMessage.value = 'No QR code found.'
           }
           if (err instanceof ChecksumException) {
-            this.status = 'error';
-            this.errorMessage = 'A code was found, but it\'s read value was not valid.';
+            status.value = 'error'
+            errorMessage.value = 'A code was found, but it\'s read value was not valid.'
           }
           if (err instanceof FormatException) {
-            this.status = 'error';
-            this.errorMessage = 'A code was found, but it was in a invalid format.';
+            status.value = 'error'
+            errorMessage.value = 'A code was found, but it was in a invalid format.'
           }
         }
       })
     }
-  },
-  components: {
-    BFormTextarea
+
+    return {
+      file,
+      alertMsg,
+      cameraAvailable,
+      result,
+      status,
+      errorMessage,
+      onDecode,
+      onInit,
+      readFromFile,
+      decodeOnce,
+      decodeContinuously
+    }
   }
 }
 </script>

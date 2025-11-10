@@ -128,7 +128,7 @@
 import { ref, onMounted, onUpdated } from 'vue'
 import { BRow, BCol, BButton, BFormCheckbox, BFormGroup, BFormInput, BFormTextarea } from 'bootstrap-vue-next'
 import Clipboard from 'clipboard'
-import generator from 'generate-password'
+import { randomPassword } from 'secure-random-password'
 
 export default {
   components: {
@@ -158,15 +158,40 @@ export default {
     const generate = () => {
       drawnPassword.value = ''
       const passwordList = []
-      const options = {}
+      const options = {
+        length: 10,
+        characters: []
+      }
 
-      forms.value.forEach(cv => { options[cv.id] = false })
-      checked.value.forEach(cv => { options[cv] = true })
-      options.exclude = excludeChars.value
+      // Build character set based on checked options
+      if (checked.value.includes('numbers')) {
+        options.characters.push({ characters: '0123456789' })
+      }
+      if (checked.value.includes('symbols')) {
+        options.characters.push({ characters: '!@#$%^&*()_+-=[]{}|;:,.<>?' })
+      }
+      
+      // Always include letters unless explicitly excluded
+      let letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+      if (checked.value.includes('excludeSimilarCharacters')) {
+        letters = letters.replace(/[ilLI|`oO0]/g, '')
+      }
+      if (checked.value.includes('exclude') && excludeChars.value) {
+        const excludeList = excludeChars.value.split('')
+        excludeList.forEach(char => {
+          letters = letters.replace(new RegExp(char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '')
+        })
+      }
+      options.characters.push({ characters: letters })
 
       for (let i = 0; i < samplingNum.value; i++) {
         options.length = getRandomInt(minLength.value, maxLength.value)
-        passwordList.push({ id: i, password: generator.generate(options), isSelected: false })
+        try {
+          passwordList.push({ id: i, password: randomPassword(options), isSelected: false })
+        } catch (e) {
+          // If character set is empty, use default
+          passwordList.push({ id: i, password: randomPassword({ length: options.length }), isSelected: false })
+        }
       }
       passwords.value = passwordList
     }

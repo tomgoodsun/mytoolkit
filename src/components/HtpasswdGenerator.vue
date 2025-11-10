@@ -54,7 +54,7 @@
 import { ref, onMounted } from 'vue'
 import { BRow, BCol, BAlert, BFormTextarea, BButton } from 'bootstrap-vue-next'
 import Clipboard from 'clipboard'
-import generator from 'generate-password'
+import { randomPassword } from 'secure-random-password'
 
 export default {
   components: {
@@ -84,7 +84,7 @@ export default {
           return false
         }
         if (parts.length <= 1 || parts[1].length === 0) {
-          parts[1] = generator.generate()
+          parts[1] = randomPassword({ length: 12 })
         }
         data.append(`data[${index}][user]`, parts[0])
         data.append(`data[${index}][password]`, parts[1])

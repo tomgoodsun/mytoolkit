@@ -1,34 +1,31 @@
 <template>
   <div id="app">
-    <BSidebar
+    <BOffcanvas
       id="sidebar-no-header"
       v-model="sidebarVisible"
-      aria-labelledby="sidebar-no-header-title"
+      title="tom-gs.com toolkit"
       shadow
       backdrop
-      title="tom-gs.com toolkit"
     >
-      <template #default>
-        <div class="p-3">
-          <nav class="mb-3">
-            <BNav vertical>
-              <BNavItem @click="navEvent" exact-active-class="active" to="/">HOME</BNavItem>
-              <BNavItem @click="navEvent" exact-active-class="active" to="/ml-beautifier">Markup Language Beautifier</BNavItem>
-              <BNavItem @click="navEvent" exact-active-class="active" to="/css-beautifier">CSS Beautifier</BNavItem>
-              <BNavItem @click="navEvent" exact-active-class="active" to="/js-beautifier">JavaScript Beautifier</BNavItem>
-              <BNavItem @click="navEvent" exact-active-class="active" to="/json-beautifier">JSON Beautifier</BNavItem>
-              <BNavItem @click="navEvent" exact-active-class="active" to="/sql-beautifier">SQL Beautifier</BNavItem>
-              <BNavItem @click="navEvent" exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</BNavItem>
-              <BNavItem @click="navEvent" exact-active-class="active" to="/qrcode-reader">QR Code Reader</BNavItem>
-              <BNavItem @click="navEvent" exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</BNavItem>
-              <BNavItem @click="navEvent" exact-active-class="active" to="/password-generator">Password Generator</BNavItem>
-              <BNavItem @click="navEvent" exact-active-class="active" to="/htpasswd-generator">Htpasswd Generator</BNavItem>
-              <BNavItem @click="navEvent" exact-active-class="active" to="/world-clock">World Clock</BNavItem>
-            </BNav>
-          </nav>
-        </div>
-      </template>
-    </BSidebar>
+      <div class="p-3">
+        <nav class="mb-3">
+          <BNav vertical>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/">HOME</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/ml-beautifier">Markup Language Beautifier</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/css-beautifier">CSS Beautifier</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/js-beautifier">JavaScript Beautifier</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/json-beautifier">JSON Beautifier</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/sql-beautifier">SQL Beautifier</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/qrcode-reader">QR Code Reader</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/password-generator">Password Generator</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/htpasswd-generator">Htpasswd Generator</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/world-clock">World Clock</BNavItem>
+          </BNav>
+        </nav>
+      </div>
+    </BOffcanvas>
     <header id="header" class="site-title">
       <a @click="sidebarVisible = !sidebarVisible" class="toggle-sidebar">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
@@ -43,24 +40,21 @@
       </div>
     </BContainer>
     <footer>
-      <cookie-law theme="dark-lime"></cookie-law>
     </footer>
   </div>
 </template>
 
 <script>
-import { BSidebar, BNav, BNavItem, BContainer } from 'bootstrap-vue-next'
-import CookieLaw from 'vue-cookie-law'
+import { BOffcanvas, BNav, BNavItem, BContainer } from 'bootstrap-vue-next'
 import { ref, onMounted } from 'vue'
 
 export default {
   name: 'App',
   components: {
-    BSidebar,
+    BOffcanvas,
     BNav,
     BNavItem,
-    BContainer,
-    CookieLaw
+    BContainer
   },
   setup() {
     const contentName = ref('')
@@ -122,7 +116,7 @@ body {
 }
 
 #header,
-.b-sidebar > .b-sidebar-header {
+.offcanvas-header {
   background-color: #3399cc;
   color: #ffffff;
   font-display: swap;

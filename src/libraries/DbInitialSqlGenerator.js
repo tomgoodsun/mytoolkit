@@ -1,7 +1,6 @@
 /* eslint-disable */
-import DbInitialSqlDefine from './DbInitialSqlDefine.js';
-
-var sprintf = require('sprintf-js').sprintf;
+import DbInitialSqlDefine from './DbInitialSqlDefine.js'
+import { sprintf } from 'sprintf-js'
 
 /**
  * Database Initial SQL statement generating class
