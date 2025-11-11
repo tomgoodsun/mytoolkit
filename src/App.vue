@@ -64,6 +64,8 @@ export default {
       const activeElement = document.querySelector('#sidebar-no-header a.active')
       if (activeElement) {
         contentName.value = activeElement.innerHTML
+      } else {
+        contentName.value = 'HOME'
       }
     })
 
@@ -82,7 +84,17 @@ export default {
 </script>
 
 <style>
+@import url(//db.onlinewebfonts.com/c/034590c9705a820856d89653415479ff?family=Neutraface+2+Text+Bold);
 @import url(//db.onlinewebfonts.com/c/f6e67539e25adbf860808313c8e75ce5?family=Digital-7);
+@font-face {
+  font-family: "Neutraface 2 Text Bold";
+  src: url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.eot");
+  src: url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.eot?#iefix") format("embedded-opentype"),
+    url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.woff2") format("woff2"),
+    url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.woff") format("woff"),
+    url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.ttf") format("truetype"),
+    url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.svg#Neutraface 2 Text Bold") format("svg");
+}
 @font-face {
   font-family: "Digital-7";
   src: url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.eot");
@@ -120,6 +132,7 @@ body {
   background-color: #3399cc;
   color: #ffffff;
   font-display: swap;
+  font-family: 'Neutraface 2 Text Bold';
   font-size: 1.5rem !important;
   padding: 0.5rem 1rem 0.5rem 1rem !important;
 }
@@ -145,18 +158,18 @@ body {
   margin: 0 0 0 0;
 }
 
-#app .nav .nav-item:hover {
+#sidebar-no-header .nav .nav-item:hover {
   background-color: #ffcc99 !important;
 }
-#app .nav .nav-item .active {
+#sidebar-no-header .nav .nav-item .active {
   background-color: var(--normal-text-color);
 }
-#app .nav .nav-item:hover a,
-#app .nav .nav-item a {
+#sidebar-no-header .nav .nav-item:hover a,
+#sidebar-no-header .nav .nav-item a {
   color: var(--normal-text-color) !important;
 }
-#app .nav .nav-item .active,
-#app .nav .nav-item:hover .active {
+#sidebar-no-header .nav .nav-item .active,
+#sidebar-no-header .nav .nav-item:hover .active {
   color: #cfcfcf !important;
 }
 
