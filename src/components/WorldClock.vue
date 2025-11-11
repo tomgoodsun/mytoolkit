@@ -25,11 +25,11 @@
 
       <div id="timezone-list">
         <WorldClockTimeZone
-          v-for="timezone in timezones"
+          v-for="timezone in filteredTimezones"
           :key="timezone.utc"
-          class="timezone"
-          @click="toggleTimeZone"
           :timezone="timezone"
+          :is-selected="selectedTimeZoneIds.includes(timezone.utc)"
+          @toggle="toggleTimeZone(timezone.utc)"
         />
       </div>
     </BCol>
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { BRow, BCol, BButton, BAlert } from 'bootstrap-vue-next'
 import Cookies from 'js-cookie'
 import WorldClockTimeZones from '../libraries/WorldClockTimeZones.js'
@@ -53,61 +53,38 @@ export default {
   },
   setup() {
     const timezones = ref(WorldClockTimeZones.LIST)
-    const hours = ref(WorldClockTimeZones.HOUR_LIST)
-    const settings = reactive({
-      showingAll: true,
-      selectedTimeZoneIds: []
+    const showingAll = ref(true)
+    const selectedTimeZoneIds = ref([])
+
+    const settings = computed(() => ({
+      showingAll: showingAll.value,
+      selectedTimeZoneIds: selectedTimeZoneIds.value
+    }))
+
+    const filteredTimezones = computed(() => {
+      if (showingAll.value) {
+        return timezones.value
+      }
+      return timezones.value.filter(tz => selectedTimeZoneIds.value.includes(tz.utc))
     })
 
     const toggleFilter = () => {
-      settings.showingAll = !settings.showingAll
-      toggleDisplayOfTimeZones()
+      showingAll.value = !showingAll.value
       saveSettings()
     }
 
-    const toggleTimeZone = (evt) => {
-      let element = evt.target
-      while (!element.classList.contains('timezone')) {
-        if (element.tagName === 'BODY') {
-          break
-        }
-        element = element.parentNode
+    const toggleTimeZone = (utc) => {
+      const index = selectedTimeZoneIds.value.indexOf(utc)
+      if (index > -1) {
+        selectedTimeZoneIds.value.splice(index, 1)
+      } else {
+        selectedTimeZoneIds.value.push(utc)
       }
-      element.classList.toggle('selected')
       saveSettings()
-    }
-
-    const initTimeZoneSelections = () => {
-      settings.selectedTimeZoneIds.forEach((id) => {
-        const element = document.getElementById(id)
-        if (element && !element.classList.contains('selected')) {
-          element.classList.add('selected')
-        }
-      })
-      toggleDisplayOfTimeZones()
-    }
-
-    const toggleDisplayOfTimeZones = () => {
-      document
-        .querySelectorAll('#timezone-list .timezone')
-        .forEach((element) => {
-          if (settings.showingAll) {
-            element.style.display = 'block'
-          } else {
-            element.style.display = element.classList.contains('selected') ? 'block' : 'none'
-          }
-        })
     }
 
     const saveSettings = () => {
-      settings.selectedTimeZoneIds = []
-      document
-        .querySelectorAll('#timezone-list .selected')
-        .forEach((element) => {
-          settings.selectedTimeZoneIds.push(element.id)
-        })
-
-      const jsonStr = JSON.stringify(settings)
+      const jsonStr = JSON.stringify(settings.value)
       Cookies.set(
         'world-clock-settings',
         jsonStr,
@@ -122,23 +99,28 @@ export default {
     const restoreSettings = () => {
       const jsonStr = Cookies.get('world-clock-settings')
       if (jsonStr !== undefined) {
-        const restoredSettings = JSON.parse(jsonStr)
-        settings.showingAll = restoredSettings.showingAll
-        settings.selectedTimeZoneIds = restoredSettings.selectedTimeZoneIds
+        try {
+          const restoredSettings = JSON.parse(jsonStr)
+          showingAll.value = restoredSettings.showingAll
+          selectedTimeZoneIds.value = restoredSettings.selectedTimeZoneIds || []
+          console.log(`Setting restored. ${jsonStr}`)
+        } catch (e) {
+          console.error('Failed to restore settings', e)
+        }
       }
-      console.log(`Setting restored. ${jsonStr}`)
     }
 
+    // Auto-save every minute
     onMounted(() => {
       restoreSettings()
-      initTimeZoneSelections()
       setInterval(saveSettings, 60000)
     })
 
     return {
       timezones,
-      hours,
+      filteredTimezones,
       settings,
+      selectedTimeZoneIds,
       toggleFilter,
       toggleTimeZone
     }
@@ -152,58 +134,5 @@ export default {
     top: 0.5rem;
     right: 10px;
     z-index: 100;
-  }
-  #timezone-list .selected {
-    border: 3px solid rgb(255, 153, 0);
-  }
-  .timezone {
-    border: 3px solid #fff;
-    color: #fff;
-    margin: 0 0 0.5rem 0;
-    padding: 0.5rem 1rem;
-  }
-  .timezone :deep(.utc) {
-    float: left;
-    font-size: 180%;
-    font-weight: bold;
-    width: 130px;
-  }
-  .timezone :deep(.clock) {
-    font: 200% "Digital-7";
-    margin-top: 4px;
-  }
-  .timezone :deep(.regions) {
-    border: 1px solid #ccc;
-    height: 40px;
-    padding: 3px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    width: 100%;
-    word-break: keep-all;
-  }
-  .timezone :deep(.regions .region-list .region) {
-    background-color: #999;
-    margin-right: 0.5rem;
-  }
-
-  @media screen and (max-width: 480px) {
-    .timezone {
-      margin: 0 0 1em 0;
-    }
-    .timezone :deep(.utc) {
-      float: none;
-      font-size: 150%;
-      width: 100%;
-    }
-    .timezone :deep(.clock) {
-      float: none;
-      font-size: 180%;
-      margin-top: 0;
-      width: 100%;
-    }
-    .timezone :deep(.regions) {
-      display: inline-block;
-      width: 100%;
-    }
   }
 </style>
