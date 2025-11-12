@@ -1,30 +1,121 @@
 # mytoolkit
 
-> A Vue.js project
+> Developer tools collection built with Vue 3 + Vite
 
-## Build Setup
+A collection of convenient web development tools including beautifiers, generators, and utilities.
 
-``` bash
-# install dependencies
+## Features
+
+- 🎨 Code Beautifiers (HTML, CSS, JavaScript, JSON, SQL)
+- 🔐 Password & Htpasswd Generator
+- 📊 QR Code Reader
+- 🖼️ Image Data URI Scheme Generator
+- 🗄️ Database Initial SQL Creator
+- 🌍 World Clock
+- ⚡ Fast development with Vite
+- 🎯 Vue 3 Composition API
+
+## Tech Stack
+
+- Vue 3
+- Vite
+- Vue Router
+- Bootstrap 5 + bootstrap-vue-next
+- Luxon (DateTime)
+- js-beautify
+- secure-random-password
+- And more...
+
+## Development Setup
+
+```bash
+# Install dependencies
 npm install
 
-# serve with hot reload at localhost:8080
+# Start development server at localhost:8080
 npm run dev
 
-# build for production with minification
+# Build for production
 npm run build
 
-# build for production and view the bundle analyzer report
-npm run build --report
+# Build for development (with sourcemap)
+npm run build:dev
 
-# run unit tests
-npm run unit
+# Preview production build
+npm run preview
 
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
+# Lint code
+npm run lint
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## Environment Variables
+
+Create `.env.local` or `.env.production.local` files to override default settings:
+
+```bash
+VITE_APP_HTPASSWD_API=https://your-api-endpoint.com/htpasswd
+VITE_APP_BASE_URL=https://your-domain.com
+```
+
+## Deployment
+
+1. Build for production:
+   ```bash
+   npm run build:prod
+   ```
+
+2. Upload the `dist/` folder contents to your server
+
+3. Configure your web server for SPA routing (see below)
+
+### Apache (.htaccess)
+
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+```
+
+### Nginx
+
+```nginx
+location / {
+  try_files $uri $uri/ /index.html;
+}
+```
+
+## Project Structure
+
+```
+mytoolkit/
+├── src/
+│   ├── components/     # Vue components
+│   ├── libraries/      # Utility libraries
+│   ├── router/         # Vue Router configuration
+│   ├── App.vue         # Root component
+│   └── main.js         # Entry point
+├── public/             # Static assets
+├── dist/               # Production build output
+├── .env.development    # Development environment variables
+├── .env.production     # Production environment variables
+├── vite.config.js      # Vite configuration
+└── package.json        # Dependencies and scripts
+```
+
+## Browser Support
+
+- Modern browsers (ES2015+)
+- Chrome, Firefox, Safari, Edge
+
+## License
+
+Private
+
+## Author
+
+Tomohito Higuchi

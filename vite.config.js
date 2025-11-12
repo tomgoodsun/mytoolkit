@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       assetsDir: 'static',
+      target: 'es2015', // または 'esnext'
       sourcemap: mode === 'development', // 開発時のみソースマップを生成
       minify: mode === 'production' ? 'esbuild' : false, // 本番時のみminify
       rollupOptions: {
