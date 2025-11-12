@@ -54,7 +54,7 @@ export default {
 
     onMounted(() => {
       updateTime()
-      timerId = setInterval(updateTime, 1000)
+      timerId = setInterval(updateTime, 1)
     })
 
     onUnmounted(() => {
