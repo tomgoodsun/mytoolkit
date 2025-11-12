@@ -33,6 +33,6 @@ export default defineConfig(({ mode }) => {
     },
     // サブディレクトリにデプロイする場合（例: https://example.com/mytoolkit/）
     // base: mode === 'production' ? '/mytoolkit/' : '/'
-    base: '/'
+    base: './'
   }
 })
