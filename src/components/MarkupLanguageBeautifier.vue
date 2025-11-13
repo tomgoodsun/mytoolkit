@@ -7,6 +7,7 @@
       <BAlert v-else variant="danger" :model-value="true">{{ errorMessage }}</BAlert>
       <BFormTextarea
         id="ml-from"
+        class="code-textarea"
         v-model="mlFrom"
         placeholder="Enter Markup Language string..."
       ></BFormTextarea>
@@ -16,6 +17,7 @@
       <BAlert v-else variant="dark" :model-value="true">Waiting for Markup Language input...</BAlert>
       <BFormTextarea
         id="ml-to"
+        class="code-textarea"
         v-model="mlTo"
         readonly
       ></BFormTextarea>
@@ -86,16 +88,3 @@ export default {
   }
 }
 </script>
-
-<style>
-#ml-from, #ml-to {
-  font-family: Monaco, monospace;
-  font-size: 100%;
-  height: 500px;
-  min-height: 300px;
-}
-.op-btn {
-  margin-top: 0.5rem;
-  text-align: right;
-}
-</style>

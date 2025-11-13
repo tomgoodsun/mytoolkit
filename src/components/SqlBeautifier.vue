@@ -7,6 +7,7 @@
       <BAlert v-else variant="danger" :model-value="true">{{ errorMessage }}</BAlert>
       <BFormTextarea
         id="sql-from"
+        class="code-textarea"
         v-model="sqlFrom"
         placeholder="Enter SQL string..."
       ></BFormTextarea>
@@ -16,6 +17,7 @@
       <BAlert v-else variant="dark" :model-value="true">Waiting for SQL input...</BAlert>
       <BFormTextarea
         id="sql-to"
+        class="code-textarea"
         v-model="sqlTo"
         readonly
       ></BFormTextarea>
@@ -86,16 +88,3 @@ export default {
   }
 }
 </script>
-
-<style>
-#sql-from, #sql-to {
-  font-family: Monaco, monospace;
-  font-size: 100%;
-  height: 500px;
-  min-height: 300px;
-}
-.op-btn {
-  margin-top: 0.5rem;
-  text-align: right;
-}
-</style>

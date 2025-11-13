@@ -7,6 +7,7 @@
       <BAlert v-else variant="danger" :model-value="true">{{ errorMessage }}</BAlert>
       <BFormTextarea
         id="css-from"
+        class="code-textarea"
         v-model="cssFrom"
         placeholder="Enter CSS string..."
       ></BFormTextarea>
@@ -16,6 +17,7 @@
       <BAlert v-else variant="dark" :model-value="true">Waiting for CSS input...</BAlert>
       <BFormTextarea
         id="css-to"
+        class="code-textarea"
         v-model="cssTo"
         readonly
       ></BFormTextarea>
@@ -86,16 +88,3 @@ export default {
   }
 }
 </script>
-
-<style>
-#css-from, #css-to {
-  font-family: Monaco, monospace;
-  font-size: 100%;
-  height: 500px;
-  min-height: 300px;
-}
-.op-btn {
-  margin-top: 0.5rem;
-  text-align: right;
-}
-</style>
