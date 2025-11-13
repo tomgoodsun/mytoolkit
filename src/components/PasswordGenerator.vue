@@ -139,12 +139,13 @@ export default {
       { id: 'length', name: 'Length' },
       { id: 'numbers', name: 'Include Numbers' },
       { id: 'symbols', name: 'Include Symbols' },
+      { id: 'excludeSimilarCharacters', name: 'Exclude Similar Characters' },
       { id: 'noDuplicateCharacters', name: 'No Duplicate Characters' },
       { id: 'exclude', name: 'Exclude' },
       { id: 'strict', name: 'Strict' }
     ])
 
-    const checked = ref(['length', 'numbers', 'symbols', 'noDuplicateCharacters', 'exclude', 'strict'])
+    const checked = ref(['length', 'numbers', 'symbols', 'excludeSimilarCharacters', 'exclude', 'strict'])
     const minLength = ref(6)
     const maxLength = ref(10)
     const excludeChars = ref('')
@@ -173,12 +174,34 @@ export default {
 
       // Always include letters unless explicitly excluded
       let letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+      // Exclude similar characters if option is checked
+      if (checked.value.includes('excludeSimilarCharacters')) {
+        // Remove visually similar characters: i, l, L, I, |, o, O, 0, 1
+        letters = letters.replace(/[ilLI|oO01]/g, '')
+        // Also remove from numbers and symbols if they're included
+        if (options.characters.length > 0) {
+          options.characters = options.characters.map(charSet => ({
+            characters: charSet.characters.replace(/[ilLI|oO01]/g, '')
+          }))
+        }
+      }
+
+      // Exclude custom characters
       if (checked.value.includes('exclude') && excludeChars.value) {
         const excludeList = excludeChars.value.split('')
         excludeList.forEach(char => {
-          letters = letters.replace(new RegExp(char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '')
+          const escapedChar = char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+          letters = letters.replace(new RegExp(escapedChar, 'g'), '')
+          // Also exclude from other character sets
+          if (options.characters.length > 0) {
+            options.characters = options.characters.map(charSet => ({
+              characters: charSet.characters.replace(new RegExp(escapedChar, 'g'), '')
+            }))
+          }
         })
       }
+
       options.characters.push({ characters: letters })
 
       const noDuplicates = checked.value.includes('noDuplicateCharacters')
@@ -261,6 +284,8 @@ export default {
 #result .is-selected { background: #666; color: #eee; }
 #drawn-result { display: block; font-size: 30px; height: 1.5em; min-height: 1.5em; text-align: center; }
 #password-stocker { font-family: Monaco, monospace; font-size: 100%; height: 100px; min-height: 100px; }
+#input-group-settings label { margin-bottom: 0; margin-top: 0; }
+.input-area label, #input-group-settings label[for="settings"] { margin-bottom: 0; margin-top: 10px; }
 .input-area button[name="generate"] { margin-top: 1rem; }
 .result-area button { margin-left: 5px !important; }
 </style>
