@@ -5,7 +5,9 @@
         <BFormInput
           id="min-exclude"
           name="min-exclude"
-          v-model="minLength"
+          v-model.number="minLength"
+          type="number"
+          min="1"
         ></BFormInput>
       </BFormGroup>
 
@@ -13,7 +15,9 @@
         <BFormInput
           id="max-exclude"
           name="max-exclude"
-          v-model="maxLength"
+          v-model.number="maxLength"
+          type="number"
+          min="1"
         ></BFormInput>
       </BFormGroup>
 
@@ -41,7 +45,10 @@
         <BFormInput
           id="num"
           name="num"
-          v-model="samplingNum"
+          v-model.number="samplingNum"
+          type="number"
+          min="1"
+          max="1000"
         ></BFormInput>
       </BFormGroup>
 
@@ -164,6 +171,11 @@ export default {
         characters: []
       }
 
+      // Ensure min/max are integers
+      const min = parseInt(minLength.value) || 6
+      const max = parseInt(maxLength.value) || 10
+      const samples = parseInt(samplingNum.value) || 100
+
       // Build character set based on checked options
       if (checked.value.includes('numbers')) {
         options.characters.push({ characters: '0123456789' })
@@ -206,8 +218,8 @@ export default {
 
       const noDuplicates = checked.value.includes('noDuplicateCharacters')
 
-      for (let i = 0; i < samplingNum.value; i++) {
-        options.length = getRandomInt(minLength.value, maxLength.value)
+      for (let i = 0; i < samples; i++) {
+        options.length = getRandomInt(min, max)
         let password = ''
         try {
           if (noDuplicates) {
