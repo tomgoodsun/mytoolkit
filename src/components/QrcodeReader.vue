@@ -1,7 +1,7 @@
 <template>
   <BForm>
     <BRow>
-      <BCol col lg="6" md="12" sm="12" id="file">
+      <BCol cols="12" md="6" id="file">
         <BFormFile
           v-model="file"
           accept="image/*"
@@ -13,18 +13,38 @@
         <div class="mt-3 image">
           <img src="">
         </div>
+        
+        <!-- デバッグ情報 -->
+        <div v-if="debugInfo" class="mt-2 debug-info">
+          <small>{{ debugInfo }}</small>
+        </div>
+        
         <div class="mt-3 qr-code-reader" :class="{'camera-available': cameraAvailable}">
-          <qrcode-stream class="qr-reader" @decode="onDecode" @init="onInit" />
+          <qrcode-stream 
+            class="qr-reader" 
+            :constraints="constraints"
+            :track="paintBoundingBox"
+            @detect="onDetect"
+            @decode="onDecode" 
+            @init="onInit"
+            @error="onError"
+          >
+            <div v-if="loading" class="loading-indicator">
+              Loading camera...
+            </div>
+          </qrcode-stream>
         </div>
       </BCol>
 
-      <BCol col lg="6" md="12" sm="12">
+      <BCol cols="12" md="6">
         <BAlert v-if="status=='error'" variant="danger" :model-value="true">{{ errorMessage }}</BAlert>
         <BAlert v-else-if="status=='success'" variant="info" :model-value="true">QR code has been read.</BAlert>
+        <BAlert v-else-if="status=='detecting'" variant="warning" :model-value="true">QR code detected, decoding...</BAlert>
         <BAlert v-else variant="dark" :model-value="true">Waiting for QR code...</BAlert>
 
         <BFormTextarea
           id="result"
+          class="code-textarea"
           v-model="result"
           readonly
         ></BFormTextarea>
@@ -95,29 +115,124 @@ export default {
     const result = ref('')
     const status = ref('info')
     const errorMessage = ref('')
+    const loading = ref(false)
+    const debugInfo = ref('')
+
+    // カメラの制約条件（解像度とフォーカスモード）
+    const constraints = ref({
+      facingMode: 'environment', // バックカメラを優先
+      video: {
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+        facingMode: 'environment'
+      }
+    })
 
     onMounted(() => {
       imgElem = document.querySelector('#file .image img:first-child')
       new Clipboard('.clipboard')
     })
 
+    // QRコードの境界線を描画する関数
+    const paintBoundingBox = (detectedCodes, ctx) => {
+      for (const detectedCode of detectedCodes) {
+        const {
+          boundingBox: { x, y, width, height }
+        } = detectedCode
+
+        ctx.lineWidth = 3
+        ctx.strokeStyle = '#00ff00'
+        ctx.strokeRect(x, y, width, height)
+        
+        // 中央に十字線を描画
+        ctx.strokeStyle = '#ff0000'
+        ctx.lineWidth = 2
+        const centerX = x + width / 2
+        const centerY = y + height / 2
+        const crossSize = 20
+        
+        ctx.beginPath()
+        ctx.moveTo(centerX - crossSize, centerY)
+        ctx.lineTo(centerX + crossSize, centerY)
+        ctx.moveTo(centerX, centerY - crossSize)
+        ctx.lineTo(centerX, centerY + crossSize)
+        ctx.stroke()
+      }
+    }
+
+    // QRコード検出時（デコード前）
+    const onDetect = (detectedCodes) => {
+      if (detectedCodes.length > 0) {
+        debugInfo.value = `Detected ${detectedCodes.length} code(s). Trying to decode...`
+        console.log('Detected codes:', detectedCodes)
+        
+        // 検出されたコードから値を抽出
+        detectedCodes.forEach((code, index) => {
+          console.log(`Code ${index}:`, code)
+          
+          // rawValue, format, contentなど、様々なプロパティを確認
+          const qrValue = code.rawValue || code.format || code.content || code.data
+          
+          if (qrValue && qrValue !== result.value) {
+            status.value = 'success'
+            result.value = qrValue
+            debugInfo.value = `Successfully decoded: ${qrValue.substring(0, 50)}${qrValue.length > 50 ? '...' : ''}`
+            console.log('QR Code value:', qrValue)
+            
+            // 読み取り成功時に音を鳴らす
+            playBeep()
+            
+            // 画像をクリア
+            imgElem.src = ''
+            imgElem.alt = ''
+          }
+        })
+      } else {
+        if (status.value !== 'success') {
+          debugInfo.value = 'Scanning...'
+        }
+      }
+    }
+
+    // QRコードデコード成功時（バックアップ）
     const onDecode = (decodedResult) => {
-      status.value = 'success'
-      result.value = decodedResult
-      imgElem.src = ''
-      imgElem.alt = ''
+      console.log('Decode success:', decodedResult)
+      if (decodedResult && decodedResult !== result.value) {
+        status.value = 'success'
+        result.value = decodedResult
+        debugInfo.value = `Successfully decoded: ${decodedResult.substring(0, 50)}${decodedResult.length > 50 ? '...' : ''}`
+        imgElem.src = ''
+        imgElem.alt = ''
+        
+        // 読み取り成功時に音を鳴らす
+        playBeep()
+      }
+    }
+
+    // エラーハンドリング
+    const onError = (error) => {
+      console.error('QR Reader error:', error)
+      errorMessage.value = `Error: ${error.message || error}`
+      status.value = 'error'
     }
 
     const onInit = async (promise) => {
+      loading.value = true
+      debugInfo.value = 'Initializing camera...'
       try {
         status.value = 'info'
-        await promise
+        const capabilities = await promise
+        console.log('Camera capabilities:', capabilities)
         cameraAvailable.value = true
+        loading.value = false
+        debugInfo.value = 'Camera ready. Point at QR code.'
       } catch (error) {
+        loading.value = false
         cameraAvailable.value = false
+        debugInfo.value = ''
         if (error.name === 'NotAllowedError') {
           status.value = 'info'
-          errorMessage.value = "INFO: you need to grant camera access permisson"
+          errorMessage.value = "INFO: you need to grant camera access permission"
         } else if (error.name === 'NotFoundError') {
           status.value = 'info'
           errorMessage.value = "INFO: no camera on this device"
@@ -133,31 +248,69 @@ export default {
         } else if (error.name === 'StreamApiNotSupportedError') {
           status.value = 'error'
           errorMessage.value = "ERROR: Stream API is not supported in this browser"
+        } else {
+          status.value = 'error'
+          errorMessage.value = `ERROR: ${error.message || error}`
         }
-        console.error(errorMessage.value)
+        console.error(errorMessage.value, error)
       }
     }
 
     const readFromFile = (evt) => {
       status.value = 'info'
+      debugInfo.value = 'Reading from file...'
       imgElem.src = ''
       imgElem.alt = ''
 
       let fileObj = evt.target.files[0]
+      if (!fileObj) {
+        debugInfo.value = 'No file selected'
+        return
+      }
+
       let fr = new FileReader()
       fr.onload = function () {
         imgElem.src = fr.result
         imgElem.alt = fileObj.name
+        debugInfo.value = 'Decoding image...'
+        
         codeReader.decodeFromImage(imgElem).then((resultObj) => {
           status.value = 'success'
           result.value = resultObj.text
+          debugInfo.value = 'Successfully decoded from image'
+          console.log('File decode success:', resultObj.text)
+          playBeep()
         }).catch((err) => {
           status.value = 'error'
-          errorMessage.value = err
-          console.error(err)
+          errorMessage.value = 'Could not decode QR code from image'
+          debugInfo.value = `Error: ${err.message || err}`
+          console.error('File decode error:', err)
         })
       }
       fr.readAsDataURL(fileObj)
+    }
+
+    // ビープ音を鳴らす（読み取り成功のフィードバック）
+    const playBeep = () => {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+        const oscillator = audioContext.createOscillator()
+        const gainNode = audioContext.createGain()
+
+        oscillator.connect(gainNode)
+        gainNode.connect(audioContext.destination)
+
+        oscillator.frequency.value = 800
+        oscillator.type = 'sine'
+
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1)
+
+        oscillator.start(audioContext.currentTime)
+        oscillator.stop(audioContext.currentTime + 0.1)
+      } catch (e) {
+        console.log('Audio feedback not available')
+      }
     }
 
     const decodeOnce = (codeReader, selectedDeviceId) => {
@@ -205,7 +358,13 @@ export default {
       result,
       status,
       errorMessage,
+      loading,
+      debugInfo,
+      constraints,
+      paintBoundingBox,
+      onDetect,
       onDecode,
+      onError,
       onInit,
       readFromFile,
       decodeOnce,
@@ -215,7 +374,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #file .image img:first-child {
   max-height: 500px;
   max-width: 100%;
@@ -223,23 +382,50 @@ export default {
 #file .qr-code-reader {
   max-height: 100px;
   max-width: 100%;
+  position: relative;
 }
 #file .qr-code-reader.camera-available {
   margin-bottom: 20px;
-  max-height: 300px;
-}
-#file .qr-code-reader * {
-  max-height: 300px;
-  max-width: 300%;
-}
-#result {
-  font-family: Monaco, monospace;
-  font-size: 100%;
-  height: 500px;
+  max-height: 480px;
   min-height: 300px;
 }
-.op-btn {
-  margin-top: 0.5rem;
-  text-align: right;
+#file .qr-code-reader * {
+  max-width: 100%;
+}
+
+/* デバッグ情報 */
+.debug-info {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #333;
+  padding: 0.5rem;
+  font-family: monospace;
+}
+
+/* ローディングインジケーター */
+.loading-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  z-index: 1000;
+}
+
+/* QRコードリーダーのビデオ要素 */
+.qr-reader {
+  width: 100%;
+  height: 100%;
+}
+
+/* カメラが利用可能な場合のスタイル */
+.camera-available .qr-reader video {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
 }
 </style>
