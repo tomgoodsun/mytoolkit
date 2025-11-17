@@ -1,6 +1,6 @@
 <template>
   <BRow>
-    <BCol col lg="12" md="12" sm="12">
+    <BCol cols="12">
       <div id="timezone-filter">
         <BButton
           variant="light"

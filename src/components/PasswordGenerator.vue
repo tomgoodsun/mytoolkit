@@ -1,6 +1,6 @@
 <template>
   <BRow>
-    <BCol col lg="6" md="12" sm="12" class="input-area">
+    <BCol cols="12" md="6" class="input-area">
       <BFormGroup id="input-group-min" label="Min Length:" label-for="min-exclude">
         <BFormInput
           id="min-exclude"
@@ -55,7 +55,7 @@
       <BButton variant="outline-primary" name="generate" @click="generate()">Generate</BButton>
 
     </BCol>
-    <BCol col lg="6" md="12" sm="12" class="result-area">
+    <BCol cols="12" md="6" class="result-area">
       <h3>Password Results</h3>
       <h4>
         Drawn

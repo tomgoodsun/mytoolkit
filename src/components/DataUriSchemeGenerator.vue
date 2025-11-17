@@ -1,7 +1,7 @@
 <template>
   <BForm>
     <BRow>
-      <BCol col lg="12" md="12" sm="12" id="file">
+      <BCol cols="12" id="file">
         <BFormFile
           accept="image/*"
           plain

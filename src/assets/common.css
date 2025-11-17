@@ -16,3 +16,10 @@
 .clipboard {
   margin-right: 0.25rem;
 }
+
+/* レスポンシブ：2カラムレイアウトの右カラム */
+@media (max-width: 767px) {
+  .col:nth-child(2) {
+    margin-top: 1.5rem;
+  }
+}

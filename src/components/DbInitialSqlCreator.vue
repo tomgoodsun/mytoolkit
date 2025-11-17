@@ -1,7 +1,7 @@
 <template>
   <BForm @reset="onReset" v-if="show">
     <BRow>
-      <BCol col lg="6" md="12" sm="12" class="input-area">
+      <BCol cols="12" md="6" class="input-area">
         <BFormGroup id="input-group-database" label="Database:" label-for="database">
           <BFormInput
             id="database"
@@ -95,7 +95,7 @@
 
       </BCol>
 
-      <BCol col lg="6" md="12" sm="12" class="result-area">
+      <BCol cols="12" md="6" class="result-area">
 
         <BFormGroup label="Privileges: " id="privileges">
           <div class="buttons">

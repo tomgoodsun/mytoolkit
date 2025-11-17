@@ -1,6 +1,6 @@
 <template>
   <BRow>
-    <BCol col lg="6" md="12" sm="12">
+    <BCol cols="12" md="6">
       <BAlert v-if="errorMessage === ''" variant="success" :model-value="true">
         Input JavaScript string
       </BAlert>
@@ -12,7 +12,7 @@
         placeholder="Enter JavaScript string..."
       ></BFormTextarea>
     </BCol>
-    <BCol col lg="6" md="12" sm="12">
+    <BCol cols="12" md="6">
       <BAlert v-if="jsTo.length > 0" variant="info" :model-value="true">JavaScript parsed</BAlert>
       <BAlert v-else variant="dark" :model-value="true">Waiting for JavaScript input...</BAlert>
       <BFormTextarea

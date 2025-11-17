@@ -1,6 +1,6 @@
 <template>
   <BRow>
-    <BCol col lg="6" md="12" sm="12">
+    <BCol cols="12" md="6">
       <BAlert v-if="errorMessage === ''" variant="success" :model-value="true">
         Input user:password lines. Automatically generates if no password.
       </BAlert>
@@ -25,7 +25,7 @@
         </BButton>
       </div>
     </BCol>
-    <BCol col lg="6" md="12" sm="12">
+    <BCol cols="12" md="6">
       <BAlert v-if="result.length > 0" variant="info" :model-value="true">Result</BAlert>
       <BAlert v-else variant="dark" :model-value="true">Htpasswd result is the below.</BAlert>
       <BFormTextarea

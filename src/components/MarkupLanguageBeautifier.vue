@@ -1,6 +1,6 @@
 <template>
   <BRow>
-    <BCol col lg="6" md="12" sm="12">
+    <BCol cols="12" md="6">
       <BAlert v-if="errorMessage === ''" variant="success" :model-value="true">
         Input Markup Language string
       </BAlert>
@@ -12,7 +12,7 @@
         placeholder="Enter Markup Language string..."
       ></BFormTextarea>
     </BCol>
-    <BCol col lg="6" md="12" sm="12">
+    <BCol cols="12" md="6">
       <BAlert v-if="mlTo.length > 0" variant="info" :model-value="true">Markup Language parsed</BAlert>
       <BAlert v-else variant="dark" :model-value="true">Waiting for Markup Language input...</BAlert>
       <BFormTextarea
