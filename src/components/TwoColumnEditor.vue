@@ -8,7 +8,7 @@
       <BAlert v-else :variant="leftStatus" :model-value="true">
         {{ leftMessage }}
       </BAlert>
-      
+
       <BFormTextarea
         :id="leftId"
         class="code-textarea"
@@ -16,7 +16,7 @@
         :placeholder="leftPlaceholder"
         @update:model-value="handleInput"
       ></BFormTextarea>
-      
+
       <!-- 左側の追加ボタンエリア（オプション） -->
       <slot name="left-buttons"></slot>
     </BCol>
@@ -32,14 +32,14 @@
       <BAlert v-else variant="dark" :model-value="true">
         {{ rightPlaceholder }}
       </BAlert>
-      
+
       <BFormTextarea
         :id="rightId"
         class="code-textarea"
         :model-value="outputValue"
         readonly
       ></BFormTextarea>
-      
+
       <div class="op-btn">
         <BButton
           variant="light"
@@ -53,7 +53,7 @@
             <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
           </svg> Copy
         </BButton>
-        
+
         <!-- 右側の追加ボタンエリア（オプション） -->
         <slot name="right-buttons"></slot>
       </div>
