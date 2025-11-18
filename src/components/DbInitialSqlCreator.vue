@@ -95,7 +95,7 @@
 
       </BCol>
 
-      <BCol cols="12" md="6" class="result-area">
+      <BCol cols="12" md="6" class="result-area mt-3 mt-md-0">
 
         <BFormGroup label="Privileges: " id="privileges">
           <div class="buttons">

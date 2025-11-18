@@ -12,7 +12,7 @@
         placeholder="Enter Markup Language string..."
       ></BFormTextarea>
     </BCol>
-    <BCol cols="12" md="6">
+    <BCol cols="12" md="6" class="mt-3 mt-md-0">
       <BAlert v-if="mlTo.length > 0" variant="info" :model-value="true">Markup Language parsed</BAlert>
       <BAlert v-else variant="dark" :model-value="true">Waiting for Markup Language input...</BAlert>
       <BFormTextarea

@@ -55,7 +55,7 @@
       <BButton variant="outline-primary" name="generate" @click="generate()">Generate</BButton>
 
     </BCol>
-    <BCol cols="12" md="6" class="result-area">
+    <BCol cols="12" md="6" class="result-area mt-3 mt-md-0">
       <h3>Password Results</h3>
       <h4>
         Drawn

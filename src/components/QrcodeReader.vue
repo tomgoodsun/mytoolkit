@@ -1,7 +1,7 @@
 <template>
   <BForm>
     <BRow>
-      <BCol cols="12" md="6" id="file">
+      <BCol cols="12" md="6">
         <BFormFile
           v-model="file"
           accept="image/*"
@@ -10,12 +10,13 @@
           @change="readFromFile"
         ></BFormFile>
         <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
+        
         <div class="mt-3 image">
-          <img src="">
+          <img src="" alt="">
         </div>
         
         <!-- デバッグ情報 -->
-        <div v-if="debugInfo" class="mt-2 debug-info">
+        <div v-if="debugInfo" class="mt-3 debug-info">
           <small>{{ debugInfo }}</small>
         </div>
         
@@ -36,7 +37,7 @@
         </div>
       </BCol>
 
-      <BCol cols="12" md="6">
+      <BCol cols="12" md="6" class="mt-3 mt-md-0">
         <BAlert v-if="status=='error'" variant="danger" :model-value="true">{{ errorMessage }}</BAlert>
         <BAlert v-else-if="status=='success'" variant="info" :model-value="true">QR code has been read.</BAlert>
         <BAlert v-else-if="status=='detecting'" variant="warning" :model-value="true">QR code detected, decoding...</BAlert>
@@ -129,7 +130,7 @@ export default {
     })
 
     onMounted(() => {
-      imgElem = document.querySelector('#file .image img:first-child')
+      imgElem = document.querySelector('.image img')
       new Clipboard('.clipboard')
     })
 
@@ -183,8 +184,10 @@ export default {
             playBeep()
             
             // 画像をクリア
-            imgElem.src = ''
-            imgElem.alt = ''
+            if (imgElem) {
+              imgElem.src = ''
+              imgElem.alt = ''
+            }
           }
         })
       } else {
@@ -201,8 +204,10 @@ export default {
         status.value = 'success'
         result.value = decodedResult
         debugInfo.value = `Successfully decoded: ${decodedResult.substring(0, 50)}${decodedResult.length > 50 ? '...' : ''}`
-        imgElem.src = ''
-        imgElem.alt = ''
+        if (imgElem) {
+          imgElem.src = ''
+          imgElem.alt = ''
+        }
         
         // 読み取り成功時に音を鳴らす
         playBeep()
@@ -259,8 +264,10 @@ export default {
     const readFromFile = (evt) => {
       status.value = 'info'
       debugInfo.value = 'Reading from file...'
-      imgElem.src = ''
-      imgElem.alt = ''
+      if (imgElem) {
+        imgElem.src = ''
+        imgElem.alt = ''
+      }
 
       let fileObj = evt.target.files[0]
       if (!fileObj) {
@@ -270,8 +277,10 @@ export default {
 
       let fr = new FileReader()
       fr.onload = function () {
-        imgElem.src = fr.result
-        imgElem.alt = fileObj.name
+        if (imgElem) {
+          imgElem.src = fr.result
+          imgElem.alt = fileObj.name
+        }
         debugInfo.value = 'Decoding image...'
         
         codeReader.decodeFromImage(imgElem).then((resultObj) => {
@@ -375,22 +384,39 @@ export default {
 </script>
 
 <style scoped>
-#file .image img:first-child {
-  max-height: 500px;
+.image {
   max-width: 100%;
+  overflow: hidden;
 }
-#file .qr-code-reader {
-  max-height: 100px;
+
+.image img {
+  max-height: 400px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.qr-code-reader {
   max-width: 100%;
   position: relative;
+  background-color: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-#file .qr-code-reader.camera-available {
-  margin-bottom: 20px;
-  max-height: 480px;
+
+.qr-code-reader.camera-available {
   min-height: 300px;
+  max-height: 480px;
 }
-#file .qr-code-reader * {
-  max-width: 100%;
+
+.qr-reader {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
 }
 
 /* デバッグ情報 */
@@ -409,22 +435,26 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.8);
   color: white;
   padding: 1rem 2rem;
   border-radius: 8px;
   z-index: 1000;
+  font-weight: bold;
 }
 
 /* QRコードリーダーのビデオ要素 */
-.qr-reader {
+.qr-reader :deep(video) {
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 
-/* カメラが利用可能な場合のスタイル */
-.camera-available .qr-reader video {
-  object-fit: cover;
+/* カメラが利用可能な場合のcanvas */
+.camera-available .qr-reader :deep(canvas) {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
 }
