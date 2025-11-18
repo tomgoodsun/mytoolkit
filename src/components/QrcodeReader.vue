@@ -10,23 +10,23 @@
           @change="readFromFile"
         ></BFormFile>
         <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
-        
+
         <div class="mt-3 image">
           <img src="" alt="">
         </div>
-        
+
         <!-- デバッグ情報 -->
         <div v-if="debugInfo" class="mt-3 debug-info">
           <small>{{ debugInfo }}</small>
         </div>
-        
+
         <div class="mt-3 qr-code-reader" :class="{'camera-available': cameraAvailable}">
-          <qrcode-stream 
-            class="qr-reader" 
+          <qrcode-stream
+            class="qr-reader"
             :constraints="constraints"
             :track="paintBoundingBox"
             @detect="onDetect"
-            @decode="onDecode" 
+            @decode="onDecode"
             @init="onInit"
             @error="onError"
           >
@@ -144,14 +144,14 @@ export default {
         ctx.lineWidth = 3
         ctx.strokeStyle = '#00ff00'
         ctx.strokeRect(x, y, width, height)
-        
+
         // 中央に十字線を描画
         ctx.strokeStyle = '#ff0000'
         ctx.lineWidth = 2
         const centerX = x + width / 2
         const centerY = y + height / 2
         const crossSize = 20
-        
+
         ctx.beginPath()
         ctx.moveTo(centerX - crossSize, centerY)
         ctx.lineTo(centerX + crossSize, centerY)
@@ -166,23 +166,23 @@ export default {
       if (detectedCodes.length > 0) {
         debugInfo.value = `Detected ${detectedCodes.length} code(s). Trying to decode...`
         console.log('Detected codes:', detectedCodes)
-        
+
         // 検出されたコードから値を抽出
         detectedCodes.forEach((code, index) => {
           console.log(`Code ${index}:`, code)
-          
+
           // rawValue, format, contentなど、様々なプロパティを確認
           const qrValue = code.rawValue || code.format || code.content || code.data
-          
+
           if (qrValue && qrValue !== result.value) {
             status.value = 'success'
             result.value = qrValue
             debugInfo.value = `Successfully decoded: ${qrValue.substring(0, 50)}${qrValue.length > 50 ? '...' : ''}`
             console.log('QR Code value:', qrValue)
-            
+
             // 読み取り成功時に音を鳴らす
             playBeep()
-            
+
             // 画像をクリア
             if (imgElem) {
               imgElem.src = ''
@@ -208,7 +208,7 @@ export default {
           imgElem.src = ''
           imgElem.alt = ''
         }
-        
+
         // 読み取り成功時に音を鳴らす
         playBeep()
       }
@@ -282,7 +282,7 @@ export default {
           imgElem.alt = fileObj.name
         }
         debugInfo.value = 'Decoding image...'
-        
+
         codeReader.decodeFromImage(imgElem).then((resultObj) => {
           status.value = 'success'
           result.value = resultObj.text
