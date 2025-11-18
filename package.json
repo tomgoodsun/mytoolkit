@@ -2,7 +2,7 @@
   "name": "mytoolkit",
   "version": "1.0.0",
   "description": "A Vue.js project",
-  "author": "Tomohito Higuchi",
+  "author": "Tom Goodsun",
   "private": true,
   "type": "module",
   "scripts": {

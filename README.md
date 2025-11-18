@@ -118,4 +118,4 @@ Private
 
 ## Author
 
-Tomohito Higuchi
+Tom Goodsun
