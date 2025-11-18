@@ -245,4 +245,38 @@ export default {
 .result-area .buttons button {
   margin-right: 5px;
 }
+
+.input-area label:not(.form-check-label), #input-group-settings label[for="settings"] { margin-bottom: 0; margin-top: 10px; }
+
+/* チェックボックスのベースライン調整 */
+.form-check {
+  align-items: center;
+  display: flex;
+  min-height: 0 !important;
+}
+
+.col-form-label {
+  margin-top: 10px !important;
+  padding-bottom: 0 !important;
+}
+
+label[for="database"],
+label[for="username"],
+label[for="password"],
+label[for="custom-hosts"] {
+  margin-bottom: 0 !important;
+}
+
+#database,
+#username,
+#password,
+.input-area select,
+#custom-hosts {
+  margin-bottom: 5px;
+}
+
+input[type="checkbox"] {
+  margin-top: 5px !important;
+}
+
 </style>

@@ -297,7 +297,18 @@ export default {
 #drawn-result { display: block; font-size: 30px; height: 1.5em; min-height: 1.5em; text-align: center; }
 #password-stocker { font-family: Monaco, monospace; font-size: 100%; height: 100px; min-height: 100px; }
 #input-group-settings label { margin-bottom: 0; margin-top: 0; }
-.input-area label, #input-group-settings label[for="settings"] { margin-bottom: 0; margin-top: 10px; }
+.input-area label:not(.form-check-label), #input-group-settings label[for="settings"] { margin-bottom: 0; margin-top: 10px; }
 .input-area button[name="generate"] { margin-top: 1rem; }
 .result-area button { margin-left: 5px !important; }
+
+.form-label {
+  margin-bottom: 0 !important;
+}
+
+label[for="min-exclude"],
+label[for="max-exclude"],
+label[for="exclude"],
+label[for="num"] {
+  margin-bottom: 0 !important;
+}
 </style>
