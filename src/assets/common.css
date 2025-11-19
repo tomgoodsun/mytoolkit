@@ -1,0 +1,25 @@
+/* 共通のテキストエリアスタイル */
+.code-textarea {
+  font-family: Monaco, Consolas, 'Courier New', monospace;
+  font-size: 100%;
+  height: 500px;
+  min-height: 300px;
+}
+
+/* 共通の操作ボタンエリア */
+.op-btn {
+  margin-top: 0.5rem;
+  text-align: right;
+}
+
+/* コピーボタン共通スタイル */
+.clipboard {
+  margin-right: 0.25rem;
+}
+
+/* レスポンシブ：2カラムレイアウトの右カラム */
+@media (max-width: 767px) {
+  .col:nth-child(2) {
+    margin-top: 1.5rem;
+  }
+}

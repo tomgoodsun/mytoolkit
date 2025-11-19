@@ -1,17 +1,17 @@
 <template>
-  <b-form>
-    <b-row>
-      <b-col col lg="12" md="12" sm="12" id="file">
-        <b-form-file
+  <BForm>
+    <BRow>
+      <BCol cols="12" id="file">
+        <BFormFile
           accept="image/*"
           plain
           multiple
-          v-on:change="readFromFile"
-        ></b-form-file>
+          @change="readFromFile"
+        ></BFormFile>
         <div class="mt-3 images">
           <div class="result">
 
-            <div v-for="(value) in result" v-bind:key="value.name" class="img-line">
+            <div v-for="(value) in result" :key="value.name" class="img-line">
               <div class="img-name">{{ value.file.name }}</div>
               <div class="img">
                 <img
@@ -23,42 +23,46 @@
               <div class="data-uri-scheme">
                 <textarea
                   :id="value.id"
-                  v-bind:value="value.event.srcElement.result"
+                  :value="value.event.srcElement.result"
                 >
                 </textarea>
               </div>
               <div class="op-btn">
-                <b-button
+                <BButton
                   variant="light"
                   size="sm"
                   class="clipboard"
                   :data-clipboard-target="value.target"
                   title="Copy to clipboard"
                 >
-                  <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
-                </b-button>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+                    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+                  </svg> Copy
+                </BButton>
               </div>
             </div>
 
           </div>
         </div>
-      </b-col>
-    </b-row>
-  </b-form>
+      </BCol>
+    </BRow>
+  </BForm>
 </template>
 
 <script>
 /* eslint-disable */
-import Vue from 'vue';
 import {
+  BForm,
   BFormTextarea,
-  BootstrapVue,
-  FormFilePlugin,
-  FormGroupPlugin,
-  FormInputPlugin,
-  FormPlugin,
-  LayoutPlugin,
-} from 'bootstrap-vue';
+  BFormFile,
+  BFormGroup,
+  BFormInput,
+  BButton,
+  BRow,
+  BCol
+} from 'bootstrap-vue-next'
+import { ref, onMounted } from 'vue'
 import {
   BrowserQRCodeReader,
   BrowserMultiFormatReader,
@@ -66,48 +70,34 @@ import {
   NotFoundException,
   ChecksumException,
   FormatException,
-} from '@zxing/library';
-import Clipboard from 'clipboard';
+} from '@zxing/library'
+import Clipboard from 'clipboard'
 
-Vue.use(FormFilePlugin);
-Vue.use(FormGroupPlugin);
-Vue.use(FormInputPlugin);
-Vue.use(FormPlugin);
-
-let resultAreas = [];
-let fileCount = 0;
-let frResults = [];
-let frResultCount = 0;
+let resultAreas = []
+let fileCount = 0
+let frResults = []
+let frResultCount = 0
 
 export default {
-  data() {
-    return {
-      result: []
-    }
+  components: {
+    BForm,
+    BFormTextarea,
+    BFormFile,
+    BFormGroup,
+    BFormInput,
+    BButton,
+    BRow,
+    BCol
   },
-  mounted() {
-    resultAreas = document.querySelectorAll('.result');
-  },
-  methods: {
-    readFromFile(evt) {
-      resultAreas.forEach(element => {
-        element.innerHTML = '';
-      });
-      let files = evt.target.files;
+  setup() {
+    const result = ref([])
 
-      fileCount = files.length;
-      frResults = [];
-      this.result = [];
-      frResultCount = 0;
+    onMounted(() => {
+      resultAreas = document.querySelectorAll('.result')
+    })
 
-      for (let i = 0; i < fileCount; i++) {
-        this.loadImage(i, files[i]);
-      };
-      this.checkImageLoading();
-    },
-
-    loadImage(index, file) {
-      let fr = new FileReader();
+    const loadImage = (index, file) => {
+      let fr = new FileReader()
       fr.onload = function (evt) {
         frResults[index] = {
           index: index,
@@ -115,25 +105,40 @@ export default {
           target: '#data-uri-scheme-result-' + index,
           file: file,
           event: evt
-        };
-        frResultCount++;
-      };
-      fr.readAsDataURL(file);
-    },
-
-    checkImageLoading() {
-      console.log(frResults);
-      if (fileCount == frResultCount) {
-        this.result = frResults;
-        new Clipboard('.clipboard');
-        return;
+        }
+        frResultCount++
       }
-      setTimeout(this.checkImageLoading, 500);
+      fr.readAsDataURL(file)
     }
 
-  },
-  components: {
-    BFormTextarea
+    const checkImageLoading = () => {
+      console.log(frResults)
+      if (fileCount == frResultCount) {
+        result.value = frResults
+        new Clipboard('.clipboard')
+        return
+      }
+      setTimeout(checkImageLoading, 500)
+    }
+
+    const readFromFile = (evt) => {
+      let files = evt.target.files
+
+      fileCount = files.length
+      frResults = []
+      result.value = []
+      frResultCount = 0
+
+      for (let i = 0; i < fileCount; i++) {
+        loadImage(i, files[i])
+      }
+      checkImageLoading()
+    }
+
+    return {
+      result,
+      readFromFile
+    }
   }
 }
 </script>

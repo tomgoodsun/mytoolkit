@@ -11,7 +11,7 @@
 
 <style>
 .home {
-  /*font-family: 'Neutraface 2 Text Bold';*/
+  font-family: 'Neutraface 2 Text Bold';
   text-align: center;
 }
 .home h3 {

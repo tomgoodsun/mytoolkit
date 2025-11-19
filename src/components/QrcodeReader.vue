@@ -1,229 +1,461 @@
 <template>
-  <b-form>
-    <b-row>
-      <b-col col lg="6" md="12" sm="12" id="file">
-        <b-form-file
+  <BForm>
+    <BRow>
+      <BCol cols="12" md="6">
+        <BFormFile
           v-model="file"
           accept="image/*"
           plain
           capture
-          v-on:change="readFromFile"
-        ></b-form-file>
+          @change="readFromFile"
+        ></BFormFile>
         <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
+
         <div class="mt-3 image">
-          <img src="">
+          <img src="" alt="">
         </div>
-        <div class="mt-3 qr-code-reader" v-bind:class="{'camera-available': cameraAvailable}">
-          <qrcode-stream class="qr-reader" @decode="onDecode" @init="onInit" />
+
+        <!-- デバッグ情報 -->
+        <div v-if="debugInfo" class="mt-3 debug-info">
+          <small>{{ debugInfo }}</small>
         </div>
-      </b-col>
 
-      <b-col col lg="6" md="12" sm="12">
-        <b-alert v-if="$data.status=='error'" variant="danger" show>{{ errorMessage }}</b-alert>
-        <b-alert v-else-if="$data.status== 'success'" variant="info" show>QR code has been read.</b-alert>
-        <b-alert v-else variant="dark" show>Waiting for QR code...</b-alert>
+        <div class="mt-3 qr-code-reader" :class="{'camera-available': cameraAvailable}">
+          <qrcode-stream
+            class="qr-reader"
+            :constraints="constraints"
+            :track="paintBoundingBox"
+            @detect="onDetect"
+            @decode="onDecode"
+            @init="onInit"
+            @error="onError"
+          >
+            <div v-if="loading" class="loading-indicator">
+              Loading camera...
+            </div>
+          </qrcode-stream>
+        </div>
+      </BCol>
 
-        <b-form-textarea
+      <BCol cols="12" md="6" class="mt-3 mt-md-0">
+        <BAlert v-if="status=='error'" variant="danger" :model-value="true">{{ errorMessage }}</BAlert>
+        <BAlert v-else-if="status=='success'" variant="info" :model-value="true">QR code has been read.</BAlert>
+        <BAlert v-else-if="status=='detecting'" variant="warning" :model-value="true">QR code detected, decoding...</BAlert>
+        <BAlert v-else variant="dark" :model-value="true">Waiting for QR code...</BAlert>
+
+        <BFormTextarea
           id="result"
-          v-model="$data.result"
+          class="code-textarea"
+          v-model="result"
           readonly
-        ></b-form-textarea>
+        ></BFormTextarea>
         <div class="op-btn">
-          <b-button
+          <BButton
             variant="light"
             size="sm"
             class="clipboard"
             data-clipboard-target="#result"
             title="Copy to clipboard"
           >
-            <b-icon icon="clipboard" aria-hidden="true"></b-icon> Copy
-          </b-button>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+              <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+              <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+            </svg> Copy
+          </BButton>
         </div>
-      </b-col>
-    </b-row>
-  </b-form>
+      </BCol>
+    </BRow>
+  </BForm>
 </template>
 
 <script>
 /* eslint-disable */
-import Vue from 'vue';
 import {
-  AlertPlugin,
+  BAlert,
+  BForm,
   BFormTextarea,
-  BootstrapVue,
-  ButtonPlugin,
-  FormFilePlugin,
-  FormGroupPlugin,
-  FormInputPlugin,
-  FormPlugin,
-  LayoutPlugin,
-} from 'bootstrap-vue';
+  BFormFile,
+  BFormGroup,
+  BFormInput,
+  BButton,
+  BRow,
+  BCol
+} from 'bootstrap-vue-next'
+import { ref, onMounted } from 'vue'
 import {
   BrowserQRCodeReader,
   BrowserMultiFormatReader,
   NotFoundException,
   ChecksumException,
   FormatException,
-} from '@zxing/library';
-import VueQrcodeReader from "vue-qrcode-reader";
-import Clipboard from 'clipboard';
+} from '@zxing/library'
+import { QrcodeStream } from 'vue-qrcode-reader'
+import Clipboard from 'clipboard'
 
-Vue.use(ButtonPlugin);
-Vue.use(FormFilePlugin);
-Vue.use(FormGroupPlugin);
-Vue.use(FormInputPlugin);
-Vue.use(FormPlugin);
-Vue.use(AlertPlugin);
-Vue.use(VueQrcodeReader);
-
-const codeReader = new BrowserMultiFormatReader();
-let selectedDeviceId;
-let imgElem;
+const codeReader = new BrowserMultiFormatReader()
+let selectedDeviceId
+let imgElem
 
 export default {
-  data() {
-    return {
-      alertMsg: '',
-      cameraAvailable: false,
-      result: '',
-      status: 'info',
-      errorMessage: ''
-    }
+  components: {
+    BAlert,
+    BForm,
+    BFormTextarea,
+    BFormFile,
+    BFormGroup,
+    BFormInput,
+    BButton,
+    BRow,
+    BCol,
+    QrcodeStream
   },
-  mounted() {
-    imgElem = document.querySelector('#file .image img:first-child');
-    new Clipboard('.clipboard');
-  },
-  methods: {
-    // @see https://gruhn.github.io/vue-qrcode-reader/demos/DecodeAll.html
-    onDecode (result) {
-      this.status = 'success';
-      this.result = result;
-      imgElem.src = '';
-      imgElem.alt = '';
-    },
-    async onInit (promise) {
-      try {
-        this.status = 'info';
-        await promise;
-        this.cameraAvailable = true;
-      } catch (error) {
-        this.cameraAvailable = false;
-        if (error.name === 'NotAllowedError') {
-          this.status = 'info';
-          this.errorMessage = "INFO: you need to grant camera access permisson";
-        } else if (error.name === 'NotFoundError') {
-          this.status = 'info';
-          this.errorMessage = "INFO: no camera on this device";
-        } else if (error.name === 'NotSupportedError') {
-          this.status = 'error';
-          this.errorMessage = "ERROR: secure context required (HTTPS, localhost)";
-        } else if (error.name === 'NotReadableError') {
-          this.status = 'error';
-          this.errorMessage = "ERROR: is the camera already in use?";
-        } else if (error.name === 'OverconstrainedError') {
-          this.status = 'error';
-          this.errorMessage = "ERROR: installed cameras are not suitable";
-        } else if (error.name === 'StreamApiNotSupportedError') {
-          this.status = 'error';
-          this.errorMessage = "ERROR: Stream API is not supported in this browser";
-        }
-        console.error(this.errorMessage);
+  setup() {
+    const file = ref(null)
+    const alertMsg = ref('')
+    const cameraAvailable = ref(false)
+    const result = ref('')
+    const status = ref('info')
+    const errorMessage = ref('')
+    const loading = ref(false)
+    const debugInfo = ref('')
+
+    // カメラの制約条件（解像度とフォーカスモード）
+    const constraints = ref({
+      facingMode: 'environment', // バックカメラを優先
+      video: {
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+        facingMode: 'environment'
       }
-    },
+    })
 
-    readFromFile(evt) {
-      this.status = 'info';
-      let that = this;
-      imgElem.src = '';
-      imgElem.alt = '';
+    onMounted(() => {
+      imgElem = document.querySelector('.image img')
+      new Clipboard('.clipboard')
+    })
 
-      let file = evt.target.files[0];
-      let fr = new FileReader();
+    // QRコードの境界線を描画する関数
+    const paintBoundingBox = (detectedCodes, ctx) => {
+      for (const detectedCode of detectedCodes) {
+        const {
+          boundingBox: { x, y, width, height }
+        } = detectedCode
+
+        ctx.lineWidth = 3
+        ctx.strokeStyle = '#00ff00'
+        ctx.strokeRect(x, y, width, height)
+
+        // 中央に十字線を描画
+        ctx.strokeStyle = '#ff0000'
+        ctx.lineWidth = 2
+        const centerX = x + width / 2
+        const centerY = y + height / 2
+        const crossSize = 20
+
+        ctx.beginPath()
+        ctx.moveTo(centerX - crossSize, centerY)
+        ctx.lineTo(centerX + crossSize, centerY)
+        ctx.moveTo(centerX, centerY - crossSize)
+        ctx.lineTo(centerX, centerY + crossSize)
+        ctx.stroke()
+      }
+    }
+
+    // QRコード検出時（デコード前）
+    const onDetect = (detectedCodes) => {
+      if (detectedCodes.length > 0) {
+        debugInfo.value = `Detected ${detectedCodes.length} code(s). Trying to decode...`
+        console.log('Detected codes:', detectedCodes)
+
+        // 検出されたコードから値を抽出
+        detectedCodes.forEach((code, index) => {
+          console.log(`Code ${index}:`, code)
+
+          // rawValue, format, contentなど、様々なプロパティを確認
+          const qrValue = code.rawValue || code.format || code.content || code.data
+
+          if (qrValue && qrValue !== result.value) {
+            status.value = 'success'
+            result.value = qrValue
+            debugInfo.value = `Successfully decoded: ${qrValue.substring(0, 50)}${qrValue.length > 50 ? '...' : ''}`
+            console.log('QR Code value:', qrValue)
+
+            // 読み取り成功時に音を鳴らす
+            playBeep()
+
+            // 画像をクリア
+            if (imgElem) {
+              imgElem.src = ''
+              imgElem.alt = ''
+            }
+          }
+        })
+      } else {
+        if (status.value !== 'success') {
+          debugInfo.value = 'Scanning...'
+        }
+      }
+    }
+
+    // QRコードデコード成功時（バックアップ）
+    const onDecode = (decodedResult) => {
+      console.log('Decode success:', decodedResult)
+      if (decodedResult && decodedResult !== result.value) {
+        status.value = 'success'
+        result.value = decodedResult
+        debugInfo.value = `Successfully decoded: ${decodedResult.substring(0, 50)}${decodedResult.length > 50 ? '...' : ''}`
+        if (imgElem) {
+          imgElem.src = ''
+          imgElem.alt = ''
+        }
+
+        // 読み取り成功時に音を鳴らす
+        playBeep()
+      }
+    }
+
+    // エラーハンドリング
+    const onError = (error) => {
+      console.error('QR Reader error:', error)
+      errorMessage.value = `Error: ${error.message || error}`
+      status.value = 'error'
+    }
+
+    const onInit = async (promise) => {
+      loading.value = true
+      debugInfo.value = 'Initializing camera...'
+      try {
+        status.value = 'info'
+        const capabilities = await promise
+        console.log('Camera capabilities:', capabilities)
+        cameraAvailable.value = true
+        loading.value = false
+        debugInfo.value = 'Camera ready. Point at QR code.'
+      } catch (error) {
+        loading.value = false
+        cameraAvailable.value = false
+        debugInfo.value = ''
+        if (error.name === 'NotAllowedError') {
+          status.value = 'info'
+          errorMessage.value = "INFO: you need to grant camera access permission"
+        } else if (error.name === 'NotFoundError') {
+          status.value = 'info'
+          errorMessage.value = "INFO: no camera on this device"
+        } else if (error.name === 'NotSupportedError') {
+          status.value = 'error'
+          errorMessage.value = "ERROR: secure context required (HTTPS, localhost)"
+        } else if (error.name === 'NotReadableError') {
+          status.value = 'error'
+          errorMessage.value = "ERROR: is the camera already in use?"
+        } else if (error.name === 'OverconstrainedError') {
+          status.value = 'error'
+          errorMessage.value = "ERROR: installed cameras are not suitable"
+        } else if (error.name === 'StreamApiNotSupportedError') {
+          status.value = 'error'
+          errorMessage.value = "ERROR: Stream API is not supported in this browser"
+        } else {
+          status.value = 'error'
+          errorMessage.value = `ERROR: ${error.message || error}`
+        }
+        console.error(errorMessage.value, error)
+      }
+    }
+
+    const readFromFile = (evt) => {
+      status.value = 'info'
+      debugInfo.value = 'Reading from file...'
+      if (imgElem) {
+        imgElem.src = ''
+        imgElem.alt = ''
+      }
+
+      let fileObj = evt.target.files[0]
+      if (!fileObj) {
+        debugInfo.value = 'No file selected'
+        return
+      }
+
+      let fr = new FileReader()
       fr.onload = function () {
-        imgElem.src = fr.result;
-        imgElem.alt = file.name;
-        codeReader.decodeFromImage(imgElem).then((result) => {
-          that.status = 'success';
-          that.result = result.text;
-          //resultForm.select();
-          //console.log(resultForm);
+        if (imgElem) {
+          imgElem.src = fr.result
+          imgElem.alt = fileObj.name
+        }
+        debugInfo.value = 'Decoding image...'
+
+        codeReader.decodeFromImage(imgElem).then((resultObj) => {
+          status.value = 'success'
+          result.value = resultObj.text
+          debugInfo.value = 'Successfully decoded from image'
+          console.log('File decode success:', resultObj.text)
+          playBeep()
         }).catch((err) => {
-          that.status = 'error';
-          that.errorMessage = err;
-          console.error(err)
-        });
-      };
-      fr.readAsDataURL(file);
-    },
-    decodeOnce(codeReader, selectedDeviceId) {
-      codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((result) => {
-        console.log(result)
-        this.result = result.text;
+          status.value = 'error'
+          errorMessage.value = 'Could not decode QR code from image'
+          debugInfo.value = `Error: ${err.message || err}`
+          console.error('File decode error:', err)
+        })
+      }
+      fr.readAsDataURL(fileObj)
+    }
+
+    // ビープ音を鳴らす（読み取り成功のフィードバック）
+    const playBeep = () => {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+        const oscillator = audioContext.createOscillator()
+        const gainNode = audioContext.createGain()
+
+        oscillator.connect(gainNode)
+        gainNode.connect(audioContext.destination)
+
+        oscillator.frequency.value = 800
+        oscillator.type = 'sine'
+
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1)
+
+        oscillator.start(audioContext.currentTime)
+        oscillator.stop(audioContext.currentTime + 0.1)
+      } catch (e) {
+        console.log('Audio feedback not available')
+      }
+    }
+
+    const decodeOnce = (codeReader, selectedDeviceId) => {
+      codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((resultObj) => {
+        console.log(resultObj)
+        result.value = resultObj.text
       }).catch((err) => {
         console.error(err)
-        this.result = err;
-        this.status = 'error';
-        this.errorMessage = err;
+        result.value = err
+        status.value = 'error'
+        errorMessage.value = err
       })
-    },
-    decodeContinuously(codeReader, selectedDeviceId) {
-      codeReader.decodeFromInputVideoDeviceContinuously(selectedDeviceId, 'video', (result, err) => {
-        console.log(result);
-        if (result) {
-          this.status = 'success';
-          this.errorMessage = 'Found QR code!';
-          console.log('Found QR code!', result)
-          this.result = result.text;
+    }
+
+    const decodeContinuously = (codeReader, selectedDeviceId) => {
+      codeReader.decodeFromInputVideoDeviceContinuously(selectedDeviceId, 'video', (resultObj, err) => {
+        console.log(resultObj)
+        if (resultObj) {
+          status.value = 'success'
+          errorMessage.value = 'Found QR code!'
+          console.log('Found QR code!', resultObj)
+          result.value = resultObj.text
         }
         if (err) {
           if (err instanceof NotFoundException) {
-            this.status = 'error';
-            this.errorMessage = 'No QR code found.';
+            status.value = 'error'
+            errorMessage.value = 'No QR code found.'
           }
           if (err instanceof ChecksumException) {
-            this.status = 'error';
-            this.errorMessage = 'A code was found, but it\'s read value was not valid.';
+            status.value = 'error'
+            errorMessage.value = 'A code was found, but it\'s read value was not valid.'
           }
           if (err instanceof FormatException) {
-            this.status = 'error';
-            this.errorMessage = 'A code was found, but it was in a invalid format.';
+            status.value = 'error'
+            errorMessage.value = 'A code was found, but it was in a invalid format.'
           }
         }
       })
     }
-  },
-  components: {
-    BFormTextarea
+
+    return {
+      file,
+      alertMsg,
+      cameraAvailable,
+      result,
+      status,
+      errorMessage,
+      loading,
+      debugInfo,
+      constraints,
+      paintBoundingBox,
+      onDetect,
+      onDecode,
+      onError,
+      onInit,
+      readFromFile,
+      decodeOnce,
+      decodeContinuously
+    }
   }
 }
 </script>
 
-<style>
-#file .image img:first-child {
-  max-height: 500px;
+<style scoped>
+.image {
   max-width: 100%;
+  overflow: hidden;
 }
-#file .qr-code-reader {
-  max-height: 100px;
+
+.image img {
+  max-height: 400px;
   max-width: 100%;
+  height: auto;
+  display: block;
 }
-#file .qr-code-reader.camera-available {
-  margin-bottom: 20px;
-  max-height: 300px;
+
+.qr-code-reader {
+  max-width: 100%;
+  position: relative;
+  background-color: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-#file .qr-code-reader * {
-  max-height: 300px;
-  max-width: 300%;
-}
-#result {
-  font-family: Monaco, monospace;
-  font-size: 100%;
-  height: 500px;
+
+.qr-code-reader.camera-available {
   min-height: 300px;
+  max-height: 480px;
 }
-.op-btn {
-  margin-top: 0.5rem;
-  text-align: right;
+
+.qr-reader {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+}
+
+/* デバッグ情報 */
+.debug-info {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #333;
+  padding: 0.5rem;
+  font-family: monospace;
+}
+
+/* ローディングインジケーター */
+.loading-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  z-index: 1000;
+  font-weight: bold;
+}
+
+/* QRコードリーダーのビデオ要素 */
+.qr-reader :deep(video) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* カメラが利用可能な場合のcanvas */
+.camera-available .qr-reader :deep(canvas) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>

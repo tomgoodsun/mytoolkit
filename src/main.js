@@ -1,15 +1,16 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue'
-import App from './App'
+import { createApp } from 'vue'
+import App from './App.vue'
 import router from './router'
 
-Vue.config.productionTip = false
+// Import Bootstrap and BootstrapVue CSS files
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
 
-/* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  router,
-  components: { App },
-  template: '<App/>'
-})
+// Import common styles
+import './assets/common.css'
+
+const app = createApp(App)
+
+app.use(router)
+
+app.mount('#app')

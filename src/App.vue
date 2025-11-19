@@ -1,87 +1,91 @@
 <template>
   <div id="app">
-    <b-sidebar
-     id="sidebar-no-header"
-     aria-labelledby="sidebar-no-header-title"
-     shadow
-     backdrop
-     title="tom-gs.com toolkit"
+    <BOffcanvas
+      id="sidebar-no-header"
+      v-model="sidebarVisible"
+      title="tom-gs.com toolkit"
+      shadow
+      backdrop
     >
-      <template #default="{ hide }">
-        <div class="p-3">
-          <nav class="mb-3">
-            <b-nav vertical>
-              <b-nav-item @click="navEvent" exact-active-class="active" to="/">HOME</b-nav-item>
-              <b-nav-item @click="navEvent" exact-active-class="active" to="/ml-beautifier">Markup Language Beautifier</b-nav-item>
-              <b-nav-item @click="navEvent" exact-active-class="active" to="/css-beautifier">CSS Beautifier</b-nav-item>
-              <b-nav-item @click="navEvent" exact-active-class="active" to="/js-beautifier">JavaScript Beautifier</b-nav-item>
-              <b-nav-item @click="navEvent" exact-active-class="active" to="/json-beautifier">JSON Beautifier</b-nav-item>
-              <b-nav-item @click="navEvent" exact-active-class="active" to="/sql-beautifier">SQL Beautifier</b-nav-item>
-              <b-nav-item @click="navEvent" exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</b-nav-item>
-              <b-nav-item @click="navEvent" exact-active-class="active" to="/qrcode-reader">QR Code Reader</b-nav-item>
-              <b-nav-item @click="navEvent" exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</b-nav-item>
-              <b-nav-item @click="navEvent" exact-active-class="active" to="/password-generator">Password Generator</b-nav-item>
-              <b-nav-item @click="navEvent" exact-active-class="active" to="/htpasswd-generator">Htpasswd Generator</b-nav-item>
-              <b-nav-item @click="navEvent" exact-active-class="active" to="/world-clock">World Clock</b-nav-item>
-            </b-nav>
-          </nav>
-        </div>
-      </template>
-    </b-sidebar>
+      <div class="p-3">
+        <nav class="mb-3">
+          <BNav vertical>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/">HOME</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/ml-beautifier">Markup Language Beautifier</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/css-beautifier">CSS Beautifier</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/js-beautifier">JavaScript Beautifier</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/json-beautifier">JSON Beautifier</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/sql-beautifier">SQL Beautifier</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/qrcode-reader">QR Code Reader</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/password-generator">Password Generator</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/htpasswd-generator">Htpasswd Generator</BNavItem>
+            <BNavItem @click="navEvent" exact-active-class="active" to="/world-clock">World Clock</BNavItem>
+          </BNav>
+        </nav>
+      </div>
+    </BOffcanvas>
     <header id="header" class="site-title">
-      <a v-b-toggle.sidebar-no-header class="toggle-sidebar">
-        <b-icon-list></b-icon-list>
+      <a @click="sidebarVisible = !sidebarVisible" class="toggle-sidebar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+        </svg>
       </a>
       <span class="site-name">tom-gs.com</span> toolkit - {{ contentName }}
     </header>
-    <b-container class="wrapper" fluid>
+    <BContainer class="wrapper" fluid>
       <div class="content">
         <router-view></router-view>
       </div>
-    </b-container>
+    </BContainer>
     <footer>
-      <cookie-law theme="dark-lime"></cookie-law>
     </footer>
   </div>
 </template>
 
 <script>
-/* eslint-disable */
-import Vue from 'vue';
-import { BootstrapVue, IconsPlugin, SidebarPlugin } from 'bootstrap-vue';
-import CookieLaw from 'vue-cookie-law';
-
-Vue.use(BootstrapVue)
-Vue.use(IconsPlugin)
-Vue.use(SidebarPlugin);
+import { BOffcanvas, BNav, BNavItem, BContainer } from 'bootstrap-vue-next'
+import { ref, onMounted } from 'vue'
 
 export default {
   name: 'App',
-  data() {
-    return {
-      contentName: ''
-    };
-  },
-  mounted() {
-    this.contentName = document.querySelector('#sidebar-no-header a.active').innerHTML;
-  },
-  methods: {
-    /**
-     * @param {Event} evt
-     */
-    navEvent(evt) {
-      this.contentName = evt.target.innerHTML;
-    }
-  },
   components: {
-    CookieLaw
+    BOffcanvas,
+    BNav,
+    BNavItem,
+    BContainer
+  },
+  setup() {
+    const contentName = ref('')
+    const sidebarVisible = ref(false)
+
+    onMounted(() => {
+      const activeElement = document.querySelector('#sidebar-no-header a.active')
+      if (activeElement) {
+        contentName.value = activeElement.innerHTML
+      } else {
+        contentName.value = 'HOME'
+      }
+    })
+
+    const navEvent = (evt) => {
+      contentName.value = evt.target.innerHTML
+      sidebarVisible.value = false
+    }
+
+    return {
+      contentName,
+      sidebarVisible,
+      navEvent
+    }
   }
 }
 </script>
 
 <style>
-/*
 @import url(//db.onlinewebfonts.com/c/034590c9705a820856d89653415479ff?family=Neutraface+2+Text+Bold);
+@import url(//db.onlinewebfonts.com/c/f6e67539e25adbf860808313c8e75ce5?family=Digital-7);
 @font-face {
   font-family: "Neutraface 2 Text Bold";
   src: url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.eot");
@@ -91,9 +95,6 @@ export default {
     url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.ttf") format("truetype"),
     url("//db.onlinewebfonts.com/t/034590c9705a820856d89653415479ff.svg#Neutraface 2 Text Bold") format("svg");
 }
-*/
-
-@import url(//db.onlinewebfonts.com/c/f6e67539e25adbf860808313c8e75ce5?family=Digital-7);
 @font-face {
   font-family: "Digital-7";
   src: url("//db.onlinewebfonts.com/t/f6e67539e25adbf860808313c8e75ce5.eot");
@@ -127,11 +128,11 @@ body {
 }
 
 #header,
-.b-sidebar > .b-sidebar-header {
+.offcanvas-header {
   background-color: #3399cc;
   color: #ffffff;
   font-display: swap;
-  /*font-family: 'Neutraface 2 Text Bold';*/
+  font-family: 'Neutraface 2 Text Bold';
   font-size: 1.5rem !important;
   padding: 0.5rem 1rem 0.5rem 1rem !important;
 }
@@ -141,6 +142,7 @@ body {
 }
 .toggle-sidebar {
   color: #fff;
+  cursor: pointer;
 }
 #app {
   background-color: #2c3e50;
@@ -156,18 +158,18 @@ body {
   margin: 0 0 0 0;
 }
 
-#app .nav .nav-item:hover {
+#sidebar-no-header .nav .nav-item:hover {
   background-color: #ffcc99 !important;
 }
-#app .nav .nav-item .active {
-  background-color: var(--normal-text-color); /* Reverse of text color */
+#sidebar-no-header .nav .nav-item .active {
+  background-color: var(--normal-text-color);
 }
-#app .nav .nav-item:hover a,
-#app .nav .nav-item a {
+#sidebar-no-header .nav .nav-item:hover a,
+#sidebar-no-header .nav .nav-item a {
   color: var(--normal-text-color) !important;
 }
-#app .nav .nav-item .active,
-#app .nav .nav-item:hover .active {
+#sidebar-no-header .nav .nav-item .active,
+#sidebar-no-header .nav .nav-item:hover .active {
   color: #cfcfcf !important;
 }
 
@@ -185,17 +187,16 @@ body {
 }
 
 .form-control,
-.custom-select {
+.form-select {
   background-color: #fff0 !important;
   color: #cfcfcf !important;
 }
-.custom-select option {
+.form-select option {
   background-color: #2c3e50 !important;
 }
-.custom-control-input:checked ~ .custom-control-label::before {
-  color: #fff;
-  border-color: #ffcc66 !important;
+.form-check-input:checked {
   background-color: #ffcc66 !important;
+  border-color: #ffcc66 !important;
 }
 .btn-outline-primary {
   color: #ffcc66 !important;
