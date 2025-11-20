@@ -46,7 +46,8 @@
 
 <script>
 import { BOffcanvas, BNav, BNavItem, BContainer } from 'bootstrap-vue-next'
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'App',
@@ -57,21 +58,27 @@ export default {
     BContainer
   },
   setup() {
+    const route = useRoute()
     const contentName = ref('')
     const sidebarVisible = ref(false)
     const version = import.meta.env.VITE_APP_VERSION || '0.0.0'
 
-    onMounted(() => {
-      const activeElement = document.querySelector('#sidebar-no-header a.active')
-      if (activeElement) {
-        contentName.value = activeElement.innerHTML
-      } else {
-        contentName.value = 'HOME'
-      }
+    // ルートのメタデータからページ名を取得
+    const updateContentName = () => {
+      contentName.value = route.meta.title || 'HOME'
+    }
+
+    // 初期表示時にページ名を設定
+    updateContentName()
+
+    // ルート変更を監視
+    watch(() => route.path, () => {
+      updateContentName()
     })
 
-    const navEvent = (evt) => {
-      contentName.value = evt.target.innerHTML
+    const navEvent = () => {
+      // ルート変更後にwatchが自動的にcontentNameを更新するため、
+      // ここではサイドバーを閉じるだけでOK
       sidebarVisible.value = false
     }
 

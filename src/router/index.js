@@ -13,18 +13,18 @@ import HtpasswdGenerator from '@/components/HtpasswdGenerator.vue'
 import WorldClock from '@/components/WorldClock.vue'
 
 const routes = [
-  { path: '/', component: Home },
-  { path: '/ml-beautifier', component: MarkupLanguageBeautifier },
-  { path: '/css-beautifier', component: CssBeautifier },
-  { path: '/js-beautifier', component: JavaScriptBeautifier },
-  { path: '/json-beautifier', component: JsonBeautifier },
-  { path: '/sql-beautifier', component: SqlBeautifier },
-  { path: '/db-initial-sql-creator', component: DbInitialSqlCreator },
-  { path: '/password-generator', component: PasswordGenerator },
-  { path: '/qrcode-reader', component: QrcodeReader },
-  { path: '/data-uri-scheme-generator', component: DataUriSchemeGenerator },
-  { path: '/htpasswd-generator', component: HtpasswdGenerator },
-  { path: '/world-clock', component: WorldClock }
+  { path: '/', component: Home, meta: { title: 'HOME' } },
+  { path: '/ml-beautifier', component: MarkupLanguageBeautifier, meta: { title: 'Markup Language Beautifier' } },
+  { path: '/css-beautifier', component: CssBeautifier, meta: { title: 'CSS Beautifier' } },
+  { path: '/js-beautifier', component: JavaScriptBeautifier, meta: { title: 'JavaScript Beautifier' } },
+  { path: '/json-beautifier', component: JsonBeautifier, meta: { title: 'JSON Beautifier' } },
+  { path: '/sql-beautifier', component: SqlBeautifier, meta: { title: 'SQL Beautifier' } },
+  { path: '/db-initial-sql-creator', component: DbInitialSqlCreator, meta: { title: 'DB Initial SQL Creator' } },
+  { path: '/password-generator', component: PasswordGenerator, meta: { title: 'Password Generator' } },
+  { path: '/qrcode-reader', component: QrcodeReader, meta: { title: 'QR Code Reader' } },
+  { path: '/data-uri-scheme-generator', component: DataUriSchemeGenerator, meta: { title: 'Image Data URI Scheme Generator' } },
+  { path: '/htpasswd-generator', component: HtpasswdGenerator, meta: { title: 'Htpasswd Generator' } },
+  { path: '/world-clock', component: WorldClock, meta: { title: 'World Clock' } }
 ]
 
 const router = createRouter({
