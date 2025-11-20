@@ -1,6 +1,10 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
+import { readFileSync } from 'fs'
+
+// package.jsonからバージョン情報を読み取り
+const packageJson = JSON.parse(readFileSync('./package.json', 'utf-8'))
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -10,6 +14,10 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
+    },
+    define: {
+      // package.jsonのバージョンを環境変数として公開
+      'import.meta.env.VITE_APP_VERSION': JSON.stringify(packageJson.version)
     },
     server: {
       port: 8080,

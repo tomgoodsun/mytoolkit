@@ -32,7 +32,7 @@
           <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
         </svg>
       </a>
-      <span class="site-name">tom-gs.com</span> toolkit - {{ contentName }}
+      <span class="site-name">tom-gs.com</span> toolkit Ver.{{ version }} - {{ contentName }}
     </header>
     <BContainer class="wrapper" fluid>
       <div class="content">
@@ -59,6 +59,7 @@ export default {
   setup() {
     const contentName = ref('')
     const sidebarVisible = ref(false)
+    const version = import.meta.env.VITE_APP_VERSION || '0.0.0'
 
     onMounted(() => {
       const activeElement = document.querySelector('#sidebar-no-header a.active')
@@ -77,6 +78,7 @@ export default {
     return {
       contentName,
       sidebarVisible,
+      version,
       navEvent
     }
   }
