@@ -10,18 +10,15 @@
       <div class="p-3">
         <nav class="mb-3">
           <BNav vertical>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/">HOME</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/ml-beautifier">Markup Language Beautifier</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/css-beautifier">CSS Beautifier</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/js-beautifier">JavaScript Beautifier</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/json-beautifier">JSON Beautifier</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/sql-beautifier">SQL Beautifier</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/qrcode-reader">QR Code Reader</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/password-generator">Password Generator</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/htpasswd-generator">Htpasswd Generator</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/world-clock">World Clock</BNavItem>
+            <BNavItem
+              v-for="(route, index) in routes"
+              :key="index"
+              @click="navEvent"
+              exact-active-class="active"
+              :to="route.path"
+            >
+              {{ route.meta.title }}
+            </BNavItem>
           </BNav>
         </nav>
       </div>
@@ -47,7 +44,7 @@
 <script>
 import { BOffcanvas, BNav, BNavItem, BContainer } from 'bootstrap-vue-next'
 import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 export default {
   name: 'App',
@@ -62,6 +59,7 @@ export default {
     const contentName = ref('')
     const sidebarVisible = ref(false)
     const version = import.meta.env.VITE_APP_VERSION || '0.0.0'
+    const routes = useRouter().options.routes
 
     // ルートのメタデータからページ名を取得
     const updateContentName = () => {
@@ -83,6 +81,7 @@ export default {
     }
 
     return {
+      routes,
       contentName,
       sidebarVisible,
       version,
