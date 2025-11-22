@@ -10,18 +10,15 @@
       <div class="p-3">
         <nav class="mb-3">
           <BNav vertical>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/">HOME</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/ml-beautifier">Markup Language Beautifier</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/css-beautifier">CSS Beautifier</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/js-beautifier">JavaScript Beautifier</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/json-beautifier">JSON Beautifier</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/sql-beautifier">SQL Beautifier</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/db-initial-sql-creator">DB Initial SQL Creator</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/qrcode-reader">QR Code Reader</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/data-uri-scheme-generator">Image Data URI Scheme Generator</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/password-generator">Password Generator</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/htpasswd-generator">Htpasswd Generator</BNavItem>
-            <BNavItem @click="navEvent" exact-active-class="active" to="/world-clock">World Clock</BNavItem>
+            <BNavItem
+              v-for="(route, index) in routes"
+              :key="index"
+              @click="navEvent"
+              exact-active-class="active"
+              :to="route.path"
+            >
+              {{ route.meta.title }}
+            </BNavItem>
           </BNav>
         </nav>
       </div>
@@ -32,7 +29,7 @@
           <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
         </svg>
       </a>
-      <span class="site-name">tom-gs.com</span> toolkit - {{ contentName }}
+      <span class="site-name">tom-gs.com</span> toolkit Ver.{{ version }} - {{ contentName }}
     </header>
     <BContainer class="wrapper" fluid>
       <div class="content">
@@ -46,7 +43,8 @@
 
 <script>
 import { BOffcanvas, BNav, BNavItem, BContainer } from 'bootstrap-vue-next'
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 export default {
   name: 'App',
@@ -57,26 +55,36 @@ export default {
     BContainer
   },
   setup() {
+    const route = useRoute()
     const contentName = ref('')
     const sidebarVisible = ref(false)
+    const version = import.meta.env.VITE_APP_VERSION || '0.0.0'
+    const routes = useRouter().options.routes
 
-    onMounted(() => {
-      const activeElement = document.querySelector('#sidebar-no-header a.active')
-      if (activeElement) {
-        contentName.value = activeElement.innerHTML
-      } else {
-        contentName.value = 'HOME'
-      }
+    // ルートのメタデータからページ名を取得
+    const updateContentName = () => {
+      contentName.value = route.meta.title || 'HOME'
+    }
+
+    // 初期表示時にページ名を設定
+    updateContentName()
+
+    // ルート変更を監視
+    watch(() => route.path, () => {
+      updateContentName()
     })
 
-    const navEvent = (evt) => {
-      contentName.value = evt.target.innerHTML
+    const navEvent = () => {
+      // ルート変更後にwatchが自動的にcontentNameを更新するため、
+      // ここではサイドバーを閉じるだけでOK
       sidebarVisible.value = false
     }
 
     return {
+      routes,
       contentName,
       sidebarVisible,
+      version,
       navEvent
     }
   }
