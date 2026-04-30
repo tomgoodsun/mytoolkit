@@ -11,6 +11,7 @@ import QrcodeReader from '@/components/QrcodeReader.vue'
 import DataUriSchemeGenerator from '@/components/DataUriSchemeGenerator.vue'
 import HtpasswdGenerator from '@/components/HtpasswdGenerator.vue'
 import WorldClock from '@/components/WorldClock.vue'
+import FeedTester from '@/components/FeedTester.vue'
 
 const routes = [
   { path: '/', component: Home, meta: { title: 'HOME' } },
@@ -24,7 +25,8 @@ const routes = [
   { path: '/qrcode-reader', component: QrcodeReader, meta: { title: 'QR Code Reader' } },
   { path: '/data-uri-scheme-generator', component: DataUriSchemeGenerator, meta: { title: 'Image Data URI Scheme Generator' } },
   { path: '/htpasswd-generator', component: HtpasswdGenerator, meta: { title: 'Htpasswd Generator' } },
-  { path: '/world-clock', component: WorldClock, meta: { title: 'World Clock' } }
+  { path: '/world-clock', component: WorldClock, meta: { title: 'World Clock' } },
+  { path: '/feed-tester', component: FeedTester, meta: { title: 'Feed Tester' } }
 ]
 
 const router = createRouter({
