@@ -47,14 +47,28 @@
       </BCol>
 
       <BCol cols="12" md="6" class="mt-3 mt-md-0">
-        <BAlert v-if="status=='error'" variant="danger" :model-value="true">{{ errorMessage }}</BAlert>
-        <BAlert v-else-if="status=='success'" variant="info" :model-value="true">QR code has been read.</BAlert>
-        <BAlert v-else-if="status=='detecting'" variant="warning" :model-value="true">QR code detected, decoding...</BAlert>
-        <BAlert v-else variant="dark" :model-value="true">Waiting for QR code...</BAlert>
+        <template v-if="status === 'error'">
+          <BAlert variant="danger" :model-value="true">{{ errorMessage }}</BAlert>
+        </template>
+        <template v-else-if="status === 'success'">
+          <Transition name="read-flash" appear>
+            <BAlert :key="readCount" variant="info" :model-value="true">
+              QR code has been read.
+              <span v-if="readCount > 1" class="badge bg-primary ms-2">×{{ readCount }}</span>
+            </BAlert>
+          </Transition>
+        </template>
+        <template v-else-if="status === 'detecting'">
+          <BAlert variant="warning" :model-value="true">QR code detected, decoding...</BAlert>
+        </template>
+        <template v-else>
+          <BAlert variant="dark" :model-value="true">Waiting for QR code...</BAlert>
+        </template>
 
         <BFormTextarea
           id="result"
           class="code-textarea"
+          :class="{ 'flash-active': flashActive }"
           v-model="result"
           readonly
         ></BFormTextarea>
@@ -90,7 +104,7 @@ import {
   BRow,
   BCol
 } from 'bootstrap-vue-next'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import {
   BrowserQRCodeReader,
   BrowserMultiFormatReader,
@@ -127,6 +141,9 @@ export default {
     const errorMessage = ref('')
     const loading = ref(false)
     const debugInfo = ref('')
+    const readCount = ref(0)
+    const flashActive = ref(false)
+    let flashTimer = null
 
     // カメラの制約条件（解像度とフォーカスモード）
     const constraints = ref({
@@ -137,6 +154,19 @@ export default {
         facingMode: 'environment'
       }
     })
+
+    const setSuccess = (value, debugMsg) => {
+      readCount.value++
+      status.value = 'success'
+      result.value = value
+      debugInfo.value = debugMsg
+      // Remove then re-add the flash class so the animation replays even on repeated reads
+      flashActive.value = false
+      nextTick(() => { flashActive.value = true })
+      if (flashTimer) clearTimeout(flashTimer)
+      flashTimer = setTimeout(() => { flashActive.value = false }, 700)
+      playBeep()
+    }
 
     const decodeFromImageData = async (dataUrl, sourceName) => {
       debugInfo.value = `Decoding image from ${sourceName}...`
@@ -157,10 +187,7 @@ export default {
         })
 
         const resultObj = await codeReader.decodeFromImage(img)
-        status.value = 'success'
-        result.value = resultObj.text
-        debugInfo.value = `Successfully decoded from ${sourceName}`
-        playBeep()
+        setSuccess(resultObj.text, `Successfully decoded from ${sourceName}`)
       } catch (err) {
         status.value = 'error'
         errorMessage.value = `Could not decode QR code from ${sourceName}`
@@ -238,6 +265,7 @@ export default {
 
     onUnmounted(() => {
       document.removeEventListener('paste', handlePaste)
+      if (flashTimer) clearTimeout(flashTimer)
     })
 
     // QRコードの境界線を描画する関数
@@ -281,15 +309,8 @@ export default {
           const qrValue = code.rawValue || code.format || code.content || code.data
 
           if (qrValue && qrValue !== result.value) {
-            status.value = 'success'
-            result.value = qrValue
-            debugInfo.value = `Successfully decoded: ${qrValue.substring(0, 50)}${qrValue.length > 50 ? '...' : ''}`
+            setSuccess(qrValue, `Successfully decoded: ${qrValue.substring(0, 50)}${qrValue.length > 50 ? '...' : ''}`)
             console.log('QR Code value:', qrValue)
-
-            // 読み取り成功時に音を鳴らす
-            playBeep()
-
-            // 画像をクリア
             if (imgElem) {
               imgElem.src = ''
               imgElem.alt = ''
@@ -307,16 +328,11 @@ export default {
     const onDecode = (decodedResult) => {
       console.log('Decode success:', decodedResult)
       if (decodedResult && decodedResult !== result.value) {
-        status.value = 'success'
-        result.value = decodedResult
-        debugInfo.value = `Successfully decoded: ${decodedResult.substring(0, 50)}${decodedResult.length > 50 ? '...' : ''}`
+        setSuccess(decodedResult, `Successfully decoded: ${decodedResult.substring(0, 50)}${decodedResult.length > 50 ? '...' : ''}`)
         if (imgElem) {
           imgElem.src = ''
           imgElem.alt = ''
         }
-
-        // 読み取り成功時に音を鳴らす
-        playBeep()
       }
     }
 
@@ -454,6 +470,8 @@ export default {
       errorMessage,
       loading,
       debugInfo,
+      readCount,
+      flashActive,
       constraints,
       paintBoundingBox,
       onDetect,
@@ -543,5 +561,27 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+/* 読み取り成功アラートのリプレイアニメーション */
+.read-flash-enter-active {
+  animation: alert-flash-in 0.45s ease-out;
+}
+
+@keyframes alert-flash-in {
+  0%   { opacity: 0.2; transform: translateY(-5px) scale(0.98); }
+  45%  { opacity: 1;   transform: translateY(1px)  scale(1.01); }
+  100% { opacity: 1;   transform: translateY(0)    scale(1); }
+}
+
+/* テキストエリアの枠パルス */
+.code-textarea.flash-active {
+  animation: textarea-pulse 0.7s ease-out;
+}
+
+@keyframes textarea-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(13, 110, 253, 0.8); }
+  35%  { box-shadow: 0 0 0 6px rgba(13, 110, 253, 0.4); }
+  100% { box-shadow: 0 0 0 0   rgba(13, 110, 253, 0); }
 }
 </style>
