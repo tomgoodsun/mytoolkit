@@ -35,8 +35,8 @@
             :constraints="constraints"
             :track="paintBoundingBox"
             @detect="onDetect"
-            @decode="onDecode"
-            @init="onInit"
+            @camera-on="onCameraOn"
+            @camera-off="onCameraOff"
             @error="onError"
           >
             <div v-if="loading" class="loading-indicator">
@@ -145,14 +145,11 @@ export default {
     const flashActive = ref(false)
     let flashTimer = null
 
-    // カメラの制約条件（解像度とフォーカスモード）
+    // カメラの制約条件（getUserMedia の video オプションとして直接渡される）
     const constraints = ref({
-      facingMode: 'environment', // バックカメラを優先
-      video: {
-        width: { ideal: 1920 },
-        height: { ideal: 1080 },
-        facingMode: 'environment'
-      }
+      facingMode: 'environment',
+      width: { ideal: 1920 },
+      height: { ideal: 1080 }
     })
 
     const setSuccess = (value, debugMsg) => {
@@ -324,18 +321,6 @@ export default {
       }
     }
 
-    // QRコードデコード成功時（バックアップ）
-    const onDecode = (decodedResult) => {
-      console.log('Decode success:', decodedResult)
-      if (decodedResult && decodedResult !== result.value) {
-        setSuccess(decodedResult, `Successfully decoded: ${decodedResult.substring(0, 50)}${decodedResult.length > 50 ? '...' : ''}`)
-        if (imgElem) {
-          imgElem.src = ''
-          imgElem.alt = ''
-        }
-      }
-    }
-
     // エラーハンドリング
     const onError = (error) => {
       console.error('QR Reader error:', error)
@@ -343,44 +328,20 @@ export default {
       status.value = 'error'
     }
 
-    const onInit = async (promise) => {
+    // camera-on: カメラ起動成功時（v5.x API）
+    const onCameraOn = (capabilities) => {
+      console.log('Camera capabilities:', capabilities)
+      cameraAvailable.value = true
+      loading.value = false
+      status.value = 'info'
+      debugInfo.value = 'Camera ready. Point at QR code.'
+    }
+
+    // camera-off: カメラ停止時（v5.x API）
+    const onCameraOff = () => {
+      cameraAvailable.value = false
       loading.value = true
       debugInfo.value = 'Initializing camera...'
-      try {
-        status.value = 'info'
-        const capabilities = await promise
-        console.log('Camera capabilities:', capabilities)
-        cameraAvailable.value = true
-        loading.value = false
-        debugInfo.value = 'Camera ready. Point at QR code.'
-      } catch (error) {
-        loading.value = false
-        cameraAvailable.value = false
-        debugInfo.value = ''
-        if (error.name === 'NotAllowedError') {
-          status.value = 'info'
-          errorMessage.value = "INFO: you need to grant camera access permission"
-        } else if (error.name === 'NotFoundError') {
-          status.value = 'info'
-          errorMessage.value = "INFO: no camera on this device"
-        } else if (error.name === 'NotSupportedError') {
-          status.value = 'error'
-          errorMessage.value = "ERROR: secure context required (HTTPS, localhost)"
-        } else if (error.name === 'NotReadableError') {
-          status.value = 'error'
-          errorMessage.value = "ERROR: is the camera already in use?"
-        } else if (error.name === 'OverconstrainedError') {
-          status.value = 'error'
-          errorMessage.value = "ERROR: installed cameras are not suitable"
-        } else if (error.name === 'StreamApiNotSupportedError') {
-          status.value = 'error'
-          errorMessage.value = "ERROR: Stream API is not supported in this browser"
-        } else {
-          status.value = 'error'
-          errorMessage.value = `ERROR: ${error.message || error}`
-        }
-        console.error(errorMessage.value, error)
-      }
     }
 
     const readFromFile = (evt) => {
@@ -475,9 +436,9 @@ export default {
       constraints,
       paintBoundingBox,
       onDetect,
-      onDecode,
+      onCameraOn,
+      onCameraOff,
       onError,
-      onInit,
       readFromFile,
       readFromClipboard,
       decodeOnce,
