@@ -9,7 +9,16 @@
           capture
           @change="readFromFile"
         ></BFormFile>
-        <div class="mt-3">Selected file: {{ file ? file.name : '' }}</div>
+        <div class="mt-2">Selected file: {{ file ? file.name : '' }}</div>
+        <BButton variant="outline-secondary" size="sm" class="mt-2" @click="readFromClipboard">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-image" viewBox="0 0 16 16">
+            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+            <path d="M10.648 7.646a.5.5 0 0 1 .577-.093l1.775 1.018V14H3v-1.015l3.217-4.39a.5.5 0 0 1 .783-.035l2.01 2.51 1.925-3.425z"/>
+            <path d="M6.25 8.5a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5"/>
+          </svg>
+          Paste from Clipboard <small class="text-muted">(Ctrl+V)</small>
+        </BButton>
 
         <div class="mt-3 image">
           <img src="" alt="">
@@ -81,7 +90,7 @@ import {
   BRow,
   BCol
 } from 'bootstrap-vue-next'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import {
   BrowserQRCodeReader,
   BrowserMultiFormatReader,
@@ -129,9 +138,95 @@ export default {
       }
     })
 
+    const decodeFromImageData = (dataUrl, sourceName) => {
+      if (imgElem) {
+        imgElem.src = dataUrl
+        imgElem.alt = sourceName
+      }
+      debugInfo.value = `Decoding image from ${sourceName}...`
+
+      codeReader.decodeFromImage(imgElem).then((resultObj) => {
+        status.value = 'success'
+        result.value = resultObj.text
+        debugInfo.value = `Successfully decoded from ${sourceName}`
+        playBeep()
+      }).catch((err) => {
+        status.value = 'error'
+        errorMessage.value = `Could not decode QR code from ${sourceName}`
+        debugInfo.value = `Error: ${err.message || err}`
+        console.error(`Decode error (${sourceName}):`, err)
+      })
+    }
+
+    const readFromClipboard = async () => {
+      status.value = 'info'
+      debugInfo.value = 'Reading from clipboard...'
+
+      if (!navigator.clipboard?.read) {
+        status.value = 'error'
+        errorMessage.value = 'Clipboard API is not supported. Try Ctrl+V to paste.'
+        debugInfo.value = 'Clipboard API not supported'
+        return
+      }
+
+      try {
+        const clipboardItems = await navigator.clipboard.read()
+        let imageFound = false
+
+        for (const clipboardItem of clipboardItems) {
+          const imageType = clipboardItem.types.find(type => type.startsWith('image/'))
+          if (imageType) {
+            imageFound = true
+            const blob = await clipboardItem.getType(imageType)
+            const fr = new FileReader()
+            fr.onload = () => decodeFromImageData(fr.result, 'clipboard')
+            fr.readAsDataURL(blob)
+            break
+          }
+        }
+
+        if (!imageFound) {
+          status.value = 'error'
+          errorMessage.value = 'No image found in clipboard. Copy an image first.'
+          debugInfo.value = 'No image in clipboard'
+        }
+      } catch (err) {
+        status.value = 'error'
+        errorMessage.value = err.name === 'NotAllowedError'
+          ? 'Clipboard access denied. Please allow clipboard access.'
+          : `Clipboard error: ${err.message || err}`
+        debugInfo.value = `Clipboard error: ${err.message || err}`
+        console.error('Clipboard error:', err)
+      }
+    }
+
+    const handlePaste = (evt) => {
+      const items = evt.clipboardData?.items
+      if (!items) return
+
+      for (const item of Array.from(items)) {
+        if (item.type.startsWith('image/')) {
+          evt.preventDefault()
+          const blob = item.getAsFile()
+          if (!blob) continue
+          status.value = 'info'
+          debugInfo.value = 'Reading from paste...'
+          const fr = new FileReader()
+          fr.onload = () => decodeFromImageData(fr.result, 'pasted image')
+          fr.readAsDataURL(blob)
+          break
+        }
+      }
+    }
+
     onMounted(() => {
       imgElem = document.querySelector('.image img')
       new Clipboard('.clipboard')
+      document.addEventListener('paste', handlePaste)
+    })
+
+    onUnmounted(() => {
+      document.removeEventListener('paste', handlePaste)
     })
 
     // QRコードの境界線を描画する関数
@@ -376,6 +471,7 @@ export default {
       onError,
       onInit,
       readFromFile,
+      readFromClipboard,
       decodeOnce,
       decodeContinuously
     }
