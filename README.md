@@ -53,8 +53,8 @@ npm run lint
 Create `.env.local` or `.env.production.local` files to override default settings:
 
 ```bash
-VITE_APP_HTPASSWD_API=https://your-api-endpoint.com/htpasswd
-VITE_APP_BASE_URL=https://your-domain.com
+VITE_APP_HTPASSWD_API=https://your-api-endpoint.com/htpasswd.php
+VITE_APP_FEED_API=https://your-api-endpoint.com/feed.php
 ```
 
 ## Deployment
