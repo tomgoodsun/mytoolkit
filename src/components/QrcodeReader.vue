@@ -138,24 +138,35 @@ export default {
       }
     })
 
-    const decodeFromImageData = (dataUrl, sourceName) => {
+    const decodeFromImageData = async (dataUrl, sourceName) => {
+      debugInfo.value = `Decoding image from ${sourceName}...`
+
+      // Show preview
       if (imgElem) {
         imgElem.src = dataUrl
         imgElem.alt = sourceName
       }
-      debugInfo.value = `Decoding image from ${sourceName}...`
 
-      codeReader.decodeFromImage(imgElem).then((resultObj) => {
+      // Use a fresh Image element and wait for it to fully load before decoding
+      const img = new Image()
+      try {
+        await new Promise((resolve, reject) => {
+          img.onload = resolve
+          img.onerror = () => reject(new Error('Failed to load image'))
+          img.src = dataUrl
+        })
+
+        const resultObj = await codeReader.decodeFromImage(img)
         status.value = 'success'
         result.value = resultObj.text
         debugInfo.value = `Successfully decoded from ${sourceName}`
         playBeep()
-      }).catch((err) => {
+      } catch (err) {
         status.value = 'error'
         errorMessage.value = `Could not decode QR code from ${sourceName}`
         debugInfo.value = `Error: ${err.message || err}`
         console.error(`Decode error (${sourceName}):`, err)
-      })
+      }
     }
 
     const readFromClipboard = async () => {
@@ -358,39 +369,18 @@ export default {
 
     const readFromFile = (evt) => {
       status.value = 'info'
-      debugInfo.value = 'Reading from file...'
-      if (imgElem) {
-        imgElem.src = ''
-        imgElem.alt = ''
-      }
 
-      let fileObj = evt.target.files[0]
+      const fileObj = evt.target.files[0]
+      // Reset the input so the same file can trigger change again next time
+      evt.target.value = ''
+
       if (!fileObj) {
         debugInfo.value = 'No file selected'
         return
       }
 
-      let fr = new FileReader()
-      fr.onload = function () {
-        if (imgElem) {
-          imgElem.src = fr.result
-          imgElem.alt = fileObj.name
-        }
-        debugInfo.value = 'Decoding image...'
-
-        codeReader.decodeFromImage(imgElem).then((resultObj) => {
-          status.value = 'success'
-          result.value = resultObj.text
-          debugInfo.value = 'Successfully decoded from image'
-          console.log('File decode success:', resultObj.text)
-          playBeep()
-        }).catch((err) => {
-          status.value = 'error'
-          errorMessage.value = 'Could not decode QR code from image'
-          debugInfo.value = `Error: ${err.message || err}`
-          console.error('File decode error:', err)
-        })
-      }
+      const fr = new FileReader()
+      fr.onload = () => decodeFromImageData(fr.result, fileObj.name)
       fr.readAsDataURL(fileObj)
     }
 
